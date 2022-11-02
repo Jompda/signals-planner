@@ -1,0 +1,5 @@
+node_modules/
+app/bundle.js
+app/bundle.js.LICENSE.txt
+options.js
+package-lock.json
