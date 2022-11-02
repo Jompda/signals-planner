@@ -89,11 +89,11 @@ tiledata.getTiledata({
 
 // SIDC explained
 // https://help.perforce.com/visualization/jviews/8.9/jviews-maps-defense89/doc/html/en-US/Content/Visualization/Documentation/JViews/JViews_Defense/_pubskel/ps_usrprgdef811.html
-createMarker(new ms.Symbol('SFGPUCIN---D***'), 64)
-createMarker(new ms.Symbol('SFGPUCIN---D***'), 48)
-createMarker(new ms.Symbol('SHGPUCIN---D***'), 32)
-createMarker(new ms.Symbol('SSGPUCIN---D***'), 16)
+createMarker(new ms.Symbol('SFGPUCIN--BF', { uniqueDesignation: 'PÄÄ' }), 48)
+createMarker(new ms.Symbol('SFGPUCIN---D'), 48)
 function createMarker(s: ms.Symbol, size: number) {
+    const isHQ = s.getMetadata().headquarters
+    console.log('isHQ', isHQ)
     s.setOptions({
         size: size / 16 * 10
     })
@@ -104,11 +104,10 @@ function createMarker(s: ms.Symbol, size: number) {
     const anchor = s.getAnchor()
     svg.style.left = (-anchor.x) + 'px'
     svg.style.top = (-anchor.y) + 'px'
-    hitbox.style.left = hitbox.style.top = (-size / 2) + 'px'
+    hitbox.style.left = -(isHQ ? 0 : size / 2) + 'px'
+    hitbox.style.top = -(isHQ ? size * 1.5 : size / 2) + 'px'
     hitbox.style.width = hitbox.style.height = size + 'px'
     div.append(svg, hitbox)
-
-
 
     const icon = L.divIcon({
         className: 'node-marker',
