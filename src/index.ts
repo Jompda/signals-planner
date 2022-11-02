@@ -2,6 +2,8 @@ import { forward } from 'mgrs'
 import * as L from 'leaflet'
 import options from '../options'
 import * as tiledata from 'tiledata'
+import * as ms from 'milsymbol'
+
 
 const map = L.map('map').setView([0, 0], 1)
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -59,5 +61,36 @@ tiledata.getTiledata({
     y: 0,
     z: 1
 }, ['elevation']).then(result => console.log('resolved', result))
+
+// SIDC explained
+// https://help.perforce.com/visualization/jviews/8.9/jviews-maps-defense89/doc/html/en-US/Content/Visualization/Documentation/JViews/JViews_Defense/_pubskel/ps_usrprgdef811.html
+createMarker(new ms.Symbol('SFGPUCIN---D***'), 64)
+createMarker(new ms.Symbol('SFGPUCIN---D***'), 48)
+createMarker(new ms.Symbol('SHGPUCIN---D***'), 32)
+createMarker(new ms.Symbol('SSGPUCIN---D***'), 16)
+function createMarker(s: ms.Symbol, size: number) {
+    s.setOptions({
+        size: size / 16 * 10
+    })
+    const div = L.DomUtil.create('div', 'node')
+    const svg = L.DomUtil.create('svg', 'node-milsymbol')
+    const hitbox = L.DomUtil.create('div', 'node-hitbox')
+    svg.innerHTML = s.asSVG()
+    const anchor = s.getAnchor()
+    svg.style.left = (-anchor.x) + 'px'
+    svg.style.top = (-anchor.y) + 'px'
+    hitbox.style.left = hitbox.style.top = (-size / 2) + 'px'
+    hitbox.style.width = hitbox.style.height = size + 'px'
+    div.append(svg, hitbox)
+
+
+
+    const icon = L.divIcon({
+        className: 'node-marker',
+        html: div,
+        iconAnchor: L.point(0, 0)
+    })
+    L.marker([0, 0], { icon, draggable: true }).addTo(map)
+}
 
 console.log(forward([24, 64]))

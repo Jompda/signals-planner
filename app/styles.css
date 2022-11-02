@@ -1,0 +1,27 @@
+body {
+    position: absolute;
+    padding: 0px;
+    margin: 0px;
+    width: 100%;
+    height: 100%;
+}
+
+#map {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.node {
+    width: 0;
+    height: 0;
+}
+
+.node-milsymbol {
+    position: absolute;
+    pointer-events: none;
+}
+
+.node-hitbox {
+    position: absolute;
+}
