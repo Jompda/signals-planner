@@ -1,5 +1,6 @@
 node_modules/
-app/bundle.js
-app/bundle.js.LICENSE.txt
+app/*
+!app/index.html
+!app/styles.css
 options.js
 package-lock.json

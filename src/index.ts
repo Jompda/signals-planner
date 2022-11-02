@@ -1,13 +1,38 @@
-import { forward } from 'mgrs'
+import 'leaflet/dist/leaflet.css'
+import 'leaflet-contextmenu/dist/leaflet.contextmenu.css'
+import 'leaflet-dialog/Leaflet.Dialog.css'
+
 import * as L from 'leaflet'
+import 'leaflet-contextmenu'
+import 'leaflet-dialog'
+
 import options from '../options'
+import { forward } from 'mgrs'
 import * as tiledata from 'tiledata'
 import * as ms from 'milsymbol'
+import { showAddNode } from './ui/addnode'
 
 
-const map = L.map('map').setView([0, 0], 1)
+const map = L.map('map', {
+    contextmenu: true,
+    contextmenuWidth: 140,
+    contextmenuItems: [{
+        text: 'hello',
+        index: 1
+    }]
+} as any).setView([0, 0], 1);
+
+(map.options as any).contextmenuItems = [{
+    text: 'Add Node',
+    index: 0,
+    callback: () => showAddNode(map)
+}];
+(map as any).contextmenu.removeAllItems();
+(map as any).contextmenu._createItems();
+
+
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 }).addTo(map)
 
 const tileDataStorage = new Map()

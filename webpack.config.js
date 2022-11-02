@@ -10,6 +10,10 @@ module.exports = {
                 use: 'ts-loader',
                 exclude: /node_modules/,
             },
+            {
+                test: /\.css$/,
+                use: ['style-loader', 'css-loader']
+            }
         ],
     },
     resolve: {
@@ -18,5 +22,12 @@ module.exports = {
     output: {
         filename: 'bundle.js',
         path: path.resolve(__dirname, 'app'),
+    },
+    devServer: {
+        static: {
+            directory: path.join(__dirname, 'app')
+        },
+        compress: true,
+        port: 8080
     }
 }
