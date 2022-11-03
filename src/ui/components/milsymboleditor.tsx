@@ -2,14 +2,13 @@ import * as ms from 'milsymbol'
 import { useRef, useState } from 'react'
 
 
-export function SidcEditor(props: any) {
+export function MilSymbolEditor(props: any) {
     const sidcRef = useRef<HTMLInputElement>()
     const uniqueDesignationRef = useRef<HTMLInputElement>()
 
     let updateSvgTimeout: any = null
 
-    let sidc = 'SFGPU-------'
-    let symbol = new ms.Symbol(sidc)
+    let symbol = new ms.Symbol('SFGPU-------')
 
     const [svg, setSvg] = useState(symbol.toDataURL())
 
@@ -21,18 +20,21 @@ export function SidcEditor(props: any) {
         if (updateSvg) clearTimeout(updateSvgTimeout)
         updateSvgTimeout = setTimeout(() => {
             setSvg(symbol.toDataURL())
+            props.updateMilSymbol(symbol)
             updateSvgTimeout = null
         }, 500)
     }
 
+    props.updateMilSymbol(symbol)
+
     return (
-        <div className='sidc-editor'>
-            <div className='sidc-editor-fields'>
+        <div className='milsymbol-editor'>
+            <div className='milsymbol-editor-fields'>
                 <span>SIDC:</span>
                 <input
                     ref={sidcRef}
                     type='text'
-                    defaultValue={sidc}
+                    defaultValue={symbol.getOptions().sidc}
                     onChange={updateSvg}
                 />
                 <span>uniqueDesignation:</span>

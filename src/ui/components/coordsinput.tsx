@@ -2,7 +2,6 @@ import { useRef, useState } from 'react'
 import * as mgrs from 'mgrs'
 import * as utm from 'utm'
 import * as L from 'leaflet'
-import { SidcEditor } from './sidceditor'
 
 
 export function CoordsInput(props: any) {
@@ -171,8 +170,6 @@ export function CoordsInput(props: any) {
                     }}
                 >Clear</button>
             </div>
-            <hr />
-            <SidcEditor />
         </div>
     )
 }

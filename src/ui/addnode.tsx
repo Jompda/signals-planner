@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import * as L from 'leaflet'
 import { CoordsInput } from './components/coordsinput'
+import { MilSymbolEditor } from './components/milsymboleditor'
+import { Symbol as MilSymbol } from 'milsymbol'
 
 export function showAddNodeMenu(map: L.Map, e: L.LeafletMouseEvent) {
     const dialog = (L.control as any).dialog({
@@ -17,34 +19,20 @@ export function showAddNodeMenu(map: L.Map, e: L.LeafletMouseEvent) {
 
     console.log('showing')
 
-    const state = {
-        latlng: e.latlng
-    }
+    let latlng: L.LatLng
+    latlng = e.latlng
+    let milSymbol: MilSymbol
+
 
     const root = createRoot(container)
     root.render(
         <div className='dialog-menu'>
             <h1>Add Node:</h1>
-            <CoordsInput latlng={e.latlng} updateLatLng={(latlng: L.LatLng) => state.latlng = latlng} />
-            <br />
-            <button onClick={() => { console.log(state) }}>show</button>
-            <Counter />
+            <CoordsInput latlng={e.latlng} updateLatLng={(ll: L.LatLng) => latlng = ll} />
+            <hr />
+            <MilSymbolEditor updateMilSymbol={(s: MilSymbol) => milSymbol = s} />
+            <hr />
+            <button onClick={() => { console.log(latlng, milSymbol) }}>show</button>
         </div>
-    )
-}
-
-
-
-
-function Counter() {
-    const [count, setCount] = useState(0)
-
-    return (
-        <>
-            <p>{count}</p>
-            <button onClick={() => setCount(count + 1)}>
-                Yes
-            </button>
-        </>
     )
 }
