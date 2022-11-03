@@ -18,7 +18,8 @@ import { initContextMenu } from './ui/contextmenu'
 
 const map = L.map('map', {
     contextmenu: true,
-    contextmenuWidth: 140
+    contextmenuWidth: 140,
+    wheelPxPerZoomLevel: 60 / 0.5
 } as ExtendedMapOptions).setView([0, 0], 1)
 
 initContextMenu(map)

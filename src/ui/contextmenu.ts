@@ -1,14 +1,14 @@
 import * as L from 'leaflet'
 
 import { ContextMenuItem } from '../interfaces'
-import { showAddNode } from './addnode'
+import { showAddNodeMenu } from './addnode'
 
 
 export function initContextMenu(map: L.Map) {
     const mapOnlyItems: Array<ContextMenuItem> = [{
         text: 'Add node',
         index: 4,
-        callback: (e) => showAddNode(map, e)
+        callback: (e) => showAddNodeMenu(map, e)
     }, {
         separator: true,
         index: 9

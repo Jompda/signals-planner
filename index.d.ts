@@ -1,5 +1,6 @@
 declare module 'mgrs' {
-    export function forward(arr: number[]): string
+    export function forward(arr: Array<number>): string
+    export function toPoint(mgrs: string): Array<number>
 }
 
 declare module 'tiledata' {

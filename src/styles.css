@@ -1,3 +1,6 @@
+/* 
+ * Base styles
+ */
 body {
     position: absolute;
     padding: 0px;
@@ -12,6 +15,20 @@ body {
     height: 100%;
 }
 
+
+/* 
+ * Dialogs
+ */
+.dialog-menu {}
+
+.dialog-menu>h1 {
+    text-align: center;
+}
+
+
+/* 
+ * Map layers
+ */
 .node {
     width: 0;
     height: 0;
