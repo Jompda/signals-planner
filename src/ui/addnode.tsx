@@ -1,6 +1,5 @@
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { createRoot } from 'react-dom/client'
-import * as mgrs from 'mgrs'
 import * as L from 'leaflet'
 import { CoordsInput } from './components/coordsinput'
 
