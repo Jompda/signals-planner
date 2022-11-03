@@ -1,4 +1,5 @@
-import 'leaflet/dist/leaflet.css'
+//import 'leaflet/dist/leaflet.css'
+import './styles.css'
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.css'
 import 'leaflet-dialog/Leaflet.Dialog.css'
 
@@ -6,29 +7,21 @@ import * as L from 'leaflet'
 import 'leaflet-contextmenu'
 import 'leaflet-dialog'
 
-import options from '../options'
+import { ExtendedMapOptions } from './interfaces'
 import { forward } from 'mgrs'
 import * as tiledata from 'tiledata'
 import * as ms from 'milsymbol'
-import { showAddNode } from './ui/addnode'
+
+import options from '../options'
+import { initContextMenu } from './ui/contextmenu'
 
 
 const map = L.map('map', {
     contextmenu: true,
-    contextmenuWidth: 140,
-    contextmenuItems: [{
-        text: 'hello',
-        index: 1
-    }]
-} as any).setView([0, 0], 1);
+    contextmenuWidth: 140
+} as ExtendedMapOptions).setView([0, 0], 1)
 
-(map.options as any).contextmenuItems = [{
-    text: 'Add Node',
-    index: 0,
-    callback: () => showAddNode(map)
-}];
-(map as any).contextmenu.removeAllItems();
-(map as any).contextmenu._createItems();
+initContextMenu(map)
 
 
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -93,7 +86,6 @@ createMarker(new ms.Symbol('SFGPUCIN--BF', { uniqueDesignation: 'PÄÄ' }), 48)
 createMarker(new ms.Symbol('SFGPUCIN---D'), 48)
 function createMarker(s: ms.Symbol, size: number) {
     const isHQ = s.getMetadata().headquarters
-    console.log('isHQ', isHQ)
     s.setOptions({
         size: size / 16 * 10
     })
