@@ -27,6 +27,8 @@ initContextMenu(map)
 
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    bounds: L.latLngBounds(L.latLng(-90, -180), L.latLng(90, 180)),
+    noWrap: true
 }).addTo(map)
 
 const tileDataStorage = new Map()
