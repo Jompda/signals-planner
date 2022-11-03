@@ -1,6 +1,4 @@
 node_modules/
-app/*
-!app/index.html
-!app/styles.css
+app/
 options.js
 package-lock.json
