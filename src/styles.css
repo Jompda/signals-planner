@@ -52,6 +52,28 @@ body {
     grid-template-columns: 4em auto 4em;
 }
 
+.sidc-editor {
+    display: grid;
+    grid-template-columns: 75% 25%;
+    text-align: center;
+}
+
+.sidc-editor-fields {
+    align-items: center;
+    font-size: 1em;
+    display: grid;
+    grid-template-columns: 50% 50%;
+}
+
+.sidc-editor-fields>input {
+    max-width: 8em;
+    font-size: 1em;
+}
+
+.sidc-editor>div>img {
+    width: 100%;
+}
+
 
 /* 
  * Map layers
