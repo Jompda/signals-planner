@@ -25,6 +25,33 @@ body {
     text-align: center;
 }
 
+.coords-input-menu-latlng {
+    padding-bottom: 0.5em;
+    align-items: center;
+    display: grid;
+    grid-column-gap: 1em;
+    grid-row-gap: 0.5em;
+    grid-template-columns: auto 4em;
+}
+
+.coords-input-menu-latlng>div {
+    display: flex;
+    justify-content: space-between;
+}
+
+.coords-input-menu-latlng>div>div>input {
+    margin-left: 0.5em;
+    max-width: 8em;
+}
+
+.coords-input-menu-grid {
+    align-items: center;
+    display: grid;
+    grid-column-gap: 1em;
+    grid-row-gap: 0.5em;
+    grid-template-columns: 4em auto 4em;
+}
+
 
 /* 
  * Map layers

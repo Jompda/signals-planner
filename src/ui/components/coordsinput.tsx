@@ -5,14 +5,15 @@ import * as L from 'leaflet'
 
 
 export function CoordsInput(props: any) {
+    const defColor = 'lightgray'
     let sll
     if (props.latlng) sll = fromLatLng(String(props.latlng.lat), String(props.latlng.lng))
     else if (props.mgrs) sll = fromMGRS(props.mgrs)
     else if (props.utm) sll = utmToLatLng(props.utm)
 
-    const [latlngColor, setLatLngColor] = useState('lightgray')
-    const [mgrsColor, setMgrsColor] = useState('lightgray')
-    const [utmColor, setUtmColor] = useState('lightgray')
+    const [latlngColor, setLatLngColor] = useState(defColor)
+    const [mgrsColor, setMgrsColor] = useState(defColor)
+    const [utmColor, setUtmColor] = useState(defColor)
 
     const latRef = useRef<HTMLInputElement>()
     const lngRef = useRef<HTMLInputElement>()
@@ -59,21 +60,20 @@ export function CoordsInput(props: any) {
             latlng = src
             mgrsStr = mgrs.forward([latlng.lng, latlng.lat])
             utmStr = latlngToUtm(latlng)
-        }
-        else if (type == 'mgrs') {
+        } else if (type == 'mgrs') {
             const lonlat = mgrs.toPoint(src)
             latlng = L.latLng(lonlat[1], lonlat[0])
             mgrsStr = src
             utmStr = latlngToUtm(latlng)
-        } else {
+        } else if (type == 'utm') {
             latlng = utmToLatLng(src)
             mgrsStr = mgrs.forward([latlng.lng, latlng.lat])
             utmStr = src
         }
         props.updateLatLng(latlng)
-        setLatLngColor('lightgray')
-        setMgrsColor('lightgray')
-        setUtmColor('lightgray')
+        setLatLngColor(defColor)
+        setMgrsColor(defColor)
+        setUtmColor(defColor)
         if (latRef.current) latRef.current.value = String(round(latlng.lat as number, 5))
         if (lngRef.current) lngRef.current.value = String(round(latlng.lng as number, 5))
         if (mgrsRef.current) mgrsRef.current.value = mgrsStr
@@ -81,55 +81,96 @@ export function CoordsInput(props: any) {
     }
 
     return (
-        <>
-            <span>Lat:</span>
-            <input
-                ref={latRef}
-                type='text'
-                defaultValue={sll ? round(sll.lat as number, 5) : ''}
-                style={{ backgroundColor: latlngColor }}
-            />
-            <span>Lng:</span>
-            <input
-                ref={lngRef}
-                type='text'
-                defaultValue={sll ? round(sll.lng as number, 5) : ''}
-                style={{ backgroundColor: latlngColor }}
-            />
-            <button onClick={() => latRef.current.value = lngRef.current.value = ''}>Empty</button>
-            <button onClick={() => {
-                try { resolve('latlng', fromLatLng(latRef.current.value, lngRef.current.value)) }
-                catch (e) { setLatLngColor('red') }
-            }}>Set</button>
-            <br />
+        <div className='coords-input-menu'>
+            <div className='coords-input-menu-latlng'>
+                <div>
+                    <div>
+                        <span>Lat:</span>
+                        <input
+                            ref={latRef}
+                            type='text'
+                            defaultValue={sll ? round(sll.lat as number, 5) : ''}
+                            style={{ backgroundColor: latlngColor }}
+                            onChange={() => {
+                                try { resolve('latlng', fromLatLng(latRef.current.value, lngRef.current.value)) }
+                                catch (e) { setLatLngColor('red') }
+                            }}
+                        />
+                    </div>
+                    <div>
+                        <span>Lng:</span>
+                        <input
+                            ref={lngRef}
+                            type='text'
+                            defaultValue={sll ? round(sll.lng as number, 5) : ''}
+                            style={{ backgroundColor: latlngColor }}
+                            onChange={() => {
+                                try { resolve('latlng', fromLatLng(latRef.current.value, lngRef.current.value)) }
+                                catch (e) { setLatLngColor('red') }
+                            }}
+                        />
+                    </div>
+                </div>
+                <button
+                    onClick={() => {
+                        setLatLngColor(defColor)
+                        latRef.current.value = lngRef.current.value = ''
+                    }}
+                >Empty</button>
+            </div>
 
-            <span>MGRS:</span>
-            <input
-                ref={mgrsRef}
-                type='text'
-                defaultValue={sll ? mgrs.forward([sll.lng, sll.lat]) : ''}
-                style={{ backgroundColor: mgrsColor }}
-            />
-            <button onClick={() => mgrsRef.current.value = ''}>Empty</button>
-            <button onClick={() => {
-                try { resolve('mgrs', mgrsRef.current.value) }
-                catch (e) { setMgrsColor('red') }
-            }}>Set</button>
-            <br />
+            <div className='coords-input-menu-grid'>
+                <span>MGRS:</span>
+                <input
+                    ref={mgrsRef}
+                    type='text'
+                    defaultValue={sll ? mgrs.forward([sll.lng, sll.lat]) : ''}
+                    style={{ backgroundColor: mgrsColor }}
+                    onChange={() => {
+                        try { resolve('mgrs', mgrsRef.current.value) }
+                        catch (e) { setMgrsColor('red') }
+                    }}
+                />
+                <button
+                    onClick={() => {
+                        setMgrsColor(defColor)
+                        mgrsRef.current.value = ''
+                    }}
+                >Empty</button>
 
-            <span>UTM:</span>
-            <input
-                ref={utmRef}
-                type='text'
-                defaultValue={sll ? latlngToUtm(sll) : ''}
-                style={{ backgroundColor: utmColor }}
-            />
-            <button onClick={() => utmRef.current.value = ''}>Empty</button>
-            <button onClick={() => {
-                try { resolve('utm', utmRef.current.value) }
-                catch (e) { setUtmColor('red') }
-            }}>Set</button>
-        </>
+                <span>UTM:</span>
+                <input
+                    ref={utmRef}
+                    type='text'
+                    defaultValue={sll ? latlngToUtm(sll) : ''}
+                    style={{ backgroundColor: utmColor }}
+                    onChange={() => {
+                        try { resolve('utm', utmRef.current.value) }
+                        catch (e) { setUtmColor('red') }
+                    }}
+                />
+                <button
+                    onClick={() => {
+                        setUtmColor(defColor)
+                        utmRef.current.value = ''
+                    }}
+                >Empty</button>
+
+                <button
+                    onClick={() => {
+                        setLatLngColor(defColor)
+                        setMgrsColor(defColor)
+                        setUtmColor(defColor)
+                        latRef.current.value =
+                            lngRef.current.value =
+                            mgrsRef.current.value =
+                            utmRef.current.value =
+                            ''
+                        props.updateLatLng(null)
+                    }}
+                >Clear</button>
+            </div>
+        </div>
     )
 }
 
