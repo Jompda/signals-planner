@@ -1,11 +1,10 @@
-import { useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import * as L from 'leaflet'
 import { CoordsInput } from './components/coordsinput'
 import { MilSymbolEditor } from './components/milsymboleditor'
 import { Symbol as MilSymbol } from 'milsymbol'
 
-export function showAddNodeMenu(map: L.Map, e: L.LeafletMouseEvent) {
+export function showAddUnitMenu(map: L.Map, e: L.LeafletMouseEvent) {
     const dialog = (L.control as any).dialog({
         size: [400, 700],
         anchor: [innerHeight / 2 - 350, 0],
@@ -28,7 +27,7 @@ export function showAddNodeMenu(map: L.Map, e: L.LeafletMouseEvent) {
     const root = createRoot(container)
     root.render(
         <div className='dialog-menu'>
-            <h1>Add Node:</h1>
+            <h1>Add Unit:</h1>
             <CoordsInput latlng={e.latlng} updateLatLng={(ll: L.LatLng) => latlng = ll} />
             <hr />
             <MilSymbolEditor milSymbol={milSymbol} updateMilSymbol={(s: MilSymbol) => milSymbol = s} />

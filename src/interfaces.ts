@@ -1,4 +1,7 @@
 import * as L from 'leaflet'
+import { Symbol as MilSymbol } from 'milsymbol'
+import Unit from './struct/unit'
+
 
 export interface ExtendedMapOptions extends L.MapOptions {
     contextmenu: boolean
@@ -9,7 +12,21 @@ export interface ExtendedMapOptions extends L.MapOptions {
 export interface ContextMenuItem {
     text?: string
     index?: number
-    callback?: (e: L.LeafletMouseEvent) => any,
+    callback?: (e: L.LeafletMouseEvent) => any
     icon?: string
     separator?: boolean
+}
+
+
+export interface UnitOptions {
+    id: string
+    latlng: L.LatLng
+    symbol: MilSymbol
+}
+
+export interface LinkOptions {
+    id: string
+    unit0: Unit
+    unit1: Unit
+    // Medium
 }
