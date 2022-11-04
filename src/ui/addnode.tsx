@@ -22,6 +22,7 @@ export function showAddNodeMenu(map: L.Map, e: L.LeafletMouseEvent) {
     let latlng: L.LatLng
     latlng = e.latlng
     let milSymbol: MilSymbol
+    milSymbol = new MilSymbol('SFGPU-----A-')
 
 
     const root = createRoot(container)
@@ -30,7 +31,7 @@ export function showAddNodeMenu(map: L.Map, e: L.LeafletMouseEvent) {
             <h1>Add Node:</h1>
             <CoordsInput latlng={e.latlng} updateLatLng={(ll: L.LatLng) => latlng = ll} />
             <hr />
-            <MilSymbolEditor updateMilSymbol={(s: MilSymbol) => milSymbol = s} />
+            <MilSymbolEditor milSymbol={milSymbol} updateMilSymbol={(s: MilSymbol) => milSymbol = s} />
             <hr />
             <button onClick={() => { console.log(latlng, milSymbol) }}>show</button>
         </div>
