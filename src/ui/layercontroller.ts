@@ -37,7 +37,7 @@ export function removeUnit(unit: Unit) {
 
 export function addLink(link: Link) {
     function update() {
-        link.redraw()
+        link.update()
     }
 
     function rm() {

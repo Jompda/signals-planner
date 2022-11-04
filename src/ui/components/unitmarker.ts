@@ -2,9 +2,13 @@ import * as L from 'leaflet'
 import { Symbol as MilSymbol } from 'milsymbol'
 import { ExtendedMarkerOptions } from '../../interfaces'
 import Unit from '../../struct/unit'
-import { removeUnit as structRemoveUnit } from '../../struct'
+import { getUnitById, removeUnit as structRemoveUnit } from '../../struct'
 import { getMap, removeUnit as lgRemoveUnit } from '../layercontroller'
 import { showEditUnitMenu } from '../unitmenus'
+import Link from '../../struct/link'
+import { addLink as structAddLink } from '../../struct'
+import { addLink as lgAddLink } from '../layercontroller'
+import { showAddLinkMenu } from '../linkmenus'
 
 
 export function createMarker(latlng: L.LatLng, unit: Unit) {
@@ -19,8 +23,12 @@ export function createMarker(latlng: L.LatLng, unit: Unit) {
                 showEditUnitMenu(getMap(), unit)
             }
         }, {
-            text: 'Remove',
+            text: 'Add Link',
             index: 3,
+            callback: () => showAddLinkMenu(getMap(), unit)
+        }, {
+            text: 'Remove',
+            index: 4,
             callback: () => {
                 structRemoveUnit(unit)
                 lgRemoveUnit(unit)

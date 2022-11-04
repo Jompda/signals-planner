@@ -42,7 +42,7 @@ export function getLinkById(id: string) {
     return links.get(id)
 }
 export function linkIdExists(id: string) {
-    return units.has(id)
+    return links.has(id)
 }
 export function addLink(link: Link) {
     if (linkIdExists(link.id)) throw new Error('Link id already exists!')
@@ -53,8 +53,6 @@ export function removeLink(link: Link) {
     if (!links.delete(link.id)) return false
     return true
 }
-
-
-
-
-
+export function getLinks() {
+    return Array.from(links.values())
+}
