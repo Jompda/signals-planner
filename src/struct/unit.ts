@@ -16,5 +16,6 @@ export default class Unit {
         this.symbol = symbol
         this.layer.setLatLng(latlng)
         updateMarker(this.layer, symbol)
+        this.layer.fireEvent('update')
     }
 }

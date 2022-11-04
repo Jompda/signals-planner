@@ -43,7 +43,7 @@ export function showAddUnitMenu(map: L.Map, e: L.LeafletMouseEvent) {
                     while (unitIdExists(String(lastUnitId))) lastUnitId++
                     const unit = new Unit({
                         id: String(lastUnitId++),
-                        latlng,
+                        latlng: latlng || map.getCenter(),
                         symbol: milSymbol
                     })
                     structAddUnit(unit)
@@ -89,7 +89,7 @@ export function showEditUnitMenu(map: L.Map, unit: Unit) {
             <div className='dialog-menu-submit'>
                 <br />
                 <button onClick={() => {
-                    unit.updateMarker(latlng, milSymbol)
+                    unit.updateMarker(latlng || map.getCenter(), milSymbol)
                     dialog.close()
                 }}>Save</button>
                 <button onClick={() => {

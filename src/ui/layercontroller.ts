@@ -43,6 +43,8 @@ export function addLink(link: Link) {
     function rm() {
         link.unit0.layer.off('dragend', update)
         link.unit1.layer.off('dragend', update)
+        link.unit0.layer.off('update', update)
+        link.unit1.layer.off('update', update)
         link.unit0.layer.off('remove', rm)
         link.unit1.layer.off('remove', rm)
         link.layer.off('remove', rm)
@@ -53,6 +55,8 @@ export function addLink(link: Link) {
 
     link.unit0.layer.on('dragend', update)
     link.unit1.layer.on('dragend', update)
+    link.unit0.layer.on('update', update)
+    link.unit1.layer.on('update', update)
     link.unit0.layer.on('remove', rm)
     link.unit1.layer.on('remove', rm)
     link.layer.on('remove', rm)
