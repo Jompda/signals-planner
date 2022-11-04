@@ -36,6 +36,5 @@ export default class Link {
         this.unit0 = u0
         this.unit1 = u1
         this.layer.setLatLngs(this.getEndPoints())
-        console.log(this)
     }
 }
