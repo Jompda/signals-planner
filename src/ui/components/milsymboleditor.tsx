@@ -6,7 +6,7 @@ export function MilSymbolEditor(props: any) {
     const symbol = props.milSymbol
         ? props.milSymbol as ms.Symbol
         : new ms.Symbol('SFGPU-------')
-    const metadata = symbol.getOptions()
+    const soptions = symbol.getOptions()
 
 
     const sidcRef = useRef<HTMLInputElement>()
@@ -46,42 +46,42 @@ export function MilSymbolEditor(props: any) {
                 <input
                     ref={sidcRef}
                     type='text'
-                    defaultValue={symbol.getOptions().sidc}
+                    defaultValue={soptions.sidc}
                     onChange={updateSvg}
                 />
                 <span>Unique Designation:</span>
                 <input
                     ref={uniqueDesignationRef}
                     type='text'
-                    defaultValue={metadata.uniqueDesignation}
+                    defaultValue={soptions.uniqueDesignation}
                     onChange={updateSvg}
                 />
                 <span>Higher Formation:</span>
                 <input
                     ref={higherFormationRef}
                     type='text'
-                    defaultValue={metadata.higherFormation}
+                    defaultValue={soptions.higherFormation}
                     onChange={updateSvg}
                 />
                 <span>Reinforced or Reduced:</span>
                 <input
                     ref={reinforcedreducedRef}
                     type='text'
-                    defaultValue={metadata.reinforcedReduced}
+                    defaultValue={soptions.reinforcedReduced}
                     onChange={updateSvg}
                 />
                 <span>Type:</span>
                 <input
                     ref={typeRef}
                     type='text'
-                    defaultValue={metadata.type}
+                    defaultValue={soptions.type}
                     onChange={updateSvg}
                 />
                 <span>Additional Information:</span>
                 <input
                     ref={additionalInformationRef}
                     type='text'
-                    defaultValue={metadata.additionalInformation}
+                    defaultValue={soptions.additionalInformation}
                     onChange={updateSvg}
                 />
             </div>
