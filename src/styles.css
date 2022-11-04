@@ -19,11 +19,27 @@ body {
 /* 
  * Dialogs
  */
-.dialog-menu {}
+.dialog-menu {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
 
 .dialog-menu>h1 {
     text-align: center;
 }
+
+.grower {
+    flex: 1;
+    align-items: stretch;
+}
+
+.dialog-menu-submit {
+    display: grid;
+    grid-template-columns: auto 5em 5em;
+    grid-column-gap: 0.5em;
+}
+
 
 .coords-input-menu-latlng {
     padding-bottom: 0.5em;

@@ -8,22 +8,23 @@ import 'leaflet-contextmenu'
 import 'leaflet-dialog'
 
 import { ExtendedMapOptions } from './interfaces'
-import { forward } from 'mgrs'
+/*import { forward } from 'mgrs'
 import * as tiledata from 'tiledata'
 import * as ms from 'milsymbol'
 
-import options from '../options'
+import options from '../options'*/
 import { initContextMenu } from './ui/contextmenu'
+import { addTo as lgAddTo } from './ui/layercontroller'
 
 
 const map = L.map('map', {
     contextmenu: true,
     contextmenuWidth: 140,
     wheelPxPerZoomLevel: 60 / 0.5
-} as ExtendedMapOptions).setView([0, 0], 1)
+} as ExtendedMapOptions).setView([60, 24], 4)
 
 initContextMenu(map)
-
+lgAddTo(map)
 
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -31,7 +32,9 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     noWrap: true
 }).addTo(map)
 
-const tileDataStorage = new Map()
+
+
+/*const tileDataStorage = new Map()
 tiledata.setConfig({
     sources: [
         {
@@ -83,33 +86,4 @@ tiledata.getTiledata({
     z: 1
 }, ['elevation']).then(result => console.log('resolved', result))
 
-// SIDC explained
-// https://help.perforce.com/visualization/jviews/8.9/jviews-maps-defense89/doc/html/en-US/Content/Visualization/Documentation/JViews/JViews_Defense/_pubskel/ps_usrprgdef811.html
-createMarker(new ms.Symbol('SFGPUCIN--BF', { uniqueDesignation: 'PÄÄ' }), 48)
-createMarker(new ms.Symbol('SFGPUCIN---D'), 48)
-function createMarker(s: ms.Symbol, size: number) {
-    const isHQ = s.getMetadata().headquarters
-    s.setOptions({
-        size: size / 16 * 10
-    })
-    const div = L.DomUtil.create('div', 'node')
-    const svg = L.DomUtil.create('svg', 'node-milsymbol')
-    const hitbox = L.DomUtil.create('div', 'node-hitbox')
-    svg.innerHTML = s.asSVG()
-    const anchor = s.getAnchor()
-    svg.style.left = (-anchor.x) + 'px'
-    svg.style.top = (-anchor.y) + 'px'
-    hitbox.style.left = -(isHQ ? 0 : size / 2) + 'px'
-    hitbox.style.top = -(isHQ ? size * 1.5 : size / 2) + 'px'
-    hitbox.style.width = hitbox.style.height = size + 'px'
-    div.append(svg, hitbox)
-
-    const icon = L.divIcon({
-        className: 'node-marker',
-        html: div,
-        iconAnchor: L.point(0, 0)
-    })
-    L.marker([0, 0], { icon, draggable: true }).addTo(map)
-}
-
-console.log(forward([24, 64]))
+console.log(forward([24, 64]))*/

@@ -1,5 +1,5 @@
-import Link from "./link"
-import Unit from "./unit"
+import Link from './link'
+import Unit from './unit'
 
 
 const units = new Map<string, Unit>()
@@ -19,17 +19,23 @@ export function addUnit(unit: Unit) {
 }
 export function removeUnit(unit: Unit) {
     if (!units.delete(unit.id)) return false
-    //unit.remove()
-    //deselecUnit(unit)
+    for (const link of getLinksByUnitId(unit.id)) {
+        removeLink(link)
+    }
     return true
 }
 export function getUnits() {
     return Array.from(units.values())
 }
-/*export function setUnitDragging(state: boolean) {
-    if (state) for (const unit of units) unit.layer.dragging.enable()
-    else for (const unit of units) unit.layer.dragging.disable()
-}*/
+
+
+export function getLinksByUnitId(id: string) {
+    const arr = []
+    for (const link of links.values()) {
+        if (link.unit0.id == id || link.unit1.id == id) arr.push(link)
+    }
+    return arr
+}
 
 
 export function getLinkById(id: string) {
@@ -41,6 +47,10 @@ export function linkIdExists(id: string) {
 export function addLink(link: Link) {
     if (linkIdExists(link.id)) throw new Error('Link id already exists!')
     links.set(link.id, link)
+    return true
+}
+export function removeLink(link: Link) {
+    if (!links.delete(link.id)) return false
     return true
 }
 

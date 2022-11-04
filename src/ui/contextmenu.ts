@@ -1,14 +1,29 @@
 import * as L from 'leaflet'
 
 import { ContextMenuItem } from '../interfaces'
-import { showAddUnitMenu } from './addunit'
+import { addLink as structAddLink, getUnitById } from '../struct'
+import Link from '../struct/link'
+import { showAddUnitMenu } from './unitmenus'
+import { addLink as lgAddLink } from './layercontroller'
 
 
 export function initContextMenu(map: L.Map) {
     const mapOnlyItems: Array<ContextMenuItem> = [{
         text: 'Add Unit',
-        index: 4,
+        index: 3,
         callback: (e) => showAddUnitMenu(map, e)
+    }, {
+        text: 'Add Link',
+        index: 4,
+        callback: () => {
+            const link = new Link({
+                id: '1-2',
+                unit0: getUnitById('1'),
+                unit1: getUnitById('2')
+            })
+            structAddLink(link)
+            lgAddLink(link)
+        }
     }, {
         separator: true,
         index: 9

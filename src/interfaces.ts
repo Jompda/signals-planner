@@ -9,6 +9,18 @@ export interface ExtendedMapOptions extends L.MapOptions {
     contextmenuItems: Array<ContextMenuItem>
 }
 
+export interface ExtendedMarkerOptions extends L.MarkerOptions {
+    contextmenu?: boolean
+    contextmenuWidth?: number
+    contextmenuItems?: Array<ContextMenuItem>
+}
+
+export interface ExtendedLayerOptions extends L.LayerOptions {
+    contextmenu?: boolean
+    contextmenuWidth?: number
+    contextmenuItems?: Array<ContextMenuItem>
+}
+
 export interface ContextMenuItem {
     text?: string
     index?: number
