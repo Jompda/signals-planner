@@ -9,7 +9,7 @@ import { showEditUnitMenu } from '../unitmenus'
 
 export function createMarker(latlng: L.LatLng, unit: Unit) {
     return L.marker(latlng, {
-        icon: createIcon(latlng, unit.symbol, 40),
+        icon: createIcon(unit.symbol, 40),
         draggable: true,
         contextmenu: true,
         contextmenuItems: [{
@@ -30,7 +30,12 @@ export function createMarker(latlng: L.LatLng, unit: Unit) {
 }
 
 
-export function createIcon(latlng: L.LatLng, symbol: MilSymbol, size: number) {
+export function updateMarker(marker: L.Marker, symbol: MilSymbol) {
+    marker.setIcon(createIcon(symbol, 40))
+}
+
+
+export function createIcon(symbol: MilSymbol, size: number) {
     const isHQ = symbol.getMetadata().headquarters
     symbol.setOptions({
         size: size / 16 * 10

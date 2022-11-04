@@ -73,12 +73,12 @@ export function showEditUnitMenu(map: L.Map, unit: Unit) {
     let latlng: L.LatLng
     latlng = unit.layer.getLatLng()
     let milSymbol: MilSymbol
-    milSymbol = unit.symbol
+    milSymbol = new MilSymbol(unit.symbol.getOptions())
 
     const root = createRoot(container)
     root.render(
         <>
-            <h1>Add Unit:</h1>
+            <h1>Edit Unit:</h1>
             <CoordsInput latlng={latlng} updateLatLng={(ll: L.LatLng) => latlng = ll} />
             <hr />
             <MilSymbolEditor milSymbol={milSymbol} updateMilSymbol={(s: MilSymbol) => milSymbol = s} />
@@ -87,16 +87,9 @@ export function showEditUnitMenu(map: L.Map, unit: Unit) {
             <div className='dialog-menu-submit'>
                 <br />
                 <button onClick={() => {
-                    while (unitIdExists(String(lastUnitId))) lastUnitId++
-                    const unit = new Unit({
-                        id: String(lastUnitId++),
-                        latlng,
-                        symbol: milSymbol
-                    })
-                    structAddUnit(unit)
-                    lgAddUnit(unit)
+                    unit.updateMarker(latlng, milSymbol)
                     dialog.close()
-                }}>Add</button>
+                }}>Save</button>
                 <button onClick={() => {
                     dialog.close()
                 }}>Cancel</button>

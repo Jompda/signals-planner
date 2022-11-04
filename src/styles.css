@@ -3,8 +3,8 @@
  */
 body {
     position: absolute;
-    padding: 0px;
-    margin: 0px;
+    padding: 0;
+    margin: 0;
     width: 100%;
     height: 100%;
 }
@@ -23,6 +23,10 @@ body {
     display: flex;
     flex-direction: column;
     height: 100%;
+}
+
+.dialog-menu>hr {
+    width: 100%;
 }
 
 .dialog-menu>h1 {
