@@ -18,4 +18,20 @@ export default class Unit {
         updateMarker(this.layer, symbol)
         this.layer.fireEvent('update')
     }
+
+
+    serialize() {
+        return {
+            id: this.id,
+            latlng: this.layer.getLatLng(),
+            symbolOptions: this.symbol.getOptions()
+        }
+    }
+    static deserialize(obj: any) {
+        return new Unit({
+            id: obj.id,
+            latlng: obj.latlng,
+            symbol: new MilSymbol(obj.symbolOptions)
+        })
+    }
 }
