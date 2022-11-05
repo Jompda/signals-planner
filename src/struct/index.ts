@@ -85,7 +85,8 @@ export function deserialize(obj: SaveStructure) {
 
     for (const uObj of obj.units) {
         const unit = Unit.deserialize(uObj)
-        if (unitIdExists(unit.id)) { // After a couple conflicting import the ids have changed so much that a new import doesn't detect a conflict with a very old import the chain.
+        // FIXME: After a couple conflicting import the ids have changed so much that a new import doesn't detect a conflict with a very old import the chain.
+        if (unitIdExists(unit.id)) {
             const conflict = getUnitById(unit.id)
             if (
                 !deepEqual(unit.layer.getLatLng(), conflict.layer.getLatLng())
