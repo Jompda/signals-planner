@@ -2,6 +2,7 @@ import * as L from 'leaflet'
 import { SaveUnit, UnitOptions } from '../interfaces'
 import { Symbol as MilSymbol } from 'milsymbol'
 import { createMarker, updateMarker } from '../ui/components/unitmarker'
+import { filterEmpty } from '../util'
 
 
 export default class Unit {
@@ -24,7 +25,7 @@ export default class Unit {
         return {
             id: this.id,
             latlng: this.layer.getLatLng(),
-            symbolOptions: this.symbol.getOptions(false)
+            symbolOptions: filterEmpty(this.symbol.getOptions(false))
         } as SaveUnit
     }
     static deserialize(obj: SaveUnit) {

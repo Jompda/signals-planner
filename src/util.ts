@@ -12,3 +12,10 @@ export function round(value: number, decimal = 2) {
     const m = Math.pow(10, decimal)
     return Math.round(value * m) / m
 }
+
+
+export function filterEmpty(obj: any) {
+    for (const i in obj)
+        if (!obj[i]) obj[i] = undefined
+    return obj
+}
