@@ -62,11 +62,6 @@ export function showAddUnitMenu(map: L.Map, e: L.LeafletMouseEvent) {
 }
 
 
-/**
- * # TODO: Add bind between Unit and showEditUnitMenu
- * Should close when the bound unit gets removed.
- * Should get updated when the bound unit get updated.
- */
 export function showEditUnitMenu(map: L.Map, unit: Unit) {
     const dialog = (L.control as any).dialog({
         size: [400, 700],
@@ -85,15 +80,25 @@ export function showEditUnitMenu(map: L.Map, unit: Unit) {
     milSymbol = new MilSymbol(unit.symbol.getOptions())
 
 
+    const container = L.DomUtil.create('div', 'dialog-menu')
+    dialog.setContent(container)
+    let root = createUI(container)
+
+
+    unit.layer.on('update', onUnitUpdate)
+    unit.layer.on('dragend', onUnitUpdate)
+    unit.layer.on('remove', onUnitRemove)
+    map.on('dialog:closed', onDialogClose)
+
+
     function onUnitUpdate() {
-        console.log('updateUI')
         latlng = unit.layer.getLatLng()
         milSymbol = new MilSymbol(unit.symbol.getOptions())
-        console.log('latlng', latlng)
-        updateUI({ latlng, milSymbol })
+        root.unmount()
+        root = createUI(container)
     }
     function onUnitRemove() {
-        console.log('unitremoved')
+        dialog.close()
     }
     function onDialogClose(element: any) {
         if (element.identifier != dialog.identifier) return
@@ -104,60 +109,31 @@ export function showEditUnitMenu(map: L.Map, unit: Unit) {
         dialog.destroy()
     }
 
-    unit.layer.on('update', onUnitUpdate)
-    unit.layer.on('dragend', onUnitUpdate)
-    unit.layer.on('remove', onUnitRemove)
-    map.on('dialog:closed', onDialogClose)
 
+    function createUI(container: HTMLElement) {
+        const root = createRoot(container)
 
-    const container = L.DomUtil.create('div', 'dialog-menu')
-    const root = createRoot(container)
-    dialog.setContent(container)
+        root.render(
+            <>
+                <h1>Edit Unit:</h1>
+                <CoordsInput latlng={latlng} updateLatLng={(ll: L.LatLng) => latlng = ll} />
+                <hr />
+                <MilSymbolEditor milSymbol={milSymbol} updateMilSymbol={(s: MilSymbol) => milSymbol = s} />
+                <hr />
+                <div className='grower'></div>
+                <div className='dialog-menu-submit'>
+                    <br />
+                    <button onClick={() => {
+                        unit.updateMarker(latlng || map.getCenter(), milSymbol)
+                        dialog.close()
+                    }}>Save</button>
+                    <button onClick={() => {
+                        dialog.close()
+                    }}>Cancel</button>
+                </div>
+            </>
+        )
 
-    let updateUI: Function
-
-    root.render(
-        <Ui
-            callback={(func: Function) => updateUI = func}
-            unit={unit}
-            latlng={latlng}
-            milSymbol={milSymbol}
-            map={map}
-            dialog={dialog}
-            updateLatLng={(ll: L.LatLng) => latlng = ll}
-            updateMilSymbol={(s: MilSymbol) => milSymbol = s}
-        />
-    )
-}
-
-
-function Ui(props: any) {
-
-    const [state, setState] = useState({ latlng: props.latlng, milSymbol: props.milSymbol })
-    props.callback((data: any) => {
-        console.log('setstate')
-        setState(d => data)
-        console.log(data, state) // FUCKED
-    })
-
-    return (
-        <>
-            <h1>Edit Unit:</h1>
-            <CoordsInput latlng={state.latlng} updateLatLng={props.updateLatLng} />
-            <hr />
-            <MilSymbolEditor milSymbol={state.milSymbol} updateMilSymbol={props.updateMilSymbol} />
-            <hr />
-            <div className='grower'></div>
-            <div className='dialog-menu-submit'>
-                <br />
-                <button onClick={() => {
-                    props.unit.updateMarker(props.latlng || props.map.getCenter(), props.milSymbol)
-                    props.dialog.close()
-                }}>Save</button>
-                <button onClick={() => {
-                    props.dialog.close()
-                }}>Cancel</button>
-            </div>
-        </>
-    )
+        return root
+    }
 }

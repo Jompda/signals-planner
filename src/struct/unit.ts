@@ -5,6 +5,7 @@ import { createMarker } from '../ui/components/unitmarker'
 import { filterEmpty } from '../util'
 
 
+// SFGPUUS----B Signals squad
 export default class Unit {
     public id: string
     public symbol: MilSymbol
