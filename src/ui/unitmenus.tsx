@@ -7,7 +7,6 @@ import Unit from '../struct/unit'
 import { addUnit as structAddUnit, unitIdExists } from '../struct'
 import { addUnit as lgAddUnit } from './layercontroller'
 import { v4 as uuidv4 } from 'uuid'
-import { useState } from 'react'
 
 
 let lastUnitId = 1
