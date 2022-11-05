@@ -58,12 +58,17 @@ export function createMarker(latlng: L.LatLng, unit: Unit) {
         else svg.classList.add('unit-selected')
     })
 
+    marker.on('update', (
+        (data: { latlng: L.LatLng, symbol: MilSymbol }) =>
+            updateMarker(marker, data.latlng, data.symbol)
+    ) as any)
 
     return marker
 }
 
 
-export function updateMarker(marker: L.Marker, symbol: MilSymbol) {
+export function updateMarker(marker: L.Marker, latlng: L.LatLng, symbol: MilSymbol) {
+    marker.setLatLng(latlng);
     (marker.getIcon() as any).update(symbol, iconSize)
 }
 

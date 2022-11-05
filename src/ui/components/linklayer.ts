@@ -6,7 +6,7 @@ import { removeLink as lgRemoveLink } from '../layercontroller'
 
 
 export function createLinkLayer(endPoints: Array<L.LatLng>, link: Link) {
-    return L.polyline(endPoints, {
+    const layer = L.polyline(endPoints, {
         draggable: true,
         contextmenu: true,
         contextmenuItems: [{
@@ -30,4 +30,11 @@ export function createLinkLayer(endPoints: Array<L.LatLng>, link: Link) {
             index: 4
         }]
     } as ExtendedLayerOptions)
+
+    layer.on('update', (
+        (data: { endPoints: [L.LatLng] }) =>
+            layer.setLatLngs(data.endPoints)
+    ) as any)
+
+    return layer
 }

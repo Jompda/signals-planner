@@ -1,7 +1,7 @@
 import * as L from 'leaflet'
 import { SaveUnit, UnitOptions } from '../interfaces'
 import { Symbol as MilSymbol } from 'milsymbol'
-import { createMarker, updateMarker } from '../ui/components/unitmarker'
+import { createMarker } from '../ui/components/unitmarker'
 import { filterEmpty } from '../util'
 
 
@@ -15,9 +15,7 @@ export default class Unit {
     }
     updateMarker(latlng: L.LatLng, symbol: MilSymbol) {
         this.symbol = symbol
-        this.layer.setLatLng(latlng)
-        updateMarker(this.layer, symbol)
-        this.layer.fireEvent('update')
+        this.layer.fireEvent('update', { latlng, symbol })
     }
 
 

@@ -37,7 +37,7 @@ export default class Link {
         this.id = Link.createId(u0, u1)
         this.unit0 = u0
         this.unit1 = u1
-        this.layer.setLatLngs(this.getEndPoints())
+        this.layer.fire('update', { endPoints: this.getEndPoints() })
     }
 
 
