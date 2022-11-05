@@ -20,7 +20,8 @@ import { addTo as lgAddTo } from './ui/layercontroller'
 const map = L.map('map', {
     contextmenu: true,
     contextmenuWidth: 140,
-    wheelPxPerZoomLevel: 60 / 0.5
+    wheelPxPerZoomLevel: 60 / 0.5,
+    doubleClickZoom: false
 } as ExtendedMapOptions).setView([60, 24], 4)
 
 initContextMenu(map)
