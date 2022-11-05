@@ -38,11 +38,9 @@ export function showAddLinkMenu(map: L.Map, unit0: Unit) {
             <div className='dialog-menu-submit'>
                 <br />
                 <button onClick={() => {
-                    const linkId = Link.createId(unit0, unit1)
-                    if (linkIdExists(linkId)) throw new Error('Link id already exists!')
+                    if (linkIdExists(Link.createId(unit0, unit1))) throw new Error('Link id already exists!')
                     const [u0, u1] = Link.orderUnits(unit0, unit1)
                     const link = new Link({
-                        id: linkId,
                         unit0: u0,
                         unit1: u1
                     })

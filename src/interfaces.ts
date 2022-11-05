@@ -37,7 +37,6 @@ export interface UnitOptions {
 }
 
 export interface LinkOptions {
-    id: string
     unit0: Unit
     unit1: Unit
     // Medium

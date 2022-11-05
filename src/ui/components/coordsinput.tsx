@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import * as mgrs from 'mgrs'
 import * as utm from 'utm'
 import * as L from 'leaflet'
+import { round } from '../../util'
 
 
 export function CoordsInput(props: any) {
@@ -169,10 +170,4 @@ export function CoordsInput(props: any) {
             >Clear</button>
         </div>
     )
-}
-
-
-function round(n: number, d: number) {
-    const m = 10 ** d
-    return Math.round(n * m) / m
 }

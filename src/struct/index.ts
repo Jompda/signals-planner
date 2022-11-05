@@ -1,5 +1,7 @@
+import { getMap } from '../ui/layercontroller'
 import Link from './link'
 import Unit from './unit'
+import deepEqual from 'deep-equal'
 
 
 const units = new Map<string, Unit>()
@@ -55,4 +57,67 @@ export function removeLink(link: Link) {
 }
 export function getLinks() {
     return Array.from(links.values())
+}
+
+
+export function serialize(space?: number | string) {
+    const sUnits = [], sLinks = []
+    for (const unit of units.values())
+        sUnits.push(unit.serialize())
+    for (const link of links.values())
+        sLinks.push(link.serialize())
+    return JSON.stringify({
+        units: sUnits,
+        links: sLinks,
+        view: {
+            center: getMap().getCenter(),
+            zoom: getMap().getZoom()
+        }
+    }, undefined, space)
+}
+
+export function deserialize(obj: any) {
+    getMap().setView([obj.view.center.lat, obj.view.center.lng], obj.view.zoom)
+
+    const pUnits = [], pLinks = []
+    const remappedIds = new Map<string, string>()
+
+    for (const uObj of obj.units) {
+        const unit = Unit.deserialize(uObj)
+        if (unitIdExists(unit.id)) { // After a couple conflicting import the ids have changed so much that a new import doesn't detect a conflict with a very old import the chain.
+            const conflict = getUnitById(unit.id)
+            if (
+                !deepEqual(unit.layer.getLatLng(), conflict.layer.getLatLng())
+                || !deepEqual(unit.symbol.getOptions(false), conflict.symbol.getOptions(false))
+            ) {
+                let i = 1, lastId = unit.id
+                while (unitIdExists((lastId = unit.id + (i ? `(${i})` : '')))) i++
+                remappedIds.set(unit.id, lastId)
+                unit.id = lastId
+                addUnit(unit)
+                pUnits.push(unit)
+            }
+            else remappedIds.set(unit.id, unit.id)
+        } else {
+            remappedIds.set(unit.id, unit.id)
+            addUnit(unit)
+            pUnits.push(unit)
+        }
+    }
+
+    console.log(remappedIds)
+
+    for (const lObj of obj.links) {
+        lObj.unit0 = remappedIds.get(lObj.unit0)
+        lObj.unit1 = remappedIds.get(lObj.unit1)
+        const link = Link.deserialize(lObj)
+        if (linkIdExists(link.id)) continue
+        addLink(link)
+        pLinks.push(link)
+    }
+
+    return {
+        units: pUnits,
+        links: pLinks
+    }
 }

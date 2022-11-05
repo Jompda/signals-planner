@@ -12,6 +12,7 @@ export default class Link {
     public layer: L.Polyline
     constructor(options: LinkOptions) {
         Object.assign(this, options)
+        this.id = Link.createId(this.unit0, this.unit1)
         this.layer = createLinkLayer(this.getEndPoints(), this)
     }
     static createId(unit0: Unit, unit1: Unit /* Medium etc.. */) {
@@ -42,14 +43,12 @@ export default class Link {
 
     serialize() {
         return {
-            id: this.id,
             unit0: this.unit0.id,
             unit1: this.unit1.id
         }
     }
     static deserialize(obj: any) {
         return new Link({
-            id: obj.id,
             unit0: getUnitById(obj.unit0),
             unit1: getUnitById(obj.unit1)
         })

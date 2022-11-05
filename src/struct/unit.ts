@@ -24,7 +24,7 @@ export default class Unit {
         return {
             id: this.id,
             latlng: this.layer.getLatLng(),
-            symbolOptions: this.symbol.getOptions()
+            symbolOptions: this.symbol.getOptions(false)
         }
     }
     static deserialize(obj: any) {
