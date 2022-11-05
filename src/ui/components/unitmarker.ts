@@ -2,12 +2,9 @@ import * as L from 'leaflet'
 import { Symbol as MilSymbol } from 'milsymbol'
 import { ExtendedMarkerOptions } from '../../interfaces'
 import Unit from '../../struct/unit'
-import { getUnitById, removeUnit as structRemoveUnit } from '../../struct'
+import { removeUnit as structRemoveUnit } from '../../struct'
 import { getMap, removeUnit as lgRemoveUnit } from '../layercontroller'
 import { showEditUnitMenu } from '../unitmenus'
-import Link from '../../struct/link'
-import { addLink as structAddLink } from '../../struct'
-import { addLink as lgAddLink } from '../layercontroller'
 import { showAddLinkMenu } from '../linkmenus'
 
 
@@ -17,22 +14,32 @@ export function createMarker(latlng: L.LatLng, unit: Unit) {
         draggable: true,
         contextmenu: true,
         contextmenuItems: [{
-            text: 'Edit',
-            index: 2,
-            callback: (e) => {
-                showEditUnitMenu(getMap(), unit)
-            }
+            text: '(Info)',
+            index: 0
+        }, {
+            separator: true,
+            index: 1
         }, {
             text: 'Add Link',
-            index: 3,
+            index: 2,
             callback: () => showAddLinkMenu(getMap(), unit)
         }, {
-            text: 'Remove',
+            separator: true,
+            index: 3
+        }, {
+            text: 'Edit',
             index: 4,
+            callback: () => showEditUnitMenu(getMap(), unit)
+        }, {
+            text: 'Remove',
+            index: 5,
             callback: () => {
                 structRemoveUnit(unit)
                 lgRemoveUnit(unit)
             }
+        }, {
+            separator: true,
+            index: 6
         }]
     } as ExtendedMarkerOptions)
 }

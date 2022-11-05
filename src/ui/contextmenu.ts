@@ -10,21 +10,21 @@ import { addUnit as lgAddUnit, addLink as lgAddLink } from './layercontroller'
 export function initContextMenu(map: L.Map) {
     const mapOnlyItems: Array<ContextMenuItem> = [{
         text: 'Add Unit',
-        index: 3,
+        index: 4,
         callback: (e) => showAddUnitMenu(map, e)
     }, {
         separator: true,
-        index: 6
+        index: 5
     }, {
         text: 'Export',
-        index: 7,
+        index: 6,
         callback: () => {
             const str = JSON.stringify(serialize(), undefined, 2)
             startDownload(new Date().toISOString() + '.json', 'application/json', str)
         }
     }, {
         text: 'Import',
-        index: 8,
+        index: 7,
         callback: () => { // Create valid menus
             const fileInput = document.createElement('input')
             fileInput.setAttribute('type', 'file')
@@ -52,12 +52,15 @@ export function initContextMenu(map: L.Map) {
         }
     }, {
         text: '(Remove All)',
-        index: 9
+        index: 8
     }, {
         separator: true,
-        index: 10
+        index: 9
     }]
     const baseContextMenuItems: Array<ContextMenuItem> = [{
+        text: '(Topography)',
+        index: 10
+    }, {
         text: 'Center map here',
         index: 11,
         callback: (e: L.LeafletMouseEvent) => map.panTo(e.latlng)
@@ -66,7 +69,7 @@ export function initContextMenu(map: L.Map) {
 
     map.on('contextmenu', (e) => {
         if ((e.originalEvent.target as HTMLElement).id === 'map')
-            setContextmenuItems(map, (mapOnlyItems as any).concat(baseContextMenuItems))
+            setContextmenuItems(map, (mapOnlyItems).concat(...baseContextMenuItems))
     })
     map.on('contextmenu.hide', () => setContextmenuItems(map, baseContextMenuItems))
 }

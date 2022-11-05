@@ -10,6 +10,7 @@ import { addUnit as lgAddUnit } from './layercontroller'
 
 let lastUnitId = 1
 
+
 export function showAddUnitMenu(map: L.Map, e: L.LeafletMouseEvent) {
     const dialog = (L.control as any).dialog({
         size: [400, 700],
@@ -59,6 +60,11 @@ export function showAddUnitMenu(map: L.Map, e: L.LeafletMouseEvent) {
 }
 
 
+/**
+ * # TODO: Add bind between Unit and showEditUnitMenu
+ * Should close when the bound unit gets removed.
+ * Should get updated when the bound unit get updated.
+ */
 export function showEditUnitMenu(map: L.Map, unit: Unit) {
     const dialog = (L.control as any).dialog({
         size: [400, 700],
