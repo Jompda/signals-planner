@@ -8,9 +8,16 @@ import { showEditUnitMenu } from '../unitmenus'
 import { showAddLinkMenu } from '../linkmenus'
 
 
+const iconSize = 40
+
+
 export function createMarker(latlng: L.LatLng, unit: Unit) {
+    const { icon, svg, hitbox } = createIcon(unit.symbol, iconSize);
+    (icon as any).update = (symbol: MilSymbol, size: number) => {
+        setHitboxLocation(hitbox, applySymbol(svg, symbol, size))
+    }
     return L.marker(latlng, {
-        icon: createIcon(unit.symbol, 40),
+        icon,
         draggable: true,
         contextmenu: true,
         contextmenuItems: [{
@@ -46,24 +53,19 @@ export function createMarker(latlng: L.LatLng, unit: Unit) {
 
 
 export function updateMarker(marker: L.Marker, symbol: MilSymbol) {
-    marker.setIcon(createIcon(symbol, 40))
+    (marker.getIcon() as any).update(symbol, iconSize)
 }
 
 
 export function createIcon(symbol: MilSymbol, size: number) {
-    const isHQ = symbol.getMetadata().headquarters
     symbol.setOptions({
         size: size / 16 * 10
     })
     const div = L.DomUtil.create('div', 'node')
     const svg = L.DomUtil.create('svg', 'node-milsymbol')
     const hitbox = L.DomUtil.create('div', 'node-hitbox')
-    svg.innerHTML = symbol.asSVG()
-    const anchor = symbol.getAnchor()
-    svg.style.left = (-anchor.x) + 'px'
-    svg.style.top = (-anchor.y) + 'px'
-    hitbox.style.left = -(isHQ ? 0 : size / 2) + 'px'
-    hitbox.style.top = -(isHQ ? size * 1.5 : size / 2) + 'px'
+    const hitboxAnchor = applySymbol(svg, symbol, size)
+    setHitboxLocation(hitbox, hitboxAnchor)
     hitbox.style.width = hitbox.style.height = size + 'px'
     div.append(svg, hitbox)
 
@@ -71,6 +73,25 @@ export function createIcon(symbol: MilSymbol, size: number) {
         className: 'node-marker',
         html: div,
         iconAnchor: L.point(0, 0)
-    });
-    return icon
+    })
+    return { icon, svg, hitbox }
+}
+
+
+function setHitboxLocation(hitbox: HTMLElement, anchor: { x: number, y: number }) {
+    hitbox.style.left = anchor.x + 'px'
+    hitbox.style.top = anchor.y + 'px'
+}
+
+
+function applySymbol(svg: HTMLElement, symbol: MilSymbol, size: number) {
+    const isHQ = symbol.getMetadata().headquarters
+    const anchor = symbol.getAnchor()
+    svg.innerHTML = symbol.asSVG()
+    svg.style.left = (-anchor.x) + 'px'
+    svg.style.top = (-anchor.y) + 'px'
+    return {
+        x: -(isHQ ? 0 : size / 2),
+        y: -(isHQ ? size * 1.5 : size / 2)
+    }
 }
