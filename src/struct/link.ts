@@ -1,5 +1,5 @@
 import * as L from 'leaflet'
-import { LinkOptions } from '../interfaces'
+import { LinkOptions, SaveLink } from '../interfaces'
 import Unit from './unit'
 import { createLinkLayer } from '../ui/components/linklayer'
 import { getUnitById } from '.'
@@ -45,9 +45,9 @@ export default class Link {
         return {
             unit0: this.unit0.id,
             unit1: this.unit1.id
-        }
+        } as SaveLink
     }
-    static deserialize(obj: any) {
+    static deserialize(obj: SaveLink) {
         return new Link({
             unit0: getUnitById(obj.unit0),
             unit1: getUnitById(obj.unit1)

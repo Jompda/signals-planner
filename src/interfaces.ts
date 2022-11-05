@@ -41,3 +41,30 @@ export interface LinkOptions {
     unit1: Unit
     // Medium
 }
+
+
+export interface SaveStructure {
+    units: Array<SaveUnit>
+    links: Array<SaveLink>
+    view: {
+        center: {
+            lat: number
+            lng: number
+        }
+        zoom: number
+    }
+}
+
+export interface SaveUnit {
+    id: string
+    latlng: {
+        lat: number
+        lng: number
+    }
+    symbolOptions: any
+}
+
+export interface SaveLink {
+    unit0: string
+    unit1: string
+}

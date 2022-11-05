@@ -19,7 +19,7 @@ export function initContextMenu(map: L.Map) {
         text: 'Export',
         index: 7,
         callback: () => {
-            const str = serialize(4)
+            const str = JSON.stringify(serialize(), undefined, 2)
             startDownload(new Date().toISOString() + '.json', 'application/json', str)
         }
     }, {

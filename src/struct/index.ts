@@ -2,6 +2,7 @@ import { getMap } from '../ui/layercontroller'
 import Link from './link'
 import Unit from './unit'
 import deepEqual from 'deep-equal'
+import { SaveLink, SaveStructure, SaveUnit } from '../interfaces'
 
 
 const units = new Map<string, Unit>()
@@ -60,23 +61,23 @@ export function getLinks() {
 }
 
 
-export function serialize(space?: number | string) {
-    const sUnits = [], sLinks = []
+export function serialize() {
+    const sUnits = new Array<SaveUnit>(), sLinks = new Array<SaveLink>()
     for (const unit of units.values())
         sUnits.push(unit.serialize())
     for (const link of links.values())
         sLinks.push(link.serialize())
-    return JSON.stringify({
+    return {
         units: sUnits,
         links: sLinks,
         view: {
             center: getMap().getCenter(),
             zoom: getMap().getZoom()
         }
-    }, undefined, space)
+    } as SaveStructure
 }
 
-export function deserialize(obj: any) {
+export function deserialize(obj: SaveStructure) {
     getMap().setView([obj.view.center.lat, obj.view.center.lng], obj.view.zoom)
 
     const pUnits = [], pLinks = []

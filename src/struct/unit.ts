@@ -1,5 +1,5 @@
 import * as L from 'leaflet'
-import { UnitOptions } from '../interfaces'
+import { SaveUnit, UnitOptions } from '../interfaces'
 import { Symbol as MilSymbol } from 'milsymbol'
 import { createMarker, updateMarker } from '../ui/components/unitmarker'
 
@@ -25,12 +25,12 @@ export default class Unit {
             id: this.id,
             latlng: this.layer.getLatLng(),
             symbolOptions: this.symbol.getOptions(false)
-        }
+        } as SaveUnit
     }
-    static deserialize(obj: any) {
+    static deserialize(obj: SaveUnit) {
         return new Unit({
             id: obj.id,
-            latlng: obj.latlng,
+            latlng: L.latLng(obj.latlng),
             symbol: new MilSymbol(obj.symbolOptions)
         })
     }
