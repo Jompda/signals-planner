@@ -6,6 +6,8 @@ import { Symbol as MilSymbol } from 'milsymbol'
 import Unit from '../struct/unit'
 import { addUnit as structAddUnit, unitIdExists } from '../struct'
 import { addUnit as lgAddUnit } from './layercontroller'
+import { v4 as uuidv4 } from 'uuid'
+import { useState } from 'react'
 
 
 let lastUnitId = 1
@@ -74,32 +76,86 @@ export function showEditUnitMenu(map: L.Map, unit: Unit) {
         position: "topleft",
         initOpen: true
     }).addTo(map)
+    dialog.identifier = uuidv4()
 
-    const container = L.DomUtil.create('div', 'dialog-menu')
-    dialog.setContent(container)
 
     let latlng: L.LatLng
     latlng = unit.layer.getLatLng()
     let milSymbol: MilSymbol
     milSymbol = new MilSymbol(unit.symbol.getOptions())
 
+
+    function onUnitUpdate() {
+        console.log('updateUI')
+        latlng = unit.layer.getLatLng()
+        milSymbol = new MilSymbol(unit.symbol.getOptions())
+        console.log('latlng', latlng)
+        updateUI({ latlng, milSymbol })
+    }
+    function onUnitRemove() {
+        console.log('unitremoved')
+    }
+    function onDialogClose(element: any) {
+        if (element.identifier != dialog.identifier) return
+        unit.layer.off('update', onUnitUpdate)
+        unit.layer.off('dragend', onUnitUpdate)
+        unit.layer.off('remove', onUnitRemove)
+        map.off('dialog:closed', onDialogClose)
+        dialog.destroy()
+    }
+
+    unit.layer.on('update', onUnitUpdate)
+    unit.layer.on('dragend', onUnitUpdate)
+    unit.layer.on('remove', onUnitRemove)
+    map.on('dialog:closed', onDialogClose)
+
+
+    const container = L.DomUtil.create('div', 'dialog-menu')
     const root = createRoot(container)
+    dialog.setContent(container)
+
+    let updateUI: Function
+
     root.render(
+        <Ui
+            callback={(func: Function) => updateUI = func}
+            unit={unit}
+            latlng={latlng}
+            milSymbol={milSymbol}
+            map={map}
+            dialog={dialog}
+            updateLatLng={(ll: L.LatLng) => latlng = ll}
+            updateMilSymbol={(s: MilSymbol) => milSymbol = s}
+        />
+    )
+}
+
+
+function Ui(props: any) {
+
+    const [state, setState] = useState({ latlng: props.latlng, milSymbol: props.milSymbol })
+    props.callback((data: any) => {
+        console.log('setstate')
+        setState(d => data)
+        console.log(data, state) // FUCKED
+    })
+
+    return (
         <>
             <h1>Edit Unit:</h1>
-            <CoordsInput latlng={latlng} updateLatLng={(ll: L.LatLng) => latlng = ll} />
+            <CoordsInput latlng={state.latlng} updateLatLng={props.updateLatLng} />
             <hr />
-            <MilSymbolEditor milSymbol={milSymbol} updateMilSymbol={(s: MilSymbol) => milSymbol = s} />
+            <MilSymbolEditor milSymbol={state.milSymbol} updateMilSymbol={props.updateMilSymbol} />
             <hr />
             <div className='grower'></div>
             <div className='dialog-menu-submit'>
                 <br />
                 <button onClick={() => {
-                    unit.updateMarker(latlng || map.getCenter(), milSymbol)
-                    dialog.close()
+                    props.unit.updateMarker(props.latlng || props.map.getCenter(), props.milSymbol)
+                    props.dialog.close()
                 }}>Save</button>
                 <button onClick={() => {
-                    dialog.close()
+                    props.dialog.close()
                 }}>Cancel</button>
             </div>
         </>
