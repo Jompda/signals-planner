@@ -15,8 +15,6 @@ function updateBreakpoint(i: number, value: number) {
 
 const layer = new TopoLayer({
     attribution: 'Topography by Seth "slutske22" Lutske, ' + createMapboxTerrainAttribution(),
-    bounds: L.latLngBounds(L.latLng(-90, -180), L.latLng(90, 180)),
-    noWrap: true,
     topotype: 'elevation',
     customization: {
         colors: ['#000000', '#00ff00', '#0000ff', '#ff0000', '#ffffff'],
