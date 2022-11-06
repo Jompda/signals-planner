@@ -104,19 +104,31 @@ function CustomLayerOptions(props: any) {
         )
     }
 
+    const fitToViewRef = useRef<HTMLButtonElement>()
     return (
         <div className='lc-3xgrid'>
             <p>Colors:</p>
             {elements}
             <button
-                onClick={() => fitToView(updateElementValues)}
+                ref={fitToViewRef}
+                onClick={() => {
+                    const text = fitToViewRef.current.innerText
+                    fitToViewRef.current.setAttribute('disabled', '')
+                    fitToView((state: number) => {
+                        if (state < 1) fitToViewRef.current.innerText = `Progress: ${Math.round(state * 100)}%.`
+                        else {
+                            fitToViewRef.current.removeAttribute('disabled')
+                            fitToViewRef.current.innerText = text
+                        }
+                    }, updateElementValues)
+                }}
             >Fit to View</button>
         </div>
     )
 }
 
 
-function fitToView(callback: Function) {
+function fitToView(progressFunction: (state: number) => any, callback: Function) {
     const latlngs = new Array<{ lat: number, lng: number }>()
     const map = getMap()
     const zoom = map.getZoom()
@@ -140,9 +152,11 @@ function fitToView(callback: Function) {
 
     const check = asyncOperation(latlngs.length, undefined, postGet)
 
+    let i = 0
     const elevations = new Array<number>()
     workers(latlngs, async (latlng: { lat: number, lng: number }) => {
         elevations.push(await getElevation(latlng, zoom))
+        progressFunction(++i / latlngs.length)
         check()
     }, 10)
 
