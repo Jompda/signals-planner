@@ -3,9 +3,9 @@ import { Symbol as MilSymbol } from 'milsymbol'
 import { ExtendedMarkerOptions } from '../../interfaces'
 import Unit from '../../struct/unit'
 import { removeUnit as structRemoveUnit } from '../../struct'
-import { getMap, isUnitInteractionEnabled, removeUnit as lgRemoveUnit } from '../structurecontroller'
-import { showEditUnitMenu } from '../unitmenus'
-import { showAddLinkMenu } from '../linkmenus'
+import { getMap, removeUnit as lgRemoveUnit } from '../structurecontroller'
+import { showEditUnitMenu } from '../menus/unitmenus'
+import { showAddLinkMenu } from '../menus/linkmenus'
 
 
 const iconSize = 40

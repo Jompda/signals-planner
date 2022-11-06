@@ -1,11 +1,11 @@
 import { createRoot } from 'react-dom/client'
 import * as L from 'leaflet'
-import { CoordsInput } from './components/coordsinput'
-import { MilSymbolEditor } from './components/milsymboleditor'
+import { CoordsInput } from '../components/coordsinput'
+import { MilSymbolEditor } from '../components/milsymboleditor'
 import { Symbol as MilSymbol } from 'milsymbol'
-import Unit from '../struct/unit'
-import { addUnit as structAddUnit, unitIdExists } from '../struct'
-import { addUnit as lgAddUnit } from './structurecontroller'
+import Unit from '../../struct/unit'
+import { addUnit as structAddUnit, unitIdExists } from '../../struct'
+import { addUnit as lgAddUnit } from '../structurecontroller'
 import { v4 as uuidv4 } from 'uuid'
 
 

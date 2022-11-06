@@ -8,13 +8,13 @@ import 'leaflet-contextmenu'
 import 'leaflet-dialog'
 
 import { ExtendedMapOptions } from './interfaces'
-import './ui/layercontrol'
+import './ui/menus/layercontrolmenu'
 /*import { forward } from 'mgrs'
 import * as tiledata from 'tiledata'
 import * as ms from 'milsymbol'*/
 
 import options from '../options'
-import { initContextMenu } from './ui/contextmenu'
+import { initContextMenu } from './ui/menus/contextmenu'
 import { addTo as lgAddTo } from './ui/structurecontroller'
 import { createMapboxTerrainAttribution } from './util'
 

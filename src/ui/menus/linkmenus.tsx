@@ -1,9 +1,9 @@
 import * as L from 'leaflet'
 import { createRoot } from 'react-dom/client'
-import Link from '../struct/link'
-import Unit from '../struct/unit'
-import { addLink as structAddLink, getUnitById, getUnits, linkIdExists } from '../struct'
-import { addLink as lgAddLink } from './structurecontroller'
+import Link from '../../struct/link'
+import Unit from '../../struct/unit'
+import { addLink as structAddLink, getUnitById, getUnits, linkIdExists } from '../../struct'
+import { addLink as lgAddLink } from '../structurecontroller'
 import { useRef } from 'react'
 
 
