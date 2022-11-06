@@ -128,7 +128,7 @@ function CustomLayerOptions(props: any) {
 }
 
 
-function fitToView(progressFunction: (state: number) => any, callback: Function) {
+function fitToView(progressFunction: (state: number) => any, done: Function) {
     const latlngs = new Array<{ lat: number, lng: number }>()
     const map = getMap()
     const zoom = map.getZoom()
@@ -171,7 +171,7 @@ function fitToView(progressFunction: (state: number) => any, callback: Function)
         const avg = sum / elevations.length
         scaleBreakpoints(min, max, avg, 75)
 
-        callback()
+        done()
         layer.redraw()
     }
 }
