@@ -1,9 +1,8 @@
-import * as L from 'leaflet'
 import { TopoLayer, TopoLayerOptions } from 'leaflet-topography'
 import { useRef } from 'react'
-import { asyncOperation, createMapboxTerrainAttribution, workers } from '../../util'
+import { asyncOperation, createMapboxTerrainAttribution, workers, getMaxWorkers } from '../../util'
 import { getMap } from '../structurecontroller'
-import { getElevation, getMaxWorkers } from '../../topoutil'
+import { getElevation } from '../../topoutil'
 
 
 const breakpoints = [0, 150, 250, 350, 500]

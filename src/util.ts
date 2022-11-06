@@ -1,6 +1,15 @@
 import * as L from 'leaflet'
 
 
+let maxWorkers = 10
+export function getMaxWorkers() {
+    return maxWorkers
+}
+export function setMaxWorkers(amount: number) {
+    maxWorkers = amount
+}
+
+
 export function startDownload(name: string, type: string, content: string) {
     const a = document.createElement('a')
     a.href = URL.createObjectURL(new Blob([content], { type }))
