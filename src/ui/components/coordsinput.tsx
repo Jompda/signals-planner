@@ -30,7 +30,7 @@ export function CoordsInput(props: any) {
             || isNaN(lat)
             || isNaN(lng)
         ) throw false
-        return L.latLng(lat, lng)
+        return L.latLng(lat, lng).wrap()
     }
 
     function fromMGRS(str: string) {
