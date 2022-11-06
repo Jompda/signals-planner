@@ -8,6 +8,9 @@ import 'leaflet-contextmenu'
 import 'leaflet-dialog'
 
 
+import options from '../options'
+
+
 import 'regenerator-runtime'
 import { configure } from 'leaflet-topography'
 const topoLayerTileCache = new Map<string, any>()
@@ -19,32 +22,7 @@ configure({
 })
 
 
-import options from '../options'
-import './ui/menus/layercontrolmenu'
 import * as tiledata from 'tiledata'
-
-import { initContextMenu } from './ui/menus/contextmenu'
-import { addTo as lgAddTo } from './ui/structurecontroller'
-import { tileLayers } from './ui/tilelayers'
-
-
-const map = L.map('map', {
-    contextmenu: true,
-    contextmenuWidth: 140,
-    wheelPxPerZoomLevel: 60 / 0.5,
-    doubleClickZoom: false
-} as L.MapOptions).setView([60, 24], 4)
-
-initContextMenu(map)
-lgAddTo(map)
-L.control.scale({ imperial: false }).addTo(map);
-
-
-
-
-(L as any).layerControl(tileLayers, { position: 'topright' }).addTo(map)
-
-
 const tileDataStorage = new Map()
 tiledata.setConfig({
     sources: [
@@ -89,3 +67,24 @@ tiledata.setConfig({
     },
     getDataByTile: (name: string) => tileDataStorage.get(name)
 })
+
+
+import './ui/menus/layercontrolmenu'
+import { initContextMenu } from './ui/menus/contextmenu'
+import { addTo as lgAddTo } from './ui/structurecontroller'
+import { tileLayers } from './ui/tilelayers'
+
+
+const map = L.map('map', {
+    contextmenu: true,
+    contextmenuWidth: 140,
+    wheelPxPerZoomLevel: 60 / 0.5,
+    doubleClickZoom: false
+} as L.MapOptions).setView([60, 24], 4)
+
+initContextMenu(map)
+lgAddTo(map)
+L.control.scale({ imperial: false }).addTo(map);
+
+
+(L as any).layerControl(tileLayers, { position: 'topright' }).addTo(map)
