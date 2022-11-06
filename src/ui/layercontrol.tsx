@@ -134,7 +134,7 @@ function LayerModel(props: any) {
             </div>
             <div
                 ref={optionsRef}
-                className={'lc-layermodel-body' + (props.hidden ? ' hidden' : '')}
+                className={(props.hidden ? ' hidden' : '')}
             >Options</div>
         </div>
     )
