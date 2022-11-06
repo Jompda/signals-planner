@@ -1,7 +1,6 @@
 import * as L from 'leaflet'
-import { useRef, useState } from 'react';
+import { useRef } from 'react'
 import { createRoot } from 'react-dom/client'
-import options from '../../options';
 
 
 (L as any).layerControl = function (layers: any, options: any) {
@@ -40,6 +39,9 @@ import options from '../../options';
 
 
 function LayerControl(props: any) {
+    const headerCaretRef = useRef<HTMLElement>()
+    const bodyRef = useRef<HTMLDivElement>()
+
     const layers = new Array<JSX.Element>()
     let firstLayer = true
     for (const layerName in props.layers) {
@@ -55,10 +57,33 @@ function LayerControl(props: any) {
         )
         firstLayer = false
     }
+
     return (
         <>
-            <h2>{props.label}</h2>
-            <div>{layers}</div>
+            <div
+                className='lc-header'
+                onClick={() => {
+                    console.log('toggle')
+                    if ($(bodyRef.current).is(':visible')) {
+                        $(bodyRef.current).slideUp()
+                        headerCaretRef.current.classList.replace('fa-caret-down', 'fa-caret-right')
+                    } else {
+                        $(bodyRef.current).slideDown()
+                        headerCaretRef.current.classList.replace('fa-caret-right', 'fa-caret-down')
+                    }
+                }}
+            >
+                <i
+                    ref={headerCaretRef}
+                    className='lc-header-caret fa-solid fa-caret-down'
+                />
+                <div>{props.label}</div>
+                <br />
+            </div>
+            <div
+                ref={bodyRef}
+                className='lc-body'
+            >{layers}</div>
         </>
     )
 }

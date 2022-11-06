@@ -109,24 +109,31 @@ body {
  */
 .layercontrol {
     width: 16em;
-    height: 40em;
     background-color: #ffffff;
     border: 2px solid #e8e8e8;
     border-radius: 0.5em;
 }
 
-.layercontrol>h2 {
-    text-align: center;
-    padding: 0.2em;
+.lc-header {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    align-items: center;
+    padding: 0.4em;
     margin: 0;
-    margin-bottom: 2px;
     background-color: #e8e8e8;
     border-top-left-radius: 0.2em;
     border-top-right-radius: 0.2em;
+    cursor: pointer;
+}
+
+.lc-header-caret {
+    width: 1em;
+    margin-right: -1em;
 }
 
 .lc-layermodel {
-    margin: 0.2em 0;
+    margin-top: 2px;
     border-block: 2px solid #e8e8e8;
     border-radius: 0.4em;
 }
