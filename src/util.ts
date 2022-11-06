@@ -52,3 +52,30 @@ export function createMapboxTerrainAttribution() {
         L.DomUtil.removeClass(el, 'leaflet-interactive')
     }
 }
+
+
+export function asyncOperation(calls: number, step = () => { }, done = () => { }) {
+    let called = 0
+    return () => {
+        step()
+        if (++called === calls) done()
+        else if (called > calls) throw new Error('Received too many calls.')
+    }
+}
+
+
+export function workers<T>(srcValues: Array<T>, worker: (value: T) => Promise<any>, maxWorkers: number) {
+    let working = 0, workingIndex = -1
+    function addWorker() {
+        if (!(working < maxWorkers && workingIndex < srcValues.length - 1)) return
+        ++working
+        worker(srcValues[++workingIndex]).then(onFinish)
+    }
+    function onFinish() {
+        --working
+        addWorker()
+    }
+    for (let i = 0; i < maxWorkers && i < srcValues.length; i++) {
+        addWorker()
+    }
+}

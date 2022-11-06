@@ -1,11 +1,13 @@
 import * as L from 'leaflet'
 import { TopoLayer, TopoLayerOptions } from 'leaflet-topography'
 import { useRef } from 'react'
-import { createMapboxTerrainAttribution } from '../../util';
+import { asyncOperation, createMapboxTerrainAttribution, workers } from '../../util'
+import { getMap } from '../structurecontroller'
+import { getElevation } from '../../topoutil'
 
 
 const breakpoints = [0, 150, 250, 350, 500]
-function updateBreakpoints(i: number, value: number) {
+function updateBreakpoint(i: number, value: number) {
     breakpoints[i] = value
     layer.redraw()
 }
@@ -34,38 +36,46 @@ const layer = new TopoLayer({
             name: 'Black',
             value: breakpoints[0],
             update: (value: number) =>
-                updateBreakpoints(0, value)
+                updateBreakpoint(0, value)
         }, {
             name: 'Green',
             value: breakpoints[1],
             update: (value: number) =>
-                updateBreakpoints(1, value)
+                updateBreakpoint(1, value)
         }, {
             name: 'Blue',
             value: breakpoints[2],
             update: (value: number) =>
-                updateBreakpoints(2, value)
+                updateBreakpoint(2, value)
         }, {
             name: 'Red',
             value: breakpoints[3],
             update: (value: number) =>
-                updateBreakpoints(3, value)
+                updateBreakpoint(3, value)
         }, {
             name: 'White',
             value: breakpoints[4],
             update: (value: number) =>
-                updateBreakpoints(4, value)
+                updateBreakpoint(4, value)
         }]}
     />
 )
 
 
 function CustomLayerOptions(props: any) {
+    const sliders = new Array<React.MutableRefObject<HTMLInputElement>>()
+    const values = new Array<React.MutableRefObject<HTMLInputElement>>()
+    function updateElementValues() {
+        for (let i = 0; i < breakpoints.length; i++)
+            sliders[i].current.value = values[i].current.value = String(breakpoints[i])
+    }
     const elements = new Array<JSX.Element>()
     let i = 0
     for (const p of props.breakpoints) {
         const sliderRef = useRef<HTMLInputElement>()
         const valueRef = useRef<HTMLInputElement>()
+        sliders.push(sliderRef)
+        values.push(valueRef)
         elements.push(<span key={i++}>{p.name}:</span>)
         elements.push(
             <input
@@ -99,8 +109,74 @@ function CustomLayerOptions(props: any) {
         <div className='lc-3xgrid'>
             <p>Colors:</p>
             {elements}
+            <button
+                onClick={() => fitToView(updateElementValues)}
+            >Fit to View</button>
         </div>
     )
+}
+
+
+function fitToView(callback: Function) {
+    const latlngs = new Array<{ lat: number, lng: number }>()
+    const map = getMap()
+    const zoom = map.getZoom()
+    const bounds = map.getBounds()
+    const sw = bounds.getSouthWest()
+    const ne = bounds.getNorthEast()
+
+    const steps = 10
+    const lngStep = (ne.lng - sw.lng) / steps
+    const latStep = (ne.lat - sw.lat) / steps
+    let lng = sw.lng + lngStep / 2
+
+    while (lng < ne.lng) {
+        let lat = sw.lat + latStep / 2
+        while (lat < ne.lat) {
+            latlngs.push({ lat, lng })
+            lat += latStep
+        }
+        lng += lngStep
+    }
+
+    const check = asyncOperation(latlngs.length, undefined, postGet)
+
+    const elevations = new Array<number>()
+    workers(latlngs, async (latlng: { lat: number, lng: number }) => {
+        elevations.push(await getElevation(latlng, zoom))
+        check()
+    }, 10)
+
+    function postGet() {
+        let sum = elevations[0], min = sum, max = sum
+        for (let i = 1; i < elevations.length; i++) {
+            const temp = elevations[i]
+            sum += temp
+            if (temp < min) min = temp
+            if (temp > max) max = temp
+        }
+        const avg = sum / elevations.length
+        scaleBreakpoints(min, max, avg, 75)
+
+        callback()
+        layer.redraw()
+    }
+}
+
+
+function scaleBreakpoints(min: number, max: number, avg: number, pad: number) {
+    const arr = breakpoints
+    const range = max - min
+    const step = range / (arr.length - 1)
+
+    for (let i = 0; i < arr.length; i++)
+        arr[i] = Math.round(min + (step * i))
+
+    arr[0] = Math.round(Math.max(arr[0] - pad, 0))
+    arr[arr.length - 1] = Math.round(arr[arr.length - 1] + pad)
+
+    for (let i = 1; i < arr.length - 1; i++)
+        arr[i] = Math.round(arr[i] + (avg - arr[i]) * 0.25)
 }
 
 

@@ -178,7 +178,7 @@ body {
     border-left: 0.3em solid #e8e8e8;
     border-radius: 0.1em;
     display: grid;
-    grid-template-columns: 3em 8em 4em;
+    grid-template-columns: 3em 7.5em 4.5em;
     align-items: center;
 }
 
@@ -187,6 +187,11 @@ body {
     grid-column: span 3;
     margin: 0;
     margin-bottom: 0.2em;
+}
+
+.lc-3xgrid>button {
+    margin-top: 0.5em;
+    grid-column: span 3;
 }
 
 .lc-valueinput {

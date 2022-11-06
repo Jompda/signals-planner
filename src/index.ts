@@ -13,7 +13,7 @@ import { configure } from 'leaflet-topography'
 const topoLayerTileCache = new Map<string, any>()
 configure({
     token: options.mapboxToken,
-    priority: 'storage',
+    priority: 'speed',
     saveTile: (name: string, data: any) => topoLayerTileCache.set(name, data),
     retrieveTile: (name: string) => topoLayerTileCache.get(name)
 })
@@ -21,9 +21,7 @@ configure({
 
 import options from '../options'
 import './ui/menus/layercontrolmenu'
-/*import { forward } from 'mgrs'
 import * as tiledata from 'tiledata'
-import * as ms from 'milsymbol'*/
 
 import { initContextMenu } from './ui/menus/contextmenu'
 import { addTo as lgAddTo } from './ui/structurecontroller'
@@ -47,7 +45,7 @@ L.control.scale({ imperial: false }).addTo(map);
 (L as any).layerControl(tileLayers, { position: 'topright' }).addTo(map)
 
 
-/*const tileDataStorage = new Map()
+const tileDataStorage = new Map()
 tiledata.setConfig({
     sources: [
         {
@@ -91,12 +89,3 @@ tiledata.setConfig({
     },
     getDataByTile: (name: string) => tileDataStorage.get(name)
 })
-
-console.log('requesting')
-tiledata.getTiledata({
-    x: 0,
-    y: 0,
-    z: 1
-}, ['elevation']).then(result => console.log('resolved', result))
-
-console.log(forward([24, 64]))*/
