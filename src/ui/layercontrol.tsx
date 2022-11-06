@@ -1,5 +1,5 @@
 import * as L from 'leaflet'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 
 
@@ -135,9 +135,37 @@ function LayerModel(props: any) {
             <div
                 ref={optionsRef}
                 className={(props.hidden ? ' hidden' : '')}
-            >Options</div>
+            >
+                <LayerModelOptions
+                    layer={props.layer}
+                />
+            </div>
         </div>
     )
 }
 
 
+function LayerModelOptions(props: any) {
+    const [state, setState] = useState(1)
+    const sliderRef = useRef<HTMLInputElement>()
+
+    return (
+        <>
+            <div className='lc-opacity-slider'>
+                <span>Opacity:</span>
+                <input
+                    ref={sliderRef}
+                    type='range'
+                    defaultValue={100}
+                    min={0}
+                    max={100}
+                    onChange={() => {
+                        setState(parseInt(sliderRef.current.value) / 100)
+                        props.layer.setOpacity(state)
+                    }}
+                />
+                <span>{state.toFixed(2)}</span>
+            </div>
+        </>
+    )
+}

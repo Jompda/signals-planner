@@ -160,6 +160,17 @@ body {
     background-color: #e8e8e8;
 }
 
+.lc-opacity-slider {
+    padding: 0.2em 0.5em;
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+}
+
+.lc-opacity-slider>input {
+    width: 8em;
+}
+
 
 /* 
  * Map layers
