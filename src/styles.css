@@ -138,7 +138,6 @@ body {
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
-    outline: 2px solid #e8e8e8;
 }
 
 .lc-layermodel-head>div,
