@@ -62,6 +62,7 @@ const layer = new TopoLayer({
 )
 
 
+// TODO: Ability to change the slider value range.
 function CustomLayerOptions(props: any) {
     const sliders = new Array<React.MutableRefObject<HTMLInputElement>>()
     const values = new Array<React.MutableRefObject<HTMLInputElement>>()

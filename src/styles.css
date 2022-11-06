@@ -160,6 +160,7 @@ body {
     background-color: #e8e8e8;
 }
 
+
 .lc-slider {
     padding: 0.2em 0.5em;
     align-items: center;
@@ -167,9 +168,14 @@ body {
     justify-content: space-between;
 }
 
+.lc-slider>span:first-child {
+    font-weight: bold;
+}
+
 .lc-slider>input {
     width: 8em;
 }
+
 
 .lc-3xgrid {
     margin: 0.5em 0;
