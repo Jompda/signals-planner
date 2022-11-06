@@ -161,8 +161,9 @@ function LayerModelOptions(props: any) {
                     min={0}
                     max={100}
                     onChange={() => {
-                        setState(parseInt(sliderRef.current.value) / 100)
-                        props.layer.setOpacity(state)
+                        const value = parseInt(sliderRef.current.value) / 100
+                        setState(value)
+                        props.layer.setOpacity(value)
                     }}
                 />
                 <span>{state.toFixed(2)}</span>
