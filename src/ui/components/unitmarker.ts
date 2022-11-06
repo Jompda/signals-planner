@@ -3,7 +3,7 @@ import { Symbol as MilSymbol } from 'milsymbol'
 import { ExtendedMarkerOptions } from '../../interfaces'
 import Unit from '../../struct/unit'
 import { removeUnit as structRemoveUnit } from '../../struct'
-import { getMap, removeUnit as lgRemoveUnit } from '../structurecontroller'
+import { getMap, isUnitInteractionEnabled, removeUnit as lgRemoveUnit } from '../structurecontroller'
 import { showEditUnitMenu } from '../unitmenus'
 import { showAddLinkMenu } from '../linkmenus'
 

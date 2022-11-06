@@ -31,6 +31,8 @@ export function createLinkLayer(endPoints: Array<L.LatLng>, link: Link) {
         }]
     } as ExtendedLayerOptions)
 
+    layer.on('click', () => console.log('clicked link'))
+
     layer.on('update', (
         (data: { endPoints: [L.LatLng] }) =>
             layer.setLatLngs(data.endPoints)

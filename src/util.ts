@@ -1,3 +1,4 @@
+import * as L from 'leaflet'
 
 
 export function startDownload(name: string, type: string, content: string) {
@@ -25,4 +26,28 @@ export function createMapboxTerrainAttribution(layername: string) {
     return layername +
         '<a href=\"https://www.mapbox.com/about/maps/\" target=\"_blank\" title=\"Mapbox\" aria-label=\"Mapbox\">&copy; Mapbox</a> ' +
         '<a href=\"https://www.mapbox.com/contribute/\" target=\"_blank\" title=\"Improve this map\" aria-label=\"Improve this map\">Improve this map</a>'
+}
+
+
+/**
+ * https://github.com/Leaflet/Leaflet/issues/5442
+ * By Piero Steinger, extended for markers by Joni Rapo.
+ */
+(L.Layer as any).prototype.setInteractive = function (state: boolean) {
+    if (this.getLayers) {
+        this.getLayers().forEach((layer: any) => {
+            layer.setInteractive(state)
+        })
+        return
+    }
+
+    this.options.interactive = state
+
+    const el = this._path || this._icon
+
+    if (state) {
+        L.DomUtil.addClass(el, 'leaflet-interactive')
+    } else {
+        L.DomUtil.removeClass(el, 'leaflet-interactive')
+    }
 }
