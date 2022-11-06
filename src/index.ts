@@ -10,16 +10,12 @@ import 'leaflet-dialog'
 
 import 'regenerator-runtime'
 import { configure } from 'leaflet-topography'
-/**
- * Configure leaflet-topography
- */
-const tileCache = new Map<string, any>()
+const topoLayerTileCache = new Map<string, any>()
 configure({
     token: options.mapboxToken,
-    priority: 'speed',
-    saveTile: (name: string, data: any) => tileCache.set(name, data),
-    retrieveTile: (name: string) => tileCache.get(name),
-    scale: 14
+    priority: 'storage',
+    saveTile: (name: string, data: any) => topoLayerTileCache.set(name, data),
+    retrieveTile: (name: string) => topoLayerTileCache.get(name)
 })
 
 
@@ -31,7 +27,7 @@ import * as ms from 'milsymbol'*/
 
 import { initContextMenu } from './ui/menus/contextmenu'
 import { addTo as lgAddTo } from './ui/structurecontroller'
-import { tileLayers } from './ui/layers'
+import { tileLayers } from './ui/tilelayers'
 
 
 const map = L.map('map', {

@@ -22,10 +22,11 @@ export function filterEmpty(obj: any) {
 }
 
 
-export function createMapboxTerrainAttribution(layername: string) {
-    return layername +
+export function createMapboxTerrainAttribution() {
+    return (
         '<a href=\"https://www.mapbox.com/about/maps/\" target=\"_blank\" title=\"Mapbox\" aria-label=\"Mapbox\">&copy; Mapbox</a> ' +
         '<a href=\"https://www.mapbox.com/contribute/\" target=\"_blank\" title=\"Improve this map\" aria-label=\"Improve this map\">Improve this map</a>'
+    )
 }
 
 

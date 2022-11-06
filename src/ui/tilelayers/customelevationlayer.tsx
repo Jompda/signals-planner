@@ -1,81 +1,66 @@
 import * as L from 'leaflet'
-import { createMapboxTerrainAttribution } from '../util'
-import options from '../../options'
 import { TopoLayer, TopoLayerOptions } from 'leaflet-topography'
 import { useRef } from 'react'
+import { createMapboxTerrainAttribution } from '../../util';
 
 
-const customElevationLayerBreakpoints = [0, 150, 250, 350, 500];
+const breakpoints = [0, 150, 250, 350, 500]
+function updateBreakpoints(i: number, value: number) {
+    breakpoints[i] = value
+    layer.redraw()
+}
 
-const customElevationLayer = new TopoLayer({
-    attribution: createMapboxTerrainAttribution('Leaflet-topography (Slutse22) | '),
+
+const layer = new TopoLayer({
+    attribution: 'Topography by Seth "slutske22" Lutske, ' + createMapboxTerrainAttribution(),
     bounds: L.latLngBounds(L.latLng(-90, -180), L.latLng(90, 180)),
     noWrap: true,
     topotype: 'elevation',
     customization: {
         colors: ['#000000', '#00ff00', '#0000ff', '#ff0000', '#ffffff'],
-        breakpoints: customElevationLayerBreakpoints,
+        breakpoints: breakpoints,
         breaksAt0: false,
         continuous: true
     }
-} as TopoLayerOptions)
+} as TopoLayerOptions);
 
 
-const tileLayers = {
-    'OSM': L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        bounds: L.latLngBounds(L.latLng(-90, -180), L.latLng(90, 180)),
-        noWrap: true
-    }),
-    'Mapbox:Terrain-DEM-v1': L.tileLayer(`https://api.mapbox.com/v4/mapbox.mapbox-terrain-dem-v1/{z}/{x}/{y}.pngraw?access_token=${options.mapboxToken}`, {
-        attribution: createMapboxTerrainAttribution('Terrain-DEM-v1'),
-        bounds: L.latLngBounds(L.latLng(-90, -180), L.latLng(90, 180)),
-        noWrap: true
-    } as L.TileLayerOptions),
-    'Topography:Elevation': customElevationLayer
-}
 
-
-function updateCustomElevationLayerBreakpoints(i: number, value: number) {
-    customElevationLayerBreakpoints[i] = value
-    customElevationLayer.redraw()
-}
-
-(customElevationLayer as any).options.lcOptions = (
-    <CustomElevationLayerOptions
+(layer as any).options.lcOptions = (
+    <CustomLayerOptions
         min={0}
         max={500}
         breakpoints={[{
             name: 'Black',
-            value: customElevationLayerBreakpoints[0],
+            value: breakpoints[0],
             update: (value: number) =>
-                updateCustomElevationLayerBreakpoints(0, value)
+                updateBreakpoints(0, value)
         }, {
             name: 'Green',
-            value: customElevationLayerBreakpoints[1],
+            value: breakpoints[1],
             update: (value: number) =>
-                updateCustomElevationLayerBreakpoints(1, value)
+                updateBreakpoints(1, value)
         }, {
             name: 'Blue',
-            value: customElevationLayerBreakpoints[2],
+            value: breakpoints[2],
             update: (value: number) =>
-                updateCustomElevationLayerBreakpoints(2, value)
+                updateBreakpoints(2, value)
         }, {
             name: 'Red',
-            value: customElevationLayerBreakpoints[3],
+            value: breakpoints[3],
             update: (value: number) =>
-                updateCustomElevationLayerBreakpoints(3, value)
+                updateBreakpoints(3, value)
         }, {
             name: 'White',
-            value: customElevationLayerBreakpoints[4],
+            value: breakpoints[4],
             update: (value: number) =>
-                updateCustomElevationLayerBreakpoints(4, value)
+                updateBreakpoints(4, value)
         }]}
     />
 )
 
 
-function CustomElevationLayerOptions(props: any) {
+function CustomLayerOptions(props: any) {
     const elements = new Array<JSX.Element>()
     let i = 0
     for (const p of props.breakpoints) {
@@ -119,6 +104,4 @@ function CustomElevationLayerOptions(props: any) {
 }
 
 
-export {
-    tileLayers
-}
+export default layer
