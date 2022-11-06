@@ -1,4 +1,4 @@
-import { getMap } from '../ui/layercontroller'
+import { getMap } from '../ui/structurecontroller'
 import Link from './link'
 import Unit from './unit'
 import deepEqual from 'deep-equal'

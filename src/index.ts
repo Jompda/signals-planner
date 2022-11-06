@@ -8,13 +8,15 @@ import 'leaflet-contextmenu'
 import 'leaflet-dialog'
 
 import { ExtendedMapOptions } from './interfaces'
+import './ui/layercontrol'
 /*import { forward } from 'mgrs'
 import * as tiledata from 'tiledata'
-import * as ms from 'milsymbol'
+import * as ms from 'milsymbol'*/
 
-import options from '../options'*/
+import options from '../options'
 import { initContextMenu } from './ui/contextmenu'
-import { addTo as lgAddTo } from './ui/layercontroller'
+import { addTo as lgAddTo } from './ui/structurecontroller'
+import { createMapboxTerrainAttribution } from './util'
 
 
 const map = L.map('map', {
@@ -26,13 +28,23 @@ const map = L.map('map', {
 
 initContextMenu(map)
 lgAddTo(map)
+L.control.scale({ imperial: false }).addTo(map)
 
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    bounds: L.latLngBounds(L.latLng(-90, -180), L.latLng(90, 180)),
-    noWrap: true
-}).addTo(map)
+const tilelayers = {
+    'OSM': L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        bounds: L.latLngBounds(L.latLng(-90, -180), L.latLng(90, 180)),
+        noWrap: true
+    }),
+    'Mapbox:Terrain-DEM-v1': L.tileLayer(`https://api.mapbox.com/v4/mapbox.mapbox-terrain-dem-v1/{z}/{x}/{y}.pngraw?access_token=${options.mapboxToken}`, {
+        attribution: createMapboxTerrainAttribution('Terrain-DEM-v1'),
+        bounds: L.latLngBounds(L.latLng(-90, -180), L.latLng(90, 180)),
+        noWrap: true
+    })
+};
 
+
+(L as any).layerControl(tilelayers, { position: 'topright' }).addTo(map)
 
 
 /*const tileDataStorage = new Map()

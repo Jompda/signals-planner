@@ -5,7 +5,7 @@ import { MilSymbolEditor } from './components/milsymboleditor'
 import { Symbol as MilSymbol } from 'milsymbol'
 import Unit from '../struct/unit'
 import { addUnit as structAddUnit, unitIdExists } from '../struct'
-import { addUnit as lgAddUnit } from './layercontroller'
+import { addUnit as lgAddUnit } from './structurecontroller'
 import { v4 as uuidv4 } from 'uuid'
 
 

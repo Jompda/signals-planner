@@ -2,7 +2,7 @@ import * as L from 'leaflet'
 import { ExtendedLayerOptions } from '../../interfaces'
 import { removeLink as structRemoveLink } from '../../struct'
 import Link from '../../struct/link'
-import { removeLink as lgRemoveLink } from '../layercontroller'
+import { removeLink as lgRemoveLink } from '../structurecontroller'
 
 
 export function createLinkLayer(endPoints: Array<L.LatLng>, link: Link) {

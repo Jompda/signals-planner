@@ -4,7 +4,7 @@ import { ContextMenuItem } from '../interfaces'
 import { deserialize, serialize } from '../struct'
 import { startDownload } from '../util'
 import { showAddUnitMenu } from './unitmenus'
-import { addUnit as lgAddUnit, addLink as lgAddLink } from './layercontroller'
+import { addUnit as lgAddUnit, addLink as lgAddLink } from './structurecontroller'
 
 
 export function initContextMenu(map: L.Map) {
