@@ -154,6 +154,7 @@ function LayerModelOptions(props: any) {
             <div className='lc-opacity-slider'>
                 <span>Opacity:</span>
                 <input
+                    className='slider'
                     ref={sliderRef}
                     type='range'
                     defaultValue={100}

@@ -248,3 +248,31 @@ body {
     top: 3px;
     background-color: #fff;
 }
+
+
+.slider {
+    appearance: none;
+    height: 0.5em;
+    border-radius: 0.5em;
+    background: #e8e8e8;
+    cursor: pointer;
+}
+
+/* For some reason these two can't be merged */
+.slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+    background: #44cc66;
+    cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+    background: #44cc66;
+    cursor: pointer;
+    border: none;
+}
