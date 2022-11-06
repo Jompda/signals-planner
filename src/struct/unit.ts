@@ -1,7 +1,7 @@
 import * as L from 'leaflet'
 import { SaveUnit, UnitOptions } from '../interfaces'
 import { Symbol as MilSymbol } from 'milsymbol'
-import { createMarker } from '../ui/components/unitmarker'
+import { createMarker } from '../ui/components/unitlayer'
 import { filterEmpty } from '../util'
 
 

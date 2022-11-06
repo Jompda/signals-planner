@@ -151,7 +151,7 @@ function LayerModelOptions(props: any) {
 
     return (
         <>
-            <div className='lc-opacity-slider'>
+            <div className='lc-slider'>
                 <span>Opacity:</span>
                 <input
                     className='slider'
@@ -167,6 +167,7 @@ function LayerModelOptions(props: any) {
                 />
                 <span>{state.toFixed(2)}</span>
             </div>
+            {props.layer.options.lcOptions}
         </>
     )
 }

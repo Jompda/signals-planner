@@ -3,6 +3,7 @@ import { ExtendedLayerOptions } from '../../interfaces'
 import { removeLink as structRemoveLink } from '../../struct'
 import Link from '../../struct/link'
 import { removeLink as lgRemoveLink } from '../structurecontroller'
+import { isDefaultTool } from '../toolcontroller'
 
 
 export function createLinkLayer(endPoints: Array<L.LatLng>, link: Link) {
@@ -31,7 +32,10 @@ export function createLinkLayer(endPoints: Array<L.LatLng>, link: Link) {
         }]
     } as ExtendedLayerOptions)
 
-    layer.on('click', () => console.log('clicked link'))
+    layer.on('click', () => {
+        if (!isDefaultTool()) return
+        console.log('clicked link')
+    })
 
     layer.on('update', (
         (data: { endPoints: [L.LatLng] }) =>

@@ -7,16 +7,31 @@ import * as L from 'leaflet'
 import 'leaflet-contextmenu'
 import 'leaflet-dialog'
 
-import { ExtendedMapOptions } from './interfaces'
+
+import 'regenerator-runtime'
+import { configure } from 'leaflet-topography'
+/**
+ * Configure leaflet-topography
+ */
+const tileCache = new Map<string, any>()
+configure({
+    token: options.mapboxToken,
+    priority: 'speed',
+    saveTile: (name: string, data: any) => tileCache.set(name, data),
+    retrieveTile: (name: string) => tileCache.get(name),
+    scale: 14
+})
+
+
+import options from '../options'
 import './ui/menus/layercontrolmenu'
 /*import { forward } from 'mgrs'
 import * as tiledata from 'tiledata'
 import * as ms from 'milsymbol'*/
 
-import options from '../options'
 import { initContextMenu } from './ui/menus/contextmenu'
 import { addTo as lgAddTo } from './ui/structurecontroller'
-import { createMapboxTerrainAttribution } from './util'
+import { tileLayers } from './ui/layers'
 
 
 const map = L.map('map', {
@@ -24,27 +39,16 @@ const map = L.map('map', {
     contextmenuWidth: 140,
     wheelPxPerZoomLevel: 60 / 0.5,
     doubleClickZoom: false
-} as ExtendedMapOptions).setView([60, 24], 4)
+} as L.MapOptions).setView([60, 24], 4)
 
 initContextMenu(map)
 lgAddTo(map)
-L.control.scale({ imperial: false }).addTo(map)
-
-const tilelayers = {
-    'OSM': L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        bounds: L.latLngBounds(L.latLng(-90, -180), L.latLng(90, 180)),
-        noWrap: true
-    }),
-    'Mapbox:Terrain-DEM-v1': L.tileLayer(`https://api.mapbox.com/v4/mapbox.mapbox-terrain-dem-v1/{z}/{x}/{y}.pngraw?access_token=${options.mapboxToken}`, {
-        attribution: createMapboxTerrainAttribution('Terrain-DEM-v1'),
-        bounds: L.latLngBounds(L.latLng(-90, -180), L.latLng(90, 180)),
-        noWrap: true
-    })
-};
+L.control.scale({ imperial: false }).addTo(map);
 
 
-(L as any).layerControl(tilelayers, { position: 'topright' }).addTo(map)
+
+
+(L as any).layerControl(tileLayers, { position: 'topright' }).addTo(map)
 
 
 /*const tileDataStorage = new Map()

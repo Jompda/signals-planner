@@ -6,6 +6,7 @@ import { removeUnit as structRemoveUnit } from '../../struct'
 import { getMap, removeUnit as lgRemoveUnit } from '../structurecontroller'
 import { showEditUnitMenu } from '../menus/unitmenus'
 import { showAddLinkMenu } from '../menus/linkmenus'
+import { isDefaultTool } from '../toolcontroller'
 
 
 const iconSize = 40
@@ -53,6 +54,7 @@ export function createMarker(latlng: L.LatLng, unit: Unit) {
     } as ExtendedMarkerOptions)
 
     marker.on('click', () => {
+        if (!isDefaultTool()) return
         if (svg.classList.contains('unit-selected'))
             svg.classList.remove('unit-selected')
         else svg.classList.add('unit-selected')
