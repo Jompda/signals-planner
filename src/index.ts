@@ -91,4 +91,4 @@ control.scale({ imperial: false }).addTo(map);
 
 
 (control as any).layerControl(tileLayers, { position: 'topright' }).addTo(map);
-(control as any).toolbar([defaultTool, addNodeTool, addNodeTool], { position: 'topleft' }).addTo(map)
+(control as any).toolbar([defaultTool, addNodeTool], { position: 'topleft' }).addTo(map)
