@@ -1,11 +1,12 @@
-import { Map as LMap, DomUtil, control } from 'leaflet'
+import { Map as LMap, DomUtil } from 'leaflet'
 import { createRoot } from 'react-dom/client'
 import Link from '../../struct/link'
 import Unit from '../../struct/unit'
 import { addLink as structAddLink, getUnitById, getUnits, linkIdExists } from '../../struct'
 import { addLink as lgAddLink, structureEvents } from '../structurecontroller'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { createDialog, symbolToHierarchyString } from '../../util'
+import { v4 as uuidv4 } from 'uuid'
 
 
 export function showAddLinkMenu(map: LMap, unit0: Unit) {
@@ -54,6 +55,7 @@ export function showAddLinkMenu(map: LMap, unit0: Unit) {
                 <LinkContructor
                     unit={unit0}
                     updateTargetUnit={(unit1Id: string) => {
+                        console.log('here', unit1Id)
                         unit1 = getUnitById(unit1Id)
                     }}
                 />
@@ -62,6 +64,7 @@ export function showAddLinkMenu(map: LMap, unit0: Unit) {
                 <div className='dialog-menu-submit'>
                     <br />
                     <button onClick={() => {
+                        console.log(unit1)
                         if (!unit1) return // Tell user to select link.
                         if (linkIdExists(Link.createId(unit0, unit1))) throw new Error('Link id already exists!')
                         const [u0, u1] = Link.orderUnits(unit0, unit1)
@@ -85,20 +88,7 @@ export function showAddLinkMenu(map: LMap, unit0: Unit) {
 
 
 function LinkContructor(props: any) {
-    const targetRef = useRef<HTMLSelectElement>()
-
-    const unitOptions = getUnits()
-        .filter(u => u.id != props.unit.id)
-        .map(
-            (u, i) =>
-                <option key={i} value={u.id}>
-                    {symbolToHierarchyString(u.symbol, u.id)}
-                </option>
-        )
-
-    if (unitOptions.length > 0)
-        props.updateTargetUnit(unitOptions[0].props.value)
-
+    const units = getUnits().filter(u => u.id != props.unit.id)
     return (
         <>
             <select disabled>
@@ -106,12 +96,52 @@ function LinkContructor(props: any) {
                     {symbolToHierarchyString(props.unit.symbol, props.unit.id)}
                 </option>
             </select>
-            <select
-                ref={targetRef}
-                onChange={() =>
-                    props.updateTargetUnit(targetRef.current.value)
-                }
-            >{unitOptions}</select>
+            <UnitSelector
+                units={units}
+                updateTargetUnit={props.updateTargetUnit}
+            />
+        </>
+    )
+}
+
+
+function UnitSelector(props: any) {
+    const searchRef = useRef<HTMLInputElement>()
+    const [filter, setFilter] = useState('')
+    const [selected, setSelected] = useState('')
+    const id = uuidv4()
+
+    const units = props.units.map((u: Unit, i: number) => {
+        const str = symbolToHierarchyString(u.symbol, u.id)
+        if (str.toLowerCase().indexOf(filter) < 0) return undefined
+        return (
+            <label key={i} className='unit-selector'>
+                <input
+                    name={id}
+                    type='radio'
+                    defaultChecked={u.id == selected}
+                    onClick={() => {
+                        props.updateTargetUnit(u.id)
+                        setSelected(u.id)
+                    }}
+                />
+                <span>{str}</span>
+            </label>
+        )
+    }).filter((el: any) => el)
+
+    return (
+        <>
+            <input
+                ref={searchRef}
+                type='text'
+                onKeyUp={() => {
+                    setFilter(searchRef.current.value.toLowerCase())
+                }}
+            />
+            <div>
+                {units}
+            </div>
         </>
     )
 }

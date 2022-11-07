@@ -104,6 +104,11 @@ body {
 }
 
 
+.unit-selector {
+    display: block;
+}
+
+
 /*
  * Layer Control
  */
@@ -219,6 +224,9 @@ body {
 }
 
 
+/*
+ * Toolbar
+ */
 .toolbar {
     border-radius: 0.5em;
     border: 2px solid #e8e8e8;
