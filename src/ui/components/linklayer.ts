@@ -38,8 +38,8 @@ export function createLinkLayer(endPoints: Array<LatLng>, link: Link) {
     })
 
     layer.on('update', (
-        (data: { endPoints: [LatLng] }) =>
-            layer.setLatLngs(data.endPoints)
+        (data: { endPoints: Array<LatLng>, points: Array<LatLng> }) =>
+            layer.setLatLngs(data.points)
     ) as any)
 
     return layer

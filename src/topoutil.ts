@@ -3,6 +3,7 @@ import * as mgrs from 'mgrs'
 import * as utm from 'utm'
 import { Map as LMap, LatLng as LLatLng, latLng, Topography, popup } from 'leaflet'
 import { round } from './util'
+import LatLon from 'geodesy/latlon-spherical'
 
 
 export async function getElevation(latlng: LatLng, zoom: number) {
@@ -18,6 +19,34 @@ export async function openTopographyPopup(map: LMap, latlng: LLatLng) {
         .setLatLng(latlng)
         .setContent(await getTopographyStr(latlng) as string)
         .openOn(map)
+}
+
+
+export function geodesicLineStats(latlng0: LatLng, latlng1: LatLng) {
+    const distance = new LatLon(latlng0.lat, latlng0.lng).distanceTo(new LatLon(latlng1.lat, latlng1.lng))
+    const steps = Math.floor(Math.log2(distance / 100)) // pDist: min 100, max 2*100=200 meters
+    const pDist = distance / (2 ** steps)
+    return { steps, pDist }
+}
+
+
+export function getGeodesicLine(latlng0: LatLng, latlng1: LatLng, steps: number) {
+    const amount = 2 ** steps - 1
+    const p0 = new LatLon(latlng0.lat, latlng0.lng)
+    const p1 = new LatLon(latlng1.lat, latlng1.lng)
+    const points = Array(amount)
+
+    rmp(p0, p1, 0, amount, 0)
+    function rmp(p0: LatLon, p1: LatLon, i0: number, i1: number, d: number) {
+        if (d >= steps) return
+        const value = p0.midpointTo(p1)
+        const ci = Math.floor((i0 + i1) / 2)
+        points[ci] = value
+        rmp(p0, value, i0, ci, d + 1)
+        rmp(value, p1, ci, i1, d + 1)
+    }
+
+    return [p0, ...points, p1].map((latlon: LatLon) => latLng(latlon.lat, latlon.lon))
 }
 
 

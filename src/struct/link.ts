@@ -1,14 +1,16 @@
-import { Polyline } from 'leaflet'
+import { Polyline, LatLng } from 'leaflet'
 import { LinkOptions, SaveLink } from '../interfaces'
 import Unit from './unit'
 import { createLinkLayer } from '../ui/components/linklayer'
 import { getUnitById } from '.'
+import { geodesicLineStats, getGeodesicLine } from '../topoutil'
 
 
 export default class Link {
     public id: string
     public unit0: Unit
     public unit1: Unit
+    public points: Array<LatLng>
     public layer: Polyline
     constructor(options: LinkOptions) {
         Object.assign(this, options)
@@ -37,7 +39,17 @@ export default class Link {
         this.id = Link.createId(u0, u1)
         this.unit0 = u0
         this.unit1 = u1
-        this.layer.fire('update', { endPoints: this.getEndPoints() })
+        const endPoints = this.getEndPoints()
+        this.points = this.getPoints(endPoints)
+        this.layer.fire('update', { endPoints: endPoints, points: this.points })
+    }
+
+
+    getPoints(endPoints: Array<LatLng>) {
+        const { steps, pDist } = geodesicLineStats(endPoints[0], endPoints[1])
+        const points = getGeodesicLine(endPoints[0], endPoints[1], steps)
+        console.log(points, pDist)
+        return points
     }
 
 
