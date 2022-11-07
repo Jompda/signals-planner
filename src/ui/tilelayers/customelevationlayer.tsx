@@ -103,26 +103,38 @@ function CustomLayerOptions(props: any) {
         )
     }
 
-    const [btnDisabled, setBtnDisabled] = useState(false)
-    const [progText, setProgText] = useState('Fit to View')
     return (
         <div className='lc-3xgrid'>
             <p>Colors:</p>
             {elements}
-            <button
-                disabled={btnDisabled}
-                onClick={() => {
-                    setBtnDisabled(true)
-                    fitToView((state: number) => {
-                        if (state < 1) setProgText(`Progress: ${Math.round(state * 100)}%.`)
-                        else {
-                            setProgText('Fit to View')
-                            setBtnDisabled(false)
-                        }
-                    }, updateElementValues)
-                }}
-            >{progText}</button>
+            <FitToViewButton
+                callback={updateElementValues}
+            />
         </div>
+    )
+}
+
+
+function FitToViewButton(props: any) {
+    const [btnDisabled, setBtnDisabled] = useState(false)
+    const [progText, setProgText] = useState('Fit to View')
+
+    function progressFunction(state: number) {
+        if (state < 1) setProgText(`Progress: ${Math.round(state * 100)}%.`)
+        else {
+            setProgText('Fit to View')
+            setBtnDisabled(false)
+        }
+    }
+
+    return (
+        <button
+            disabled={btnDisabled}
+            onClick={() => {
+                setBtnDisabled(true)
+                fitToView(progressFunction, props.callback)
+            }}
+        >{progText}</button>
     )
 }
 
