@@ -104,8 +104,33 @@ body {
 }
 
 
-.unit-selector {
+.unit-selector-target-units-container {
+    height: 12em;
+    overflow-y: scroll;
+}
+
+.unit-selector-button {
     display: block;
+}
+
+.unit-selector-button>input {
+    display: none;
+}
+
+.unit-selector-button>div {
+    background-color: #e8e8e8;
+    border-block: 1px solid #cfcfcf;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.unit-selector-button>div>* {
+    margin: 0.3em;
+}
+
+.unit-selector-button>input:checked+div {
+    background-color: #4ada6e;
 }
 
 

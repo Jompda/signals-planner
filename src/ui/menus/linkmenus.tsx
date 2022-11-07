@@ -1,4 +1,4 @@
-import { Map as LMap, DomUtil } from 'leaflet'
+import { Map as LMap, DomUtil, DomEvent } from 'leaflet'
 import { createRoot } from 'react-dom/client'
 import Link from '../../struct/link'
 import Unit from '../../struct/unit'
@@ -11,7 +11,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 export function showAddLinkMenu(map: LMap, unit0: Unit) {
     const dialog = createDialog(map, {
-        size: [400, 700],
+        size: [400, 400],
         maxSize: [400, 700],
         minSize: [400, 400],
         anchor: [innerHeight / 2 - 350, 0],
@@ -21,6 +21,8 @@ export function showAddLinkMenu(map: LMap, unit0: Unit) {
     })
 
     const container = DomUtil.create('div', 'dialog-menu')
+    DomEvent.disableClickPropagation(container)
+    DomEvent.disableScrollPropagation(container)
     dialog.setContent(container)
     let root = createUI(container)
 
@@ -54,10 +56,9 @@ export function showAddLinkMenu(map: LMap, unit0: Unit) {
                 <h1>Add Link:</h1>
                 <LinkContructor
                     unit={unit0}
-                    updateTargetUnit={(unit1Id: string) => {
-                        console.log('here', unit1Id)
+                    updateTargetUnit={(unit1Id: string) =>
                         unit1 = getUnitById(unit1Id)
-                    }}
+                    }
                 />
                 <hr />
                 <div className='grower'></div>
@@ -115,7 +116,7 @@ function UnitSelector(props: any) {
         const str = symbolToHierarchyString(u.symbol, u.id)
         if (str.toLowerCase().indexOf(filter) < 0) return undefined
         return (
-            <label key={i} className='unit-selector'>
+            <label key={i} className='unit-selector-button'>
                 <input
                     name={id}
                     type='radio'
@@ -125,7 +126,7 @@ function UnitSelector(props: any) {
                         setSelected(u.id)
                     }}
                 />
-                <span>{str}</span>
+                <div><p>{str}</p></div>
             </label>
         )
     }).filter((el: any) => el)
@@ -139,7 +140,7 @@ function UnitSelector(props: any) {
                     setFilter(searchRef.current.value.toLowerCase())
                 }}
             />
-            <div>
+            <div className='unit-selector-target-units-container'>
                 {units}
             </div>
         </>

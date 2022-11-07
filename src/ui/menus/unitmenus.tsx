@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client'
-import { Map as LMap, LeafletMouseEvent, DomUtil, LatLng } from 'leaflet'
+import { Map as LMap, LeafletMouseEvent, DomUtil, LatLng, DomEvent } from 'leaflet'
 import { CoordsInput } from '../components/coordsinput'
 import { MilSymbolEditor } from '../components/milsymboleditor'
 import { Symbol as MilSymbol } from 'milsymbol'
@@ -14,7 +14,7 @@ let lastUnitId = 1
 
 export function showAddUnitMenu(map: LMap, e: LeafletMouseEvent) {
     const dialog = createDialog(map, {
-        size: [400, 700],
+        size: [400, 400],
         maxSize: [400, 700],
         minSize: [400, 400],
         anchor: [innerHeight / 2 - 350, 0],
@@ -23,6 +23,8 @@ export function showAddUnitMenu(map: LMap, e: LeafletMouseEvent) {
     })
 
     const container = DomUtil.create('div', 'dialog-menu')
+    DomEvent.disableClickPropagation(container)
+    DomEvent.disableScrollPropagation(container)
     dialog.setContent(container)
 
     let latlng: LatLng
@@ -63,7 +65,7 @@ export function showAddUnitMenu(map: LMap, e: LeafletMouseEvent) {
 
 export function showEditUnitMenu(map: LMap, unit: Unit) {
     const dialog = createDialog(map, {
-        size: [400, 700],
+        size: [400, 400],
         maxSize: [400, 700],
         minSize: [400, 400],
         anchor: [innerHeight / 2 - 350, 0],
@@ -80,6 +82,8 @@ export function showEditUnitMenu(map: LMap, unit: Unit) {
 
 
     const container = DomUtil.create('div', 'dialog-menu')
+    DomEvent.disableClickPropagation(container)
+    DomEvent.disableScrollPropagation(container)
     dialog.setContent(container)
     let root = createUI(container)
 
