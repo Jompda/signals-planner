@@ -18,7 +18,8 @@ configure({
     token: options.mapboxToken,
     priority: 'speed',
     saveTile: (name: string, data: any) => topoLayerTileCache.set(name, data),
-    retrieveTile: (name: string) => topoLayerTileCache.get(name)
+    retrieveTile: (name: string) => topoLayerTileCache.get(name),
+    scale: 14
 })
 
 
