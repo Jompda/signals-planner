@@ -8,6 +8,9 @@ const unitLg = new LayerGroup<Marker>()
 const linkLg = new LayerGroup<Polyline>()
 
 
+export const structureEvents = new EventTarget()
+
+
 let _map: LMap
 export function addTo(map: LMap) {
     _map = map
@@ -47,11 +50,18 @@ export function setLinkInteraction(state: boolean) {
 }
 
 
+function onUnitUpdate() {
+    structureEvents.dispatchEvent(new Event('updateunit'))
+}
 export function addUnit(unit: Unit) {
     unitLg.addLayer(unit.layer)
+    unit.layer.on('update', onUnitUpdate)
+    structureEvents.dispatchEvent(new Event('addunit'))
 }
 export function removeUnit(unit: Unit) {
     unit.layer.remove()
+    unit.layer.off('update', onUnitUpdate)
+    structureEvents.dispatchEvent(new Event('removeunit'))
 }
 /*export function setUnitDragging(state: boolean) {
     if (state) for (const unit of units) unit.layer.dragging.enable()

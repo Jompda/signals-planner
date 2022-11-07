@@ -1,33 +1,26 @@
 import { createRoot } from 'react-dom/client'
-import { Map as LMap, LeafletMouseEvent, control, DomUtil, LatLng } from 'leaflet'
+import { Map as LMap, LeafletMouseEvent, DomUtil, LatLng } from 'leaflet'
 import { CoordsInput } from '../components/coordsinput'
 import { MilSymbolEditor } from '../components/milsymboleditor'
 import { Symbol as MilSymbol } from 'milsymbol'
 import Unit from '../../struct/unit'
 import { addUnit as structAddUnit, unitIdExists } from '../../struct'
 import { addUnit as lgAddUnit } from '../structurecontroller'
-import { v4 as uuidv4 } from 'uuid'
+import { createDialog } from '../../util'
 
 
 let lastUnitId = 1
 
 
 export function showAddUnitMenu(map: LMap, e: LeafletMouseEvent) {
-    const dialog = (control as any).dialog({
+    const dialog = createDialog(map, {
         size: [400, 700],
         maxSize: [400, 700],
         minSize: [400, 400],
         anchor: [innerHeight / 2 - 350, 0],
         position: "topleft",
         initOpen: true
-    }).addTo(map)
-    dialog.identifier = uuidv4()
-
-    map.on('dialog:closed', onDialogClose)
-    function onDialogClose() {
-        map.off('dialog:closed', onDialogClose)
-        dialog.destroy()
-    }
+    })
 
     const container = DomUtil.create('div', 'dialog-menu')
     dialog.setContent(container)
@@ -69,15 +62,15 @@ export function showAddUnitMenu(map: LMap, e: LeafletMouseEvent) {
 
 
 export function showEditUnitMenu(map: LMap, unit: Unit) {
-    const dialog = (control as any).dialog({
+    const dialog = createDialog(map, {
         size: [400, 700],
         maxSize: [400, 700],
         minSize: [400, 400],
         anchor: [innerHeight / 2 - 350, 0],
         position: "topleft",
-        initOpen: true
-    }).addTo(map)
-    dialog.identifier = uuidv4()
+        initOpen: true,
+        onClose: onDialogClose
+    })
 
 
     let latlng: LatLng
@@ -94,7 +87,6 @@ export function showEditUnitMenu(map: LMap, unit: Unit) {
     unit.layer.on('update', onUnitUpdate)
     unit.layer.on('dragend', onUnitUpdate)
     unit.layer.on('remove', onUnitRemove)
-    map.on('dialog:closed', onDialogClose)
 
 
     function onUnitUpdate() {
@@ -106,13 +98,10 @@ export function showEditUnitMenu(map: LMap, unit: Unit) {
     function onUnitRemove() {
         dialog.close()
     }
-    function onDialogClose(element: any) {
-        if (element.identifier != dialog.identifier) return
+    function onDialogClose() {
         unit.layer.off('update', onUnitUpdate)
         unit.layer.off('dragend', onUnitUpdate)
         unit.layer.off('remove', onUnitRemove)
-        map.off('dialog:closed', onDialogClose)
-        dialog.destroy()
     }
 
 

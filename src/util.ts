@@ -1,6 +1,6 @@
-import { Layer, DomUtil } from 'leaflet'
+import { Map as LMap, Layer, DomUtil, control } from 'leaflet'
 import { Symbol as MilSymbol } from 'milsymbol'
-import { StrictMode } from 'react'
+import { v4 as uuidv4 } from 'uuid'
 
 
 let maxWorkers = 10
@@ -129,4 +129,20 @@ export function symbolToHierarchyString(symbol: MilSymbol, undef?: string) {
     }
 
     return hierarchy.reverse().join(' | ')
+}
+
+
+export function createDialog(map: LMap, options: any) {
+    const dialog = (control as any).dialog(options).addTo(map)
+    dialog.identifier = uuidv4()
+    map.on('dialog:closed', onDialogClose)
+
+    function onDialogClose(element: any) {
+        if (element.identifier != dialog.identifier) return
+        if (options.onClose) options.onClose(element)
+        map.off('dialog:closed', onDialogClose)
+        dialog.destroy()
+    }
+
+    return dialog
 }
