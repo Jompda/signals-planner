@@ -15,7 +15,7 @@ export function showAddLinkMenu(map: LMap, unit0: Unit) {
         maxSize: [400, 700],
         minSize: [400, 400],
         anchor: [innerHeight / 2 - 350, 0],
-        position: "topleft",
+        position: 'topleft',
         initOpen: true,
         onClose: onDialogClose
     })
