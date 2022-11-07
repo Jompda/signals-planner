@@ -13,7 +13,7 @@ let lastUnitId = 0
 class AddNodeTool extends Tool {
     public symbol: MilSymbol
     constructor() {
-        const symbol = new MilSymbol({ sidc: 'SFGPUUS----B', size: 16 })
+        const symbol = new MilSymbol({ sidc: 'SFGPUUS----B', size: 15 })
         super({
             icon: (
                 <div className='toolbutton-icon' title='Add Node'>
