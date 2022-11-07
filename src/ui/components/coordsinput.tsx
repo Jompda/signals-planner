@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import * as mgrs from 'mgrs'
 import * as utm from 'utm'
-import * as L from 'leaflet'
+import { LatLng, latLng } from 'leaflet'
 import { round } from '../../util'
 
 
@@ -30,15 +30,15 @@ export function CoordsInput(props: any) {
             || isNaN(lat)
             || isNaN(lng)
         ) throw false
-        return L.latLng(lat, lng).wrap()
+        return latLng(lat, lng).wrap()
     }
 
     function fromMGRS(str: string) {
         const lonlat = mgrs.toPoint(str)
-        return L.latLng(lonlat[1], lonlat[0])
+        return latLng(lonlat[1], lonlat[0])
     }
 
-    function latlngToUtm(latlng: L.LatLng) {
+    function latlngToUtm(latlng: LatLng) {
         const s = utm.fromLatLon(latlng.lat, latlng.lng)
         return `${s.zoneNum}${s.zoneLetter} ${Math.floor(s.easting)} ${Math.floor(s.northing)}`
     }
@@ -52,7 +52,7 @@ export function CoordsInput(props: any) {
             +s1.slice(0, s1.length - 1),
             s1[s1.length - 1]
         )
-        return L.latLng(s.latitude, s.longitude)
+        return latLng(s.latitude, s.longitude)
     }
 
     function resolve(type: string, src: any) {
@@ -63,7 +63,7 @@ export function CoordsInput(props: any) {
             utmStr = latlngToUtm(latlng)
         } else if (type == 'mgrs') {
             const lonlat = mgrs.toPoint(src)
-            latlng = L.latLng(lonlat[1], lonlat[0])
+            latlng = latLng(lonlat[1], lonlat[0])
             mgrsStr = src
             utmStr = latlngToUtm(latlng)
         } else if (type == 'utm') {

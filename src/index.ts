@@ -3,7 +3,7 @@ import './styles.css'
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.css'
 import 'leaflet-dialog/Leaflet.Dialog.css'
 
-import * as L from 'leaflet'
+import { Map as LMap, MapOptions, control } from 'leaflet'
 import 'leaflet-contextmenu'
 import 'leaflet-dialog'
 
@@ -75,16 +75,16 @@ import { addTo as lgAddTo } from './ui/structurecontroller'
 import { tileLayers } from './ui/tilelayers'
 
 
-const map = L.map('map', {
+const map = new LMap('map', {
     contextmenu: true,
     contextmenuWidth: 140,
     wheelPxPerZoomLevel: 60 / 0.5,
     doubleClickZoom: false
-} as L.MapOptions).setView([60, 24], 4)
+} as MapOptions).setView([60, 24], 4)
 
 initContextMenu(map)
 lgAddTo(map)
-L.control.scale({ imperial: false }).addTo(map);
+control.scale({ imperial: false }).addTo(map);
 
 
-(L as any).layerControl(tileLayers, { position: 'topright' }).addTo(map)
+(control as any).layerControl(tileLayers, { position: 'topright' }).addTo(map)

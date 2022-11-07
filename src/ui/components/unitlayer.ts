@@ -1,4 +1,4 @@
-import * as L from 'leaflet'
+import { LatLng, Marker, marker as Lmarker, DomUtil, divIcon, point } from 'leaflet'
 import { Symbol as MilSymbol } from 'milsymbol'
 import { ExtendedMarkerOptions } from '../../interfaces'
 import Unit from '../../struct/unit'
@@ -12,14 +12,14 @@ import { isDefaultTool } from '../toolcontroller'
 const iconSize = 40
 
 
-export function createMarker(latlng: L.LatLng, unit: Unit) {
+export function createMarker(latlng: LatLng, unit: Unit) {
     const { icon, svg, hitbox } = createIcon(unit.symbol, iconSize);
     (icon as any).update = (symbol: MilSymbol, size: number) => {
         setHitboxLocation(hitbox, applySymbol(svg, symbol, size))
     }
     (svg as any).unitid = unit.id
 
-    const marker = L.marker(latlng, {
+    const marker = Lmarker(latlng, {
         icon,
         draggable: true,
         contextmenu: true,
@@ -61,7 +61,7 @@ export function createMarker(latlng: L.LatLng, unit: Unit) {
     })
 
     marker.on('update', (
-        (data: { latlng: L.LatLng, symbol: MilSymbol }) =>
+        (data: { latlng: LatLng, symbol: MilSymbol }) =>
             updateMarker(marker, data.latlng, data.symbol)
     ) as any)
 
@@ -69,7 +69,7 @@ export function createMarker(latlng: L.LatLng, unit: Unit) {
 }
 
 
-export function updateMarker(marker: L.Marker, latlng: L.LatLng, symbol: MilSymbol) {
+export function updateMarker(marker: Marker, latlng: LatLng, symbol: MilSymbol) {
     marker.setLatLng(latlng);
     (marker.getIcon() as any).update(symbol, iconSize)
 }
@@ -79,18 +79,18 @@ export function createIcon(symbol: MilSymbol, size: number) {
     symbol.setOptions({
         size: size / 16 * 10
     })
-    const div = L.DomUtil.create('div', 'unit')
-    const svg = L.DomUtil.create('svg', 'unit-milsymbol')
-    const hitbox = L.DomUtil.create('div', 'unit-hitbox')
+    const div = DomUtil.create('div', 'unit')
+    const svg = DomUtil.create('svg', 'unit-milsymbol')
+    const hitbox = DomUtil.create('div', 'unit-hitbox')
     const hitboxAnchor = applySymbol(svg, symbol, size)
     setHitboxLocation(hitbox, hitboxAnchor)
     hitbox.style.width = hitbox.style.height = size + 'px'
     div.append(svg, hitbox)
 
-    const icon = L.divIcon({
+    const icon = divIcon({
         className: 'unit-marker',
         html: div,
-        iconAnchor: L.point(0, 0)
+        iconAnchor: point(0, 0)
     })
     return { icon, svg, hitbox }
 }

@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client'
-import * as L from 'leaflet'
+import { Map as LMap, LeafletMouseEvent, control, DomUtil, LatLng } from 'leaflet'
 import { CoordsInput } from '../components/coordsinput'
 import { MilSymbolEditor } from '../components/milsymboleditor'
 import { Symbol as MilSymbol } from 'milsymbol'
@@ -7,13 +7,14 @@ import Unit from '../../struct/unit'
 import { addUnit as structAddUnit, unitIdExists } from '../../struct'
 import { addUnit as lgAddUnit } from '../structurecontroller'
 import { v4 as uuidv4 } from 'uuid'
+import { unitNames } from '../../util'
 
 
 let lastUnitId = 1
 
 
-export function showAddUnitMenu(map: L.Map, e: L.LeafletMouseEvent) {
-    const dialog = (L.control as any).dialog({
+export function showAddUnitMenu(map: LMap, e: LeafletMouseEvent) {
+    const dialog = (control as any).dialog({
         size: [400, 700],
         maxSize: [400, 700],
         minSize: [400, 400],
@@ -22,10 +23,10 @@ export function showAddUnitMenu(map: L.Map, e: L.LeafletMouseEvent) {
         initOpen: true
     }).addTo(map)
 
-    const container = L.DomUtil.create('div', 'dialog-menu')
+    const container = DomUtil.create('div', 'dialog-menu')
     dialog.setContent(container)
 
-    let latlng: L.LatLng
+    let latlng: LatLng
     latlng = e.latlng
     let milSymbol: MilSymbol
     milSymbol = new MilSymbol('SFGPU-------')
@@ -34,7 +35,7 @@ export function showAddUnitMenu(map: L.Map, e: L.LeafletMouseEvent) {
     root.render(
         <>
             <h1>Add Unit:</h1>
-            <CoordsInput latlng={latlng} updateLatLng={(ll: L.LatLng) => latlng = ll} />
+            <CoordsInput latlng={latlng} updateLatLng={(ll: LatLng) => latlng = ll} />
             <hr />
             <MilSymbolEditor milSymbol={milSymbol} updateMilSymbol={(s: MilSymbol) => milSymbol = s} />
             <hr />
@@ -61,8 +62,8 @@ export function showAddUnitMenu(map: L.Map, e: L.LeafletMouseEvent) {
 }
 
 
-export function showEditUnitMenu(map: L.Map, unit: Unit) {
-    const dialog = (L.control as any).dialog({
+export function showEditUnitMenu(map: LMap, unit: Unit) {
+    const dialog = (control as any).dialog({
         size: [400, 700],
         maxSize: [400, 700],
         minSize: [400, 400],
@@ -73,13 +74,13 @@ export function showEditUnitMenu(map: L.Map, unit: Unit) {
     dialog.identifier = uuidv4()
 
 
-    let latlng: L.LatLng
+    let latlng: LatLng
     latlng = unit.layer.getLatLng()
     let milSymbol: MilSymbol
     milSymbol = new MilSymbol(unit.symbol.getOptions())
 
 
-    const container = L.DomUtil.create('div', 'dialog-menu')
+    const container = DomUtil.create('div', 'dialog-menu')
     dialog.setContent(container)
     let root = createUI(container)
 
@@ -115,7 +116,7 @@ export function showEditUnitMenu(map: L.Map, unit: Unit) {
         root.render(
             <>
                 <h1>Edit Unit:</h1>
-                <CoordsInput latlng={latlng} updateLatLng={(ll: L.LatLng) => latlng = ll} />
+                <CoordsInput latlng={latlng} updateLatLng={(ll: LatLng) => latlng = ll} />
                 <hr />
                 <MilSymbolEditor milSymbol={milSymbol} updateMilSymbol={(s: MilSymbol) => milSymbol = s} />
                 <hr />

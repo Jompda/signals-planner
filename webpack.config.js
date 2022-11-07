@@ -5,7 +5,7 @@ const srcDir = path.join(__dirname, 'src')
 const destDir = path.join(__dirname, 'dist')
 
 module.exports = {
-    mode: 'production',
+    mode: 'development',
     entry: './src/index.ts',
     module: {
         rules: [

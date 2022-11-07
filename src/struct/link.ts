@@ -1,4 +1,4 @@
-import * as L from 'leaflet'
+import { Polyline } from 'leaflet'
 import { LinkOptions, SaveLink } from '../interfaces'
 import Unit from './unit'
 import { createLinkLayer } from '../ui/components/linklayer'
@@ -9,7 +9,7 @@ export default class Link {
     public id: string
     public unit0: Unit
     public unit1: Unit
-    public layer: L.Polyline
+    public layer: Polyline
     constructor(options: LinkOptions) {
         Object.assign(this, options)
         this.id = Link.createId(this.unit0, this.unit1)

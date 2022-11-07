@@ -1,21 +1,21 @@
-import * as L from 'leaflet'
+import { LatLng as LLatLng, MapOptions, LayerOptions, MarkerOptions, LeafletMouseEvent } from 'leaflet'
 import { Symbol as MilSymbol } from 'milsymbol'
 import Unit from './struct/unit'
 
 
-export interface ExtendedMapOptions extends L.MapOptions {
+export interface ExtendedMapOptions extends MapOptions {
     contextmenu: boolean
     contextmenuWidth: number
     contextmenuItems: Array<ContextMenuItem>
 }
 
-export interface ExtendedMarkerOptions extends L.MarkerOptions {
+export interface ExtendedMarkerOptions extends MarkerOptions {
     contextmenu?: boolean
     contextmenuWidth?: number
     contextmenuItems?: Array<ContextMenuItem>
 }
 
-export interface ExtendedLayerOptions extends L.LayerOptions {
+export interface ExtendedLayerOptions extends LayerOptions {
     contextmenu?: boolean
     contextmenuWidth?: number
     contextmenuItems?: Array<ContextMenuItem>
@@ -24,7 +24,7 @@ export interface ExtendedLayerOptions extends L.LayerOptions {
 export interface ContextMenuItem {
     text?: string
     index?: number
-    callback?: (e: L.LeafletMouseEvent) => any
+    callback?: (e: LeafletMouseEvent) => any
     icon?: string
     separator?: boolean
 }
@@ -32,7 +32,7 @@ export interface ContextMenuItem {
 
 export interface UnitOptions {
     id: string
-    latlng: L.LatLng
+    latlng: LLatLng
     symbol: MilSymbol
 }
 

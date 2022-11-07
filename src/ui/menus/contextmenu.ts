@@ -1,4 +1,4 @@
-import * as L from 'leaflet'
+import { Map as LMap, LeafletMouseEvent } from 'leaflet'
 import { ContextMenuItem } from '../../interfaces'
 import { deserialize, serialize } from '../../struct'
 import { startDownload } from '../../util'
@@ -6,7 +6,7 @@ import { showAddUnitMenu } from './unitmenus'
 import { addUnit as lgAddUnit, addLink as lgAddLink } from '../structurecontroller'
 
 
-export function initContextMenu(map: L.Map) {
+export function initContextMenu(map: LMap) {
     const mapOnlyItems: Array<ContextMenuItem> = [{
         text: 'Add Unit',
         index: 4,
@@ -62,7 +62,7 @@ export function initContextMenu(map: L.Map) {
     }, {
         text: 'Center map here',
         index: 11,
-        callback: (e: L.LeafletMouseEvent) => map.panTo(e.latlng)
+        callback: (e: LeafletMouseEvent) => map.panTo(e.latlng)
     }]
     setContextmenuItems(map, baseContextMenuItems)
 
@@ -73,7 +73,7 @@ export function initContextMenu(map: L.Map) {
     map.on('contextmenu.hide', () => setContextmenuItems(map, baseContextMenuItems))
 }
 
-export function setContextmenuItems(map: L.Map, items: Array<ContextMenuItem>) {
+export function setContextmenuItems(map: LMap, items: Array<ContextMenuItem>) {
     (map as any).options.contextmenuItems = items;
     (map as any).contextmenu.removeAllItems();
     (map as any).contextmenu._createItems();

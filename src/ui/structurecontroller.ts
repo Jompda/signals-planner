@@ -1,15 +1,15 @@
-import * as L from 'leaflet'
+import { Map as LMap, LayerGroup, Marker, Polyline } from 'leaflet'
 import Unit from '../struct/unit'
 import Link from '../struct/link'
 import { getLinks, getUnits, removeLink as structRemoveLink } from '../struct'
 
 
-const unitLg = new L.LayerGroup<L.Marker>()
-const linkLg = new L.LayerGroup<L.Polyline>()
+const unitLg = new LayerGroup<Marker>()
+const linkLg = new LayerGroup<Polyline>()
 
 
-let _map: L.Map
-export function addTo(map: L.Map) {
+let _map: LMap
+export function addTo(map: LMap) {
     _map = map
     map.addLayer(linkLg)
     map.addLayer(unitLg)

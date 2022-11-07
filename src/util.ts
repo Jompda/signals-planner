@@ -1,4 +1,6 @@
-import * as L from 'leaflet'
+import { Layer, DomUtil } from 'leaflet'
+import { Symbol as MilSymbol } from 'milsymbol'
+import { StrictMode } from 'react'
 
 
 let maxWorkers = 10
@@ -43,7 +45,7 @@ export function createMapboxTerrainAttribution() {
  * https://github.com/Leaflet/Leaflet/issues/5442
  * By Piero Steinger, extended for markers by Joni Rapo.
  */
-(L.Layer as any).prototype.setInteractive = function (state: boolean) {
+(Layer as any).prototype.setInteractive = function (state: boolean) {
     if (this.getLayers) {
         this.getLayers().forEach((layer: any) => {
             layer.setInteractive(state)
@@ -56,9 +58,9 @@ export function createMapboxTerrainAttribution() {
     const el = this._path || this._icon
 
     if (state) {
-        L.DomUtil.addClass(el, 'leaflet-interactive')
+        DomUtil.addClass(el, 'leaflet-interactive')
     } else {
-        L.DomUtil.removeClass(el, 'leaflet-interactive')
+        DomUtil.removeClass(el, 'leaflet-interactive')
     }
 }
 
@@ -87,4 +89,44 @@ export function workers<T>(srcValues: Array<T>, worker: (value: T) => Promise<an
     for (let i = 0; i < maxWorkers && i < srcValues.length; i++) {
         addWorker()
     }
+}
+
+
+export const unitNames = [
+    { name: 'Team', short: 'Team.' },
+    { name: 'Squad', short: 'Sqd.' },
+    { name: 'Section', short: 'Sect.' },
+    { name: 'Platoon', short: 'Plt.' },
+    { name: 'Company', short: 'Coy.' },
+    { name: 'Battalion', short: 'Btl.' },
+    { name: 'Regiment', short: 'Rgt.' },
+    { name: 'Brigade', short: 'Brg.' },
+    { name: 'Division', short: 'Div.' },
+    { name: 'Corps', short: 'Corps.' },
+    { name: 'Army', short: 'Army.' },
+    { name: 'Army Group', short: 'Ag.' },
+    { name: 'Region', short: 'Reg.' },
+    { name: 'Command', short: 'Cmd.' },
+]
+
+export function symbolToHierarchyString(symbol: MilSymbol, undef?: string) {
+    const options = symbol.getOptions(false)
+    const hierarchy = new Array<String>()
+    const unitSize = options.sidc.charCodeAt(options.sidc.length - 1) - 65
+
+    function add(specifier: string, i: number) {
+        hierarchy.push(
+            (specifier ? specifier + '.' : '')
+            + (unitSize >= 0 ? unitNames[i].short : '')
+        )
+    }
+
+    add(options.uniqueDesignation || `(id:${undef})`, unitSize)
+    if (options.higherFormation.length > 0) {
+        const split = options.higherFormation.split('/')
+        for (let i = 0; i < split.length; i++)
+            add(split[i], unitSize + 1 + i)
+    }
+
+    return hierarchy.reverse().join(' | ')
 }

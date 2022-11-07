@@ -1,4 +1,4 @@
-import * as L from 'leaflet'
+import { Marker, LatLng, latLng } from 'leaflet'
 import { SaveUnit, UnitOptions } from '../interfaces'
 import { Symbol as MilSymbol } from 'milsymbol'
 import { createMarker } from '../ui/components/unitlayer'
@@ -9,12 +9,12 @@ import { filterEmpty } from '../util'
 export default class Unit {
     public id: string
     public symbol: MilSymbol
-    public layer: L.Marker
+    public layer: Marker
     constructor(options: UnitOptions) {
         Object.assign(this, options)
         this.layer = createMarker(options.latlng, this)
     }
-    updateMarker(latlng: L.LatLng, symbol: MilSymbol) {
+    updateMarker(latlng: LatLng, symbol: MilSymbol) {
         this.symbol = symbol
         this.layer.fireEvent('update', { latlng, symbol })
     }
@@ -30,7 +30,7 @@ export default class Unit {
     static deserialize(obj: SaveUnit) {
         return new Unit({
             id: obj.id,
-            latlng: L.latLng(obj.latlng),
+            latlng: latLng(obj.latlng),
             symbol: new MilSymbol(obj.symbolOptions)
         })
     }

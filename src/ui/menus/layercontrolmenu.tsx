@@ -1,13 +1,13 @@
-import * as L from 'leaflet'
+import { Map as LMap, Control, control, Util, DomUtil, DomEvent } from 'leaflet'
 import { useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 
 
-(L as any).layerControl = function (layers: any, options: any) {
-    return new (L.Control as any).LayerControl(layers, options)
+(control as any).layerControl = function (layers: any, options: any) {
+    return new (Control as any).LayerControl(layers, options)
 };
 
-(L.Control as any).LayerControl = L.Control.extend({
+(Control as any).LayerControl = Control.extend({
     options: {
         position: 'topright',
         label: 'Layer Control'
@@ -15,14 +15,14 @@ import { createRoot } from 'react-dom/client'
 
     initialize: function (layers: any, options: any) {
         this.layers = layers
-        L.Util.setOptions(this, options)
+        Util.setOptions(this, options)
     },
 
-    onAdd: function (map: L.Map) {
+    onAdd: function (map: LMap) {
         this._map = map
-        const container = this._container = L.DomUtil.create('div', 'layercontrol')
-        L.DomEvent.disableClickPropagation(container)
-        L.DomEvent.disableScrollPropagation(container)
+        const container = this._container = DomUtil.create('div', 'layercontrol')
+        DomEvent.disableClickPropagation(container)
+        DomEvent.disableScrollPropagation(container)
 
         const root = createRoot(container)
         root.render(

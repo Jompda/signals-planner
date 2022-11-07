@@ -1,14 +1,15 @@
-import * as L from 'leaflet'
+import { Map as LMap, DomUtil, control } from 'leaflet'
 import { createRoot } from 'react-dom/client'
 import Link from '../../struct/link'
 import Unit from '../../struct/unit'
 import { addLink as structAddLink, getUnitById, getUnits, linkIdExists } from '../../struct'
 import { addLink as lgAddLink } from '../structurecontroller'
 import { useRef } from 'react'
+import { symbolToHierarchyString } from '../../util'
 
 
-export function showAddLinkMenu(map: L.Map, unit0: Unit) {
-    const dialog = (L.control as any).dialog({
+export function showAddLinkMenu(map: LMap, unit0: Unit) {
+    const dialog = (control as any).dialog({
         size: [400, 700],
         maxSize: [400, 700],
         minSize: [400, 400],
@@ -17,7 +18,7 @@ export function showAddLinkMenu(map: L.Map, unit0: Unit) {
         initOpen: true
     }).addTo(map)
 
-    const container = L.DomUtil.create('div', 'dialog-menu')
+    const container = DomUtil.create('div', 'dialog-menu')
     dialog.setContent(container)
 
     let unit1: Unit
@@ -63,7 +64,10 @@ function LinkContructor(props: any) {
     const unitOptions = getUnits()
         .filter(u => u.id != props.unit.id)
         .map(
-            (u, i) => <option key={i} value={u.id}>{u.id}</option>
+            (u, i) =>
+                <option key={i}>
+                    {symbolToHierarchyString(u.symbol, u.id)}
+                </option>
         )
 
     if (unitOptions.length > 0)
@@ -72,7 +76,9 @@ function LinkContructor(props: any) {
     return (
         <>
             <select disabled>
-                <option>{props.unit.id}</option>
+                <option>
+                    {symbolToHierarchyString(props.unit.symbol, props.unit.id)}
+                </option>
             </select>
             <select
                 ref={targetRef}

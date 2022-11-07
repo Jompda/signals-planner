@@ -1,4 +1,4 @@
-import * as L from 'leaflet'
+import { LatLng, polyline } from 'leaflet'
 import { ExtendedLayerOptions } from '../../interfaces'
 import { removeLink as structRemoveLink } from '../../struct'
 import Link from '../../struct/link'
@@ -6,8 +6,8 @@ import { removeLink as lgRemoveLink } from '../structurecontroller'
 import { isDefaultTool } from '../toolcontroller'
 
 
-export function createLinkLayer(endPoints: Array<L.LatLng>, link: Link) {
-    const layer = L.polyline(endPoints, {
+export function createLinkLayer(endPoints: Array<LatLng>, link: Link) {
+    const layer = polyline(endPoints, {
         draggable: true,
         contextmenu: true,
         contextmenuItems: [{
@@ -38,7 +38,7 @@ export function createLinkLayer(endPoints: Array<L.LatLng>, link: Link) {
     })
 
     layer.on('update', (
-        (data: { endPoints: [L.LatLng] }) =>
+        (data: { endPoints: [LatLng] }) =>
             layer.setLatLngs(data.endPoints)
     ) as any)
 
