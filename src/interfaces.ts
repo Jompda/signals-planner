@@ -47,20 +47,14 @@ export interface SaveStructure {
     units: Array<SaveUnit>
     links: Array<SaveLink>
     view: {
-        center: {
-            lat: number
-            lng: number
-        }
+        center: LatLng
         zoom: number
     }
 }
 
 export interface SaveUnit {
     id: string
-    latlng: {
-        lat: number
-        lng: number
-    }
+    latlng: LatLng
     symbolOptions: any
 }
 

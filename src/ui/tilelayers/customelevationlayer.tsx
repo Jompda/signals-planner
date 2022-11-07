@@ -128,7 +128,7 @@ function CustomLayerOptions(props: any) {
 
 
 function fitToView(progressFunction: (state: number) => any, done: Function) {
-    const latlngs = new Array<{ lat: number, lng: number }>()
+    const latlngs = new Array<LatLng>()
     const map = getMap()
     const zoom = map.getZoom()
     const bounds = map.getBounds()
@@ -153,7 +153,7 @@ function fitToView(progressFunction: (state: number) => any, done: Function) {
 
     let i = 0
     const elevations = new Array<number>()
-    workers(latlngs, async (latlng: { lat: number, lng: number }) => {
+    workers(latlngs, async (latlng: LatLng) => {
         elevations.push(await getElevation(latlng, zoom))
         progressFunction(++i / latlngs.length)
         check()
