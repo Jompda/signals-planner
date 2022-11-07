@@ -1,7 +1,6 @@
 import { createRoot } from 'react-dom/client'
 import { Map as LMap, Control, control, Util, DomUtil, DomEvent } from 'leaflet'
-import Tool from '../tool';
-import { useRef, useState } from 'react';
+import Tool from '../tool'
 import { setActiveTool } from '../toolcontroller';
 
 
@@ -17,6 +16,8 @@ import { setActiveTool } from '../toolcontroller';
     initialize: function (tools: Array<Tool>, options: any) {
         Util.setOptions(this, options)
 
+        this._tools = tools
+
         const container = this._container = DomUtil.create('div', 'toolbar')
 
         const toolbuttons = new Array<JSX.Element>()
@@ -25,7 +26,7 @@ import { setActiveTool } from '../toolcontroller';
                 <ToolButton
                     key={i}
                     defaultChecked={!Boolean(i)}
-                    callback={() => setActiveTool(tools[i])}
+                    callback={() => setActiveTool(tools[i], this._map)}
                     tool={tools[i]}
                 />
             )
@@ -41,6 +42,8 @@ import { setActiveTool } from '../toolcontroller';
 
     onAdd: function (map: LMap) {
         this._map = map
+        this._tools
+        setActiveTool(this._tools[0], this._map)
         DomEvent.disableClickPropagation(this._container)
         DomEvent.disableScrollPropagation(this._container)
         return this._container

@@ -1,17 +1,16 @@
 import Tool from './tool'
 import defaultTool from './tools/defaultool'
+import { Map as LMap } from 'leaflet'
 
 
 let activeTool: Tool
 
-setActiveTool(defaultTool)
-
 export function getActiveTool() {
     return activeTool
 }
-export function setActiveTool(tool: Tool) {
-    if (activeTool) activeTool.disable()
-    tool.enable()
+export function setActiveTool(tool: Tool, map: LMap) {
+    if (activeTool) activeTool.disable(map)
+    tool.enable(map)
     activeTool = tool
 }
 

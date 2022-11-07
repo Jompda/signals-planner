@@ -1,4 +1,8 @@
 import Tool from '../tool'
+import { LeafletMouseEvent, popup } from 'leaflet'
+import { getTopographyStr, openTopographyPopup } from '../../topoutil'
+import { getMap } from '../structurecontroller'
+
 
 // <FontAwesomeIcon icon="fa-solid fa-draw-square" />
 // <FontAwesomeIcon icon="fa-solid fa-object-union" />
@@ -13,6 +17,9 @@ class DefaultTool extends Tool {
                 </div>
             )
         })
+    }
+    async middlemouseclick(e: LeafletMouseEvent) {
+        openTopographyPopup(getMap(), e.latlng)
     }
 }
 export default new DefaultTool()

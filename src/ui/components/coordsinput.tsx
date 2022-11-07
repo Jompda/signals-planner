@@ -3,6 +3,7 @@ import * as mgrs from 'mgrs'
 import * as utm from 'utm'
 import { LatLng, latLng } from 'leaflet'
 import { round } from '../../util'
+import { latlngToUtm, utmToLatLng } from '../../topoutil'
 
 
 export function CoordsInput(props: any) {
@@ -36,23 +37,6 @@ export function CoordsInput(props: any) {
     function fromMGRS(str: string) {
         const lonlat = mgrs.toPoint(str)
         return latLng(lonlat[1], lonlat[0])
-    }
-
-    function latlngToUtm(latlng: LatLng) {
-        const s = utm.fromLatLon(latlng.lat, latlng.lng)
-        return `${s.zoneNum}${s.zoneLetter} ${Math.floor(s.easting)} ${Math.floor(s.northing)}`
-    }
-
-    function utmToLatLng(str: string) {
-        const parts = str.split(' ')
-        const s1 = parts[0]
-        const s = utm.toLatLon(
-            +parts[1],
-            +parts[2],
-            +s1.slice(0, s1.length - 1),
-            s1[s1.length - 1]
-        )
-        return latLng(s.latitude, s.longitude)
     }
 
     function resolve(type: string, src: any) {
