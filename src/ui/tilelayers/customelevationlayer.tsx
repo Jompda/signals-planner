@@ -1,5 +1,5 @@
 import { TopoLayer, TopoLayerOptions } from 'leaflet-topography'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { asyncOperation, createMapboxTerrainAttribution, workers, getMaxWorkers } from '../../util'
 import { getMap } from '../structurecontroller'
 import { getElevation } from '../../topoutil'
@@ -104,6 +104,7 @@ function CustomLayerOptions(props: any) {
     }
 
     const fitToViewRef = useRef<HTMLButtonElement>()
+    const [progText, setProgText] = useState('Fit to View')
     return (
         <div className='lc-3xgrid'>
             <p>Colors:</p>
@@ -111,17 +112,16 @@ function CustomLayerOptions(props: any) {
             <button
                 ref={fitToViewRef}
                 onClick={() => {
-                    const text = fitToViewRef.current.innerText
                     fitToViewRef.current.setAttribute('disabled', '')
                     fitToView((state: number) => {
-                        if (state < 1) fitToViewRef.current.innerText = `Progress: ${Math.round(state * 100)}%.`
+                        if (state < 1) setProgText(`Progress: ${Math.round(state * 100)}%.`)
                         else {
+                            setProgText('Fit to View')
                             fitToViewRef.current.removeAttribute('disabled')
-                            fitToViewRef.current.innerText = text
                         }
                     }, updateElementValues)
                 }}
-            >Fit to View</button>
+            >{progText}</button>
         </div>
     )
 }
