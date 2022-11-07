@@ -6,6 +6,7 @@ import { addLink as structAddLink, getUnitById, getUnits, linkIdExists } from '.
 import { addLink as lgAddLink } from '../structurecontroller'
 import { useRef } from 'react'
 import { symbolToHierarchyString } from '../../util'
+import { v4 as uuidv4 } from 'uuid'
 
 
 export function showAddLinkMenu(map: LMap, unit0: Unit) {
@@ -17,44 +18,68 @@ export function showAddLinkMenu(map: LMap, unit0: Unit) {
         position: "topleft",
         initOpen: true
     }).addTo(map)
+    dialog.identifier = uuidv4()
 
     const container = DomUtil.create('div', 'dialog-menu')
     dialog.setContent(container)
+    let root = createUI(container)
 
     let unit1: Unit
 
+    unit0.layer.on('update', onUnitUpdate)
+    unit0.layer.on('remove', onUnitRemove)
+    map.on('dialog:closed', onDialogClose)
 
-    const root = createRoot(container)
-    root.render(
-        <>
-            <h1>Add Link:</h1>
-            <LinkContructor
-                unit={unit0}
-                updateTargetUnit={(unit1Id: string) => {
-                    unit1 = getUnitById(unit1Id)
-                }}
-            />
-            <hr />
-            <div className='grower'></div>
-            <div className='dialog-menu-submit'>
-                <br />
-                <button onClick={() => {
-                    if (linkIdExists(Link.createId(unit0, unit1))) throw new Error('Link id already exists!')
-                    const [u0, u1] = Link.orderUnits(unit0, unit1)
-                    const link = new Link({
-                        unit0: u0,
-                        unit1: u1
-                    })
-                    structAddLink(link)
-                    lgAddLink(link)
-                    dialog.close()
-                }}>Add</button>
-                <button onClick={() => {
-                    dialog.close()
-                }}>Cancel</button>
-            </div>
-        </>
-    )
+    function onUnitUpdate() {
+        root.unmount()
+        root = createUI(container)
+    }
+    function onUnitRemove() {
+        dialog.close()
+    }
+    function onDialogClose(element: any) {
+        if (element.identifier != dialog.identifier) return
+        unit0.layer.off('update', onUnitUpdate)
+        unit0.layer.off('remove', onUnitRemove)
+        map.off('dialog:closed', onDialogClose)
+        dialog.destroy()
+    }
+
+
+    function createUI(container: HTMLElement) {
+        const root = createRoot(container)
+        root.render(
+            <>
+                <h1>Add Link:</h1>
+                <LinkContructor
+                    unit={unit0}
+                    updateTargetUnit={(unit1Id: string) => {
+                        unit1 = getUnitById(unit1Id)
+                    }}
+                />
+                <hr />
+                <div className='grower'></div>
+                <div className='dialog-menu-submit'>
+                    <br />
+                    <button onClick={() => {
+                        if (linkIdExists(Link.createId(unit0, unit1))) throw new Error('Link id already exists!')
+                        const [u0, u1] = Link.orderUnits(unit0, unit1)
+                        const link = new Link({
+                            unit0: u0,
+                            unit1: u1
+                        })
+                        structAddLink(link)
+                        lgAddLink(link)
+                        dialog.close()
+                    }}>Add</button>
+                    <button onClick={() => {
+                        dialog.close()
+                    }}>Cancel</button>
+                </div>
+            </>
+        )
+        return root
+    }
 }
 
 
