@@ -1,7 +1,5 @@
-import Tool, { DefaultTool } from './tool'
-
-
-export const defaultTool = new DefaultTool()
+import Tool from './tool'
+import defaultTool from './tools/defaultool'
 
 
 let activeTool: Tool

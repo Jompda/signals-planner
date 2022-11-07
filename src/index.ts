@@ -75,7 +75,7 @@ import { initContextMenu } from './ui/menus/contextmenu'
 import { addTo as lgAddTo } from './ui/structurecontroller'
 import { tileLayers } from './ui/tilelayers'
 import addNodeTool from './ui/tools/addnodetool'
-import { defaultTool } from './ui/toolcontroller'
+import defaultTool from './ui/tools/defaultool'
 
 
 const map = new LMap('map', {

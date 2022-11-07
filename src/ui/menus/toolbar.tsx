@@ -25,10 +25,7 @@ import { setActiveTool } from '../toolcontroller';
                 <ToolButton
                     key={i}
                     defaultChecked={!Boolean(i)}
-                    callback={() => {
-                        console.log(i, tools[i])
-                        setActiveTool(tools[i])
-                    }}
+                    callback={() => setActiveTool(tools[i])}
                     tool={tools[i]}
                 />
             )
@@ -63,7 +60,7 @@ function ToolButton(props: any) {
                     props.callback()
                 }}
             />
-            <div className='toolbutton-icon'>{props.tool.icon}</div>
+            {props.tool.icon}
         </label>
     )
 }

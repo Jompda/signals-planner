@@ -11,10 +11,3 @@ export default class Tool {
     enable() { }
     disable() { }
 }
-export class DefaultTool extends Tool {
-    constructor() {
-        super({
-            icon: <i className="fa fa-mouse-pointer"></i>
-        })
-    }
-}

@@ -230,24 +230,28 @@ body {
     border-block: 1px solid #e8e8e8;
 }
 
-.toolbutton>div:hover {
-    background-color: #e8e8e8;
-}
-
 .toolbutton>input {
     display: none;
 }
 
-.toolbutton>div:hover {
-    background-color: #e8e8e8;
-}
-
-.toolbutton>input:checked+div {
+.toolbutton>input:checked+.toolbutton-icon {
     background-color: #44cc66;
 }
 
-.toolbutton>input:checked+div:hover {
+.toolbutton>input:checked+.toolbutton-icon:hover {
     background-color: #4ada6e;
+}
+
+.toolbutton-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.toolbutton-icon:hover {
+    background-color: #e8e8e8;
 }
 
 
