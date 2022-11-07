@@ -63,7 +63,6 @@ function LayerControl(props: any) {
             <div
                 className='lc-header'
                 onClick={() => {
-                    console.log('toggle')
                     if ($(bodyRef.current).is(':visible')) {
                         $(bodyRef.current).slideUp()
                         headerCaretRef.current.classList.replace('fa-caret-down', 'fa-caret-right')
