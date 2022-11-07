@@ -160,6 +160,16 @@ body {
     background-color: #e8e8e8;
 }
 
+.lc-bringtofront {
+    border-radius: 0.4em;
+    width: 1.5em;
+    text-align: center;
+}
+
+.lc-bringtofront:hover {
+    background-color: #44cc66;
+}
+
 
 .lc-slider {
     padding: 0.2em 0.5em;

@@ -128,7 +128,14 @@ function LayerModel(props: any) {
                 </label>
                 <div>
                     <span>{props.layerName}</span>
-                    <i className='fa-solid fa-ellipsis'></i>
+                    <i
+                        title='Bring to Front'
+                        className='lc-bringtofront fa-solid fa-ellipsis'
+                        onClick={(e) => {
+                            e.stopPropagation()
+                            props.layer.bringToFront()
+                        }}
+                    ></i>
                 </div>
             </div>
             <div
