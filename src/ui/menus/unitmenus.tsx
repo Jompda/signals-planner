@@ -21,6 +21,13 @@ export function showAddUnitMenu(map: LMap, e: LeafletMouseEvent) {
         position: "topleft",
         initOpen: true
     }).addTo(map)
+    dialog.identifier = uuidv4()
+
+    map.on('dialog:closed', onDialogClose)
+    function onDialogClose() {
+        map.off('dialog:closed', onDialogClose)
+        dialog.destroy()
+    }
 
     const container = DomUtil.create('div', 'dialog-menu')
     dialog.setContent(container)
