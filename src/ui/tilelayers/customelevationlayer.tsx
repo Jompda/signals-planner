@@ -103,21 +103,21 @@ function CustomLayerOptions(props: any) {
         )
     }
 
-    const fitToViewRef = useRef<HTMLButtonElement>()
+    const [btnDisabled, setBtnDisabled] = useState(false)
     const [progText, setProgText] = useState('Fit to View')
     return (
         <div className='lc-3xgrid'>
             <p>Colors:</p>
             {elements}
             <button
-                ref={fitToViewRef}
+                disabled={btnDisabled}
                 onClick={() => {
-                    fitToViewRef.current.setAttribute('disabled', '')
+                    setBtnDisabled(true)
                     fitToView((state: number) => {
                         if (state < 1) setProgText(`Progress: ${Math.round(state * 100)}%.`)
                         else {
                             setProgText('Fit to View')
-                            fitToViewRef.current.removeAttribute('disabled')
+                            setBtnDisabled(false)
                         }
                     }, updateElementValues)
                 }}
