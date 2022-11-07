@@ -209,6 +209,47 @@ body {
 }
 
 
+.toolbar {
+    border-radius: 0.5em;
+    border: 2px solid #e8e8e8;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    user-select: none;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.toolbutton>div {
+    width: 3em;
+    height: 3em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-block: 1px solid #e8e8e8;
+}
+
+.toolbutton>div:hover {
+    background-color: #e8e8e8;
+}
+
+.toolbutton>input {
+    display: none;
+}
+
+.toolbutton>div:hover {
+    background-color: #e8e8e8;
+}
+
+.toolbutton>input:checked+div {
+    background-color: #44cc66;
+}
+
+.toolbutton>input:checked+div:hover {
+    background-color: #4ada6e;
+}
+
 
 /* 
  * Map layers
