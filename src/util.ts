@@ -75,7 +75,7 @@ export function asyncOperation(calls: number, step = () => { }, done = () => { }
 }
 
 
-export function workers<T>(srcValues: Array<T>, worker: (value: T) => Promise<any>, maxWorkers: number) {
+export function workers<T>(srcValues: Array<T>, worker: (value: T) => Promise<void>, maxWorkers: number) {
     let working = 0, workingIndex = -1
     function addWorker() {
         if (!(working < maxWorkers && workingIndex < srcValues.length - 1)) return

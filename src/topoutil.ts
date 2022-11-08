@@ -2,7 +2,7 @@ import * as tiledata from 'tiledata'
 import * as mgrs from 'mgrs'
 import * as utm from 'utm'
 import { Map as LMap, LatLng as LLatLng, latLng, Topography, popup } from 'leaflet'
-import { round } from './util'
+import { asyncOperation, getMaxWorkers, round, workers } from './util'
 import LatLon from 'geodesy/latlon-spherical'
 
 
@@ -22,18 +22,74 @@ export async function openTopographyPopup(map: LMap, latlng: LLatLng) {
 }
 
 
-export function getGeodesocLine_PDist100to200(endPoints: Array<LatLng>) {
-    const { steps, pDist } = geodesicLineStats(endPoints[0], endPoints[1])
-    const points = getGeodesicLine(endPoints[0], endPoints[1], steps)
-    return { points, pDist }
+export async function getValues(latlngs: Array<LatLng>, sourceNames: Array<string>, zoom: number) {
+    const { latlngs: mappedLatLngs, tileNames } = mapLatLngsToTiles(latlngs, zoom)
+    const tiles = await getTiles(tileNames, sourceNames)
+    for (const obj of mappedLatLngs) {
+        const tile = tiles.get(obj.tileName)
+        const xyOnTile = tiledata.latlngToXYOnTile(obj.latlng, zoom)
+        for (const srcName of sourceNames) {
+            obj[srcName] = tile[srcName][xyOnTile.y * 256 + xyOnTile.x]
+        }
+    }
+    return mappedLatLngs
+}
+
+
+export function getTiles(tilesNames: Array<string>, sourceNames: Array<string>) {
+    return new Promise<Map<string, any>>((resolve, reject) => {
+        const tiles = new Map<string, any>()
+        const check = asyncOperation(tilesNames.length, undefined, () => {
+            resolve(tiles)
+        })
+        workers(tilesNames, (tileName) => {
+            return new Promise((res, rej) => {
+                const parts = tileName.split('|')
+                const tileCoords = {
+                    x: +parts[0],
+                    y: +parts[1],
+                    z: +parts[2]
+                }
+                tiledata.getTiledata(tileCoords, sourceNames)
+                    .then(data => {
+                        tiles.set(tileName, data)
+                        check()
+                        res()
+                    })
+                    .catch(reject)
+            })
+        }, getMaxWorkers())
+    })
+}
+
+
+export function mapLatLngsToTiles(latlngs: Array<LatLng>, zoom: number) {
+    const mapped = new Array()
+    const tileNames = new Map<string, boolean>()
+    for (const latlng of latlngs) {
+        const tileCoords = tiledata.latlngToTileCoords(latlng, zoom)
+        const tileName = `${tileCoords.x}|${tileCoords.y}|${tileCoords.z}`
+        const obj = { tileName, latlng }
+        let arr = tileNames.get(tileName)
+        if (!arr) tileNames.set(tileName, true)
+        mapped.push(obj)
+    }
+    return { latlngs: mapped, tileNames: Array.from(tileNames.keys()) }
+}
+
+
+export function getGeodesocLine_PDist100to200(latlng0: LatLng, latlng1: LatLng) {
+    const { steps, delta } = geodesicLineStats(latlng0, latlng1)
+    const latlngs = getGeodesicLine(latlng0, latlng1, steps)
+    return { latlngs, delta }
 }
 
 
 export function geodesicLineStats(latlng0: LatLng, latlng1: LatLng) {
     const distance = new LatLon(latlng0.lat, latlng0.lng).distanceTo(new LatLon(latlng1.lat, latlng1.lng))
-    const steps = Math.floor(Math.log2(distance / 100)) // pDist: min 100, max 2*100=200 meters
-    const pDist = distance / (2 ** steps)
-    return { steps, pDist }
+    const steps = Math.floor(Math.log2(distance / 100)) // delta: min 100, max 2*100=200 meters
+    const delta = distance / (2 ** steps)
+    return { steps, delta }
 }
 
 

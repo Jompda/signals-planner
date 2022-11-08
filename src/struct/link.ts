@@ -2,6 +2,8 @@ import { LatLng } from 'leaflet'
 import { LinkOptions, SaveLink } from '../interfaces'
 import Unit from './unit'
 import { getUnitById } from '.'
+import { getGeodesocLine_PDist100to200, getTiles, getValues, mapLatLngsToTiles } from '../topoutil'
+import { asyncOperation } from '../util'
 
 
 export default class Link {
@@ -23,6 +25,13 @@ export default class Link {
         if (ll0.lat + ll0.lng < ll1.lat + ll1.lng)
             return [unit1, unit0]
         return [unit0, unit1]
+    }
+
+
+    async calculate() {
+        const { latlngs, delta } = getGeodesocLine_PDist100to200(this.unit0.latlng, this.unit1.latlng)
+        const values = await getValues(latlngs, ['elevation'], 14)
+        console.log(delta, values)
     }
 
 
