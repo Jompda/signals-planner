@@ -55,7 +55,7 @@ export interface LineStats {
         indexes: Array<number>
     }
     highestObstacle: {
-        elevation: number
+        height: number
         index: number
     }
 }

@@ -30,9 +30,10 @@ export default class Link {
 
 
     async calculate() {
+        const sourceNames = ['elevation', 'treeHeight']
         const { latlngs, delta } = getGeodesocLine_PDist100to200(this.unit0.latlng, this.unit1.latlng)
-        const values = await getValues(latlngs, ['elevation', 'treeHeight'], 10)
-        const lineStats = getLineStats(values, ['elevation', 'treeHeight'])
+        const values = await getValues(latlngs, sourceNames, 10)
+        const lineStats = getLineStats(values, sourceNames)
 
         const unit0Elevation = values[0].elevation
         const unit1Elevation = values[values.length - 1].elevation
@@ -58,7 +59,7 @@ export default class Link {
             delta,
             ...lineStats,
             highestObstacle: {
-                elevation: highestObstacle,
+                height: highestObstacle,
                 index: highestObstacleI
             }
         }

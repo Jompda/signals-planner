@@ -3,7 +3,7 @@ import { Symbol as MilSymbol } from 'milsymbol'
 import { v4 as uuidv4 } from 'uuid'
 
 
-let maxWorkers = 10
+let maxWorkers = 30
 export function getMaxWorkers() {
     return maxWorkers
 }
