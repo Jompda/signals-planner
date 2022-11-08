@@ -4,9 +4,6 @@ import { Symbol as MilSymbol } from 'milsymbol'
 import { filterEmpty } from '../util'
 
 
-/**
- * // TODO: Separate layer from this class and update latlng and symbol from unitlayer.ts
- */
 export default class Unit {
     public id: string
     public latlng: LatLng

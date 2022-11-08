@@ -22,6 +22,13 @@ export async function openTopographyPopup(map: LMap, latlng: LLatLng) {
 }
 
 
+export function getGeodesocLine_PDist100to200(endPoints: Array<LatLng>) {
+    const { steps, pDist } = geodesicLineStats(endPoints[0], endPoints[1])
+    const points = getGeodesicLine(endPoints[0], endPoints[1], steps)
+    return { points, pDist }
+}
+
+
 export function geodesicLineStats(latlng0: LatLng, latlng1: LatLng) {
     const distance = new LatLon(latlng0.lat, latlng0.lng).distanceTo(new LatLon(latlng1.lat, latlng1.lng))
     const steps = Math.floor(Math.log2(distance / 100)) // pDist: min 100, max 2*100=200 meters
