@@ -5,7 +5,9 @@ import { createMarker } from '../ui/components/unitlayer'
 import { filterEmpty } from '../util'
 
 
-// SFGPUUS----B Signals squad
+/**
+ * // TODO: Separate layer from this class and update latlng and symbol from unitlayer.ts
+ */
 export default class Unit {
     public id: string
     public symbol: MilSymbol

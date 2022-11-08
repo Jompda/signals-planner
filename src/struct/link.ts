@@ -6,6 +6,9 @@ import { getUnitById } from '.'
 import { geodesicLineStats, getGeodesicLine } from '../topoutil'
 
 
+/**
+ * // TODO: Separate layer from this class nd update endpoints through linklayer.ts
+ */
 export default class Link {
     public id: string
     public unit0: Unit
