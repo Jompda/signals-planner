@@ -30,7 +30,7 @@ export default class Link {
     async calculate() {
         const { latlngs, delta } = getGeodesocLine_PDist100to200(this.unit0.latlng, this.unit1.latlng)
         const values = await getValues(latlngs, ['elevation', 'treeHeight'], 10)
-        const lineStats = getLineStats(values, 'elevation')
+        const lineStats = getLineStats(values, ['elevation', 'treeHeight'])
         console.log(delta, values, lineStats)
 
         const unit0Elevation = values[0].elevation

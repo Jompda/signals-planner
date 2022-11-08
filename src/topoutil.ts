@@ -22,15 +22,22 @@ export async function openTopographyPopup(map: LMap, latlng: LLatLng) {
 }
 
 
-export function getLineStats(latlngs: Array<any>, field: string) {
+export function getLineStats(latlngs: Array<any>, fields: Array<string>) {
+    function sumAt(i: number) {
+        let sum = 0
+        for (let j = 0; j < fields.length; j++)
+            sum += latlngs[i][fields[j]]
+        return sum
+    }
+
     const extremes = {
-        min: latlngs[0][field],
+        min: sumAt(0),
         iMin: 0,
-        max: latlngs[0][field],
+        max: sumAt(0),
         iMax: 0
     }
     for (let i = 1; i < latlngs.length; i++) {
-        const temp = latlngs[i][field]
+        const temp = sumAt(i)
         if (temp < extremes.min) {
             extremes.min = temp
             extremes.iMin = i
@@ -46,11 +53,11 @@ export function getLineStats(latlngs: Array<any>, field: string) {
         indexes: new Array<number>()
     }
     for (let i = 1; i < latlngs.length - 1; i++) {
-        const temp = latlngs[i]
-        if (temp[field] <= latlngs[i - 1][field]) continue
-        if (temp[field] <= latlngs[i + 1][field]) continue
+        const temp = sumAt(i)
+        if (temp <= sumAt(i - 1)) continue
+        if (temp <= sumAt(i + 1)) continue
         peaks.indexes.push(i)
-        peaks.values.push(temp[field])
+        peaks.values.push(temp)
     }
 
     return {
