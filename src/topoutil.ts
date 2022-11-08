@@ -22,6 +22,44 @@ export async function openTopographyPopup(map: LMap, latlng: LLatLng) {
 }
 
 
+export function getLineStats(latlngs: Array<any>, field: string) {
+    const extremes = {
+        min: latlngs[0][field],
+        iMin: 0,
+        max: latlngs[0][field],
+        iMax: 0
+    }
+    for (let i = 1; i < latlngs.length; i++) {
+        const temp = latlngs[i][field]
+        if (temp < extremes.min) {
+            extremes.min = temp
+            extremes.iMin = i
+        }
+        if (temp > extremes.max) {
+            extremes.max = temp
+            extremes.iMax = i
+        }
+    }
+
+    const peaks = {
+        values: new Array<number>(),
+        indexes: new Array<number>()
+    }
+    for (let i = 1; i < latlngs.length - 1; i++) {
+        const temp = latlngs[i]
+        if (temp[field] <= latlngs[i - 1][field]) continue
+        if (temp[field] <= latlngs[i + 1][field]) continue
+        peaks.indexes.push(i)
+        peaks.values.push(temp[field])
+    }
+
+    return {
+        extremes,
+        peaks
+    }
+}
+
+
 export async function getValues(latlngs: Array<LatLng>, sourceNames: Array<string>, zoom: number) {
     const { latlngs: mappedLatLngs, tileNames } = mapLatLngsToTiles(latlngs, zoom)
     const tiles = await getTiles(tileNames, sourceNames)

@@ -52,7 +52,7 @@ export default class LinkLayer extends Polyline {
     update() {
         const endPoints = getEndPoints(this.unit0, this.unit1)
         this.setLatLngs(endPoints)
-        this.link.calculate()
+        this.link.calculate().then(console.log)
         this.fire('update', { endPoints })
     }
 }
