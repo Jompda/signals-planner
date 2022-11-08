@@ -3,7 +3,9 @@ import { ContextMenuItem } from '../../interfaces'
 import { deserialize, serialize } from '../../struct'
 import { startDownload } from '../../util'
 import { showAddUnitMenu } from './unitmenus'
-import { addUnit as lgAddUnit, addLink as lgAddLink } from '../structurecontroller'
+import { addUnit as lgAddUnit, addLink as lgAddLink, getUnitById } from '../structurecontroller'
+import LinkLayer from '../components/linklayer'
+import UnitLayer from '../components/unitlayer'
 
 
 export function initContextMenu(map: LMap) {
@@ -45,8 +47,12 @@ export function initContextMenu(map: LMap) {
 
             function postLoad(parsed: any) {
                 const { units, links } = deserialize(parsed)
-                for (const unit of units) lgAddUnit(unit)
-                for (const link of links) lgAddLink(link)
+                for (const unit of units) {
+                    lgAddUnit(new UnitLayer(unit))
+                }
+                for (const link of links) {
+                    lgAddLink(new LinkLayer(link, getUnitById(link.unit0.id), getUnitById(link.unit1.id)))
+                }
             }
         }
     }, {

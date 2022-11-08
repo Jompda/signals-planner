@@ -1,46 +1,62 @@
-import { LatLng, polyline } from 'leaflet'
+import { Polyline } from 'leaflet'
 import { ExtendedLayerOptions } from '../../interfaces'
 import { removeLink as structRemoveLink } from '../../struct'
 import Link from '../../struct/link'
 import { removeLink as lgRemoveLink } from '../structurecontroller'
 import { isDefaultTool } from '../toolcontroller'
+import UnitLayer from './unitlayer'
 
 
-export function createLinkLayer(endPoints: Array<LatLng>, link: Link) {
-    const layer = polyline(endPoints, {
-        draggable: true,
-        contextmenu: true,
-        contextmenuItems: [{
-            text: '(Info)',
-            index: 0
-        }, {
-            separator: true,
-            index: 1
-        }, {
-            text: '(Edit)',
-            index: 2
-        }, {
-            text: 'Remove',
-            index: 3,
-            callback: () => {
-                structRemoveLink(link)
-                lgRemoveLink(link)
-            }
-        }, {
-            separator: true,
-            index: 4
-        }]
-    } as ExtendedLayerOptions)
+export default class LinkLayer extends Polyline {
+    public link: Link
+    public unit0: UnitLayer
+    public unit1: UnitLayer
+    constructor(link: Link, unit0: UnitLayer, unit1: UnitLayer) {
+        const endPoints = getEndPoints(unit0, unit1)
+        super(endPoints, {
+            draggable: true,
+            contextmenu: true,
+            contextmenuItems: [{
+                text: '(Info)',
+                index: 0
+            }, {
+                separator: true,
+                index: 1
+            }, {
+                text: '(Edit)',
+                index: 2
+            }, {
+                text: 'Remove',
+                index: 3,
+                callback: () => {
+                    structRemoveLink(link)
+                    lgRemoveLink(this)
+                }
+            }, {
+                separator: true,
+                index: 4
+            }]
+        } as ExtendedLayerOptions)
 
-    layer.on('click', () => {
-        if (!isDefaultTool()) return
-        console.log('clicked link')
-    })
+        this.link = link
+        this.unit0 = unit0
+        this.unit1 = unit1
 
-    layer.on('update', (
-        (data: { endPoints: Array<LatLng>, points: Array<LatLng> }) =>
-            layer.setLatLngs(data.points)
-    ) as any)
+        this.on('click', () => {
+            if (!isDefaultTool()) return
+            console.log('clicked link')
+        })
+    }
 
-    return layer
+
+    update() {
+        const endPoints = getEndPoints(this.unit0, this.unit1)
+        this.setLatLngs(endPoints)
+        this.fire('update', { endPoints })
+    }
+}
+
+
+function getEndPoints(unit0: UnitLayer, unit1: UnitLayer) {
+    return [unit0.getLatLng(), unit1.getLatLng()]
 }

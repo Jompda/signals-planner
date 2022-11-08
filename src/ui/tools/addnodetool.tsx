@@ -5,6 +5,7 @@ import Unit from '../../struct/unit'
 import { addUnit as structAddUnit, unitIdExists } from '../../struct'
 import { addUnit as lgAddUnit, getMap } from '../structurecontroller'
 import { openTopographyPopup } from '../../topoutil'
+import UnitLayer from '../components/unitlayer'
 
 
 let lastUnitId = 0
@@ -30,13 +31,13 @@ class AddNodeTool extends Tool {
             uniqueDesignation: String(lastUnitId),
             higherFormation: 'Node'
         })
-        const unit = new Unit({
+        const unitLayer = new UnitLayer(new Unit({
             id: String(lastUnitId++),
             latlng: e.latlng,
             symbol
-        })
-        structAddUnit(unit)
-        lgAddUnit(unit)
+        }))
+        structAddUnit(unitLayer.unit)
+        lgAddUnit(unitLayer)
     }
     middlemouseclick(e: LeafletMouseEvent) {
         openTopographyPopup(getMap(), e.latlng)

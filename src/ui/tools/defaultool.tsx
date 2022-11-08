@@ -1,6 +1,6 @@
 import Tool from '../tool'
-import { LeafletMouseEvent, popup } from 'leaflet'
-import { getTopographyStr, openTopographyPopup } from '../../topoutil'
+import { LeafletMouseEvent } from 'leaflet'
+import { openTopographyPopup } from '../../topoutil'
 import { getMap } from '../structurecontroller'
 
 

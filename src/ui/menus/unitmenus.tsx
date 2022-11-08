@@ -7,6 +7,7 @@ import Unit from '../../struct/unit'
 import { addUnit as structAddUnit, unitIdExists } from '../../struct'
 import { addUnit as lgAddUnit } from '../structurecontroller'
 import { createDialog } from '../../util'
+import UnitLayer from '../components/unitlayer'
 
 
 let lastUnitId = 1
@@ -45,13 +46,13 @@ export function showAddUnitMenu(map: LMap, e: LeafletMouseEvent) {
                 <br />
                 <button onClick={() => {
                     while (unitIdExists(String(lastUnitId))) lastUnitId++
-                    const unit = new Unit({
+                    const unitLayer = new UnitLayer(new Unit({
                         id: String(lastUnitId++),
                         latlng: latlng || map.getCenter(),
                         symbol: milSymbol
-                    })
-                    structAddUnit(unit)
-                    lgAddUnit(unit)
+                    }))
+                    structAddUnit(unitLayer.unit)
+                    lgAddUnit(unitLayer)
                     dialog.close()
                 }}>Add</button>
                 <button onClick={() => {
@@ -63,7 +64,7 @@ export function showAddUnitMenu(map: LMap, e: LeafletMouseEvent) {
 }
 
 
-export function showEditUnitMenu(map: LMap, unit: Unit) {
+export function showEditUnitMenu(map: LMap, unitLayer: UnitLayer) {
     const dialog = createDialog(map, {
         size: [400, 400],
         maxSize: [400, 700],
@@ -76,9 +77,9 @@ export function showEditUnitMenu(map: LMap, unit: Unit) {
 
 
     let latlng: LatLng
-    latlng = unit.layer.getLatLng()
+    latlng = unitLayer.unit.latlng
     let milSymbol: MilSymbol
-    milSymbol = new MilSymbol(unit.symbol.getOptions())
+    milSymbol = new MilSymbol(unitLayer.unit.symbol.getOptions())
 
 
     const container = DomUtil.create('div', 'dialog-menu')
@@ -88,14 +89,14 @@ export function showEditUnitMenu(map: LMap, unit: Unit) {
     let root = createUI(container)
 
 
-    unit.layer.on('update', onUnitUpdate)
-    unit.layer.on('dragend', onUnitUpdate)
-    unit.layer.on('remove', onUnitRemove)
+    unitLayer.on('update', onUnitUpdate)
+    unitLayer.on('dragend', onUnitUpdate)
+    unitLayer.on('remove', onUnitRemove)
 
 
     function onUnitUpdate() {
-        latlng = unit.layer.getLatLng()
-        milSymbol = new MilSymbol(unit.symbol.getOptions())
+        latlng = unitLayer.unit.latlng
+        milSymbol = new MilSymbol(unitLayer.unit.symbol.getOptions())
         root.unmount()
         root = createUI(container)
     }
@@ -103,9 +104,9 @@ export function showEditUnitMenu(map: LMap, unit: Unit) {
         dialog.close()
     }
     function onDialogClose() {
-        unit.layer.off('update', onUnitUpdate)
-        unit.layer.off('dragend', onUnitUpdate)
-        unit.layer.off('remove', onUnitRemove)
+        unitLayer.off('update', onUnitUpdate)
+        unitLayer.off('dragend', onUnitUpdate)
+        unitLayer.off('remove', onUnitRemove)
     }
 
 
@@ -123,7 +124,7 @@ export function showEditUnitMenu(map: LMap, unit: Unit) {
                 <div className='dialog-menu-submit'>
                     <br />
                     <button onClick={() => {
-                        unit.updateMarker(latlng || map.getCenter(), milSymbol)
+                        unitLayer.setLatLngSymbol(latlng || map.getCenter(), milSymbol)
                         dialog.close()
                     }}>Save</button>
                     <button onClick={() => {

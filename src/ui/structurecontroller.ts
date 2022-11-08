@@ -1,11 +1,19 @@
-import { Map as LMap, LayerGroup, Marker, Polyline } from 'leaflet'
-import Unit from '../struct/unit'
-import Link from '../struct/link'
-import { getLinks, getUnits, removeLink as structRemoveLink } from '../struct'
+import { Map as LMap, LayerGroup } from 'leaflet'
+import { removeLink as structRemoveLink } from '../struct'
+import UnitLayer from './components/unitlayer'
+import LinkLayer from './components/linklayer'
 
 
-const unitLg = new LayerGroup<Marker>()
-const linkLg = new LayerGroup<Polyline>()
+const unitLayers = new LayerGroup<UnitLayer>()
+const linkLayers = new LayerGroup<LinkLayer>()
+
+
+export function getUnitById(unitId: string) {
+    return (unitLayers.getLayers() as Array<UnitLayer>).find(u => u.unit.id == unitId)
+}
+export function getLinkById(linkId: string) {
+    return (linkLayers.getLayers() as Array<LinkLayer>).find(l => l.link.id == linkId)
+}
 
 
 export const structureEvents = new EventTarget()
@@ -14,12 +22,12 @@ export const structureEvents = new EventTarget()
 let _map: LMap
 export function addTo(map: LMap) {
     _map = map
-    map.addLayer(linkLg)
-    map.addLayer(unitLg)
+    map.addLayer(linkLayers)
+    map.addLayer(unitLayers)
 }
 export function remove() {
-    unitLg.remove()
-    linkLg.remove()
+    unitLayers.remove()
+    linkLayers.remove()
 }
 export function getMap() {
     return _map
@@ -32,8 +40,8 @@ export function isUnitInteractionEnabled() {
 }
 export function setUnitInteraction(state: boolean) {
     unitInteraction = state
-    for (const unit of getUnits()) {
-        (unit.layer as any).setInteractive(state)
+    for (const unitLayer of unitLayers.getLayers()) {
+        (unitLayer as any).setInteractive(state)
     }
 }
 
@@ -44,8 +52,8 @@ export function isLinkInteractionEnabled() {
 }
 export function setLinkInteraction(state: boolean) {
     linkInteraction = state
-    for (const link of getLinks()) {
-        (link.layer as any).setInteractive(state)
+    for (const linkLayer of linkLayers.getLayers()) {
+        (linkLayer as any).setInteractive(state)
     }
 }
 
@@ -53,14 +61,14 @@ export function setLinkInteraction(state: boolean) {
 function onUnitUpdate() {
     structureEvents.dispatchEvent(new Event('updateunit'))
 }
-export function addUnit(unit: Unit) {
-    unitLg.addLayer(unit.layer)
-    unit.layer.on('update', onUnitUpdate)
+export function addUnit(unitLayer: UnitLayer) {
+    unitLayers.addLayer(unitLayer)
+    unitLayer.on('update', onUnitUpdate)
     structureEvents.dispatchEvent(new Event('addunit'))
 }
-export function removeUnit(unit: Unit) {
-    unit.layer.remove()
-    unit.layer.off('update', onUnitUpdate)
+export function removeUnit(unitLayer: UnitLayer) {
+    unitLayer.off('update', onUnitUpdate)
+    unitLayers.removeLayer(unitLayer)
     structureEvents.dispatchEvent(new Event('removeunit'))
 }
 /*export function setUnitDragging(state: boolean) {
@@ -69,37 +77,36 @@ export function removeUnit(unit: Unit) {
 }*/
 
 
-export function addLink(link: Link) {
+export function addLink(linkLayer: LinkLayer) {
     function update() {
-        link.update()
+        linkLayer.update()
     }
 
     function rm() {
-        link.unit0.layer.off('dragend', update)
-        link.unit1.layer.off('dragend', update)
-        link.unit0.layer.off('update', update)
-        link.unit1.layer.off('update', update)
-        link.unit0.layer.off('remove', rm)
-        link.unit1.layer.off('remove', rm)
-        link.layer.off('remove', rm)
+        linkLayer.unit0.off('dragend', update)
+        linkLayer.unit1.off('dragend', update)
+        linkLayer.unit0.off('update', update)
+        linkLayer.unit1.off('update', update)
+        linkLayer.unit0.off('remove', rm)
+        linkLayer.unit1.off('remove', rm)
+        linkLayer.off('remove', rm)
 
-        removeLink(link)
-        structRemoveLink(link)
+        removeLink(linkLayer)
+        structRemoveLink(linkLayer.link)
     }
 
-    link.unit0.layer.on('dragend', update)
-    link.unit1.layer.on('dragend', update)
-    link.unit0.layer.on('update', update)
-    link.unit1.layer.on('update', update)
-    link.unit0.layer.on('remove', rm)
-    link.unit1.layer.on('remove', rm)
-    link.layer.on('remove', rm)
+    linkLayer.unit0.on('dragend', update)
+    linkLayer.unit1.on('dragend', update)
+    linkLayer.unit0.on('update', update)
+    linkLayer.unit1.on('update', update)
+    linkLayer.unit0.on('remove', rm)
+    linkLayer.unit1.on('remove', rm)
+    linkLayer.on('remove', rm)
 
     update()
-    linkLg.addLayer(link.layer)
+    linkLayers.addLayer(linkLayer)
 }
-export function removeLink(link: Link) {
-    link.layer.remove()
-    // remove all handlers
+export function removeLink(linkLayer: LinkLayer) {
+    linkLayer.remove()
 }
 

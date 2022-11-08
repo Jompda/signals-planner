@@ -89,7 +89,7 @@ export function deserialize(obj: SaveStructure) {
         if (unitIdExists(unit.id)) {
             const conflict = getUnitById(unit.id)
             if (
-                !deepEqual(unit.layer.getLatLng(), conflict.layer.getLatLng())
+                !deepEqual(unit.latlng, conflict.latlng)
                 || !deepEqual(unit.symbol.getOptions(false), conflict.symbol.getOptions(false))
             ) {
                 let i = 1, lastId = unit.id

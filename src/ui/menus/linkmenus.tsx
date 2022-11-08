@@ -2,14 +2,16 @@ import { Map as LMap, DomUtil, DomEvent } from 'leaflet'
 import { createRoot } from 'react-dom/client'
 import Link from '../../struct/link'
 import Unit from '../../struct/unit'
-import { addLink as structAddLink, getUnitById, getUnits, linkIdExists } from '../../struct'
-import { addLink as lgAddLink, structureEvents } from '../structurecontroller'
+import { addLink as structAddLink, getUnits, linkIdExists } from '../../struct'
+import { addLink as lgAddLink, getUnitById, structureEvents } from '../structurecontroller'
 import { useRef, useState } from 'react'
 import { createDialog, symbolToHierarchyString } from '../../util'
 import { v4 as uuidv4 } from 'uuid'
+import UnitLayer from '../components/unitlayer'
+import LinkLayer from '../components/linklayer'
 
 
-export function showAddLinkMenu(map: LMap, unit0: Unit) {
+export function showAddLinkMenu(map: LMap, unit0: UnitLayer) {
     const dialog = createDialog(map, {
         size: [400, 400],
         maxSize: [400, 700],
@@ -26,12 +28,12 @@ export function showAddLinkMenu(map: LMap, unit0: Unit) {
     dialog.setContent(container)
     let root = createUI(container)
 
-    let unit1: Unit
+    let unit1: UnitLayer
 
     structureEvents.addEventListener('updateunit', onUpdateUnits)
     structureEvents.addEventListener('addunit', onUpdateUnits)
     structureEvents.addEventListener('removeunit', onUpdateUnits)
-    unit0.layer.on('remove', onUnitRemove)
+    unit0.on('remove', onUnitRemove)
 
     function onUpdateUnits() {
         console.log('updateunits')
@@ -45,7 +47,7 @@ export function showAddLinkMenu(map: LMap, unit0: Unit) {
         structureEvents.removeEventListener('updateunit', onUpdateUnits)
         structureEvents.removeEventListener('addunit', onUpdateUnits)
         structureEvents.removeEventListener('removeunit', onUpdateUnits)
-        unit0.layer.off('remove', onUnitRemove)
+        unit0.off('remove', onUnitRemove)
     }
 
 
@@ -55,7 +57,7 @@ export function showAddLinkMenu(map: LMap, unit0: Unit) {
             <>
                 <h1>Add Link:</h1>
                 <LinkContructor
-                    unit={unit0}
+                    unit={unit0.unit}
                     updateTargetUnit={(unit1Id: string) =>
                         unit1 = getUnitById(unit1Id)
                     }
@@ -67,14 +69,14 @@ export function showAddLinkMenu(map: LMap, unit0: Unit) {
                     <button onClick={() => {
                         console.log(unit1)
                         if (!unit1) return // Tell user to select link.
-                        if (linkIdExists(Link.createId(unit0, unit1))) throw new Error('Link id already exists!')
-                        const [u0, u1] = Link.orderUnits(unit0, unit1)
-                        const link = new Link({
+                        if (linkIdExists(Link.createId(unit0.unit, unit1.unit))) throw new Error('Link id already exists!')
+                        const [u0, u1] = Link.orderUnits(unit0.unit, unit1.unit)
+                        const linkLayer = new LinkLayer(new Link({
                             unit0: u0,
                             unit1: u1
-                        })
-                        structAddLink(link)
-                        lgAddLink(link)
+                        }), getUnitById(u0.id), getUnitById(u1.id))
+                        structAddLink(linkLayer.link)
+                        lgAddLink(linkLayer)
                         dialog.close()
                     }}>Add</button>
                     <button onClick={() => {

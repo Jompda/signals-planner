@@ -1,4 +1,4 @@
-import { LatLng, Marker, marker as Lmarker, DomUtil, divIcon, point } from 'leaflet'
+import { LatLng, Marker, DomUtil, divIcon, point, LeafletMouseEvent } from 'leaflet'
 import { Symbol as MilSymbol } from 'milsymbol'
 import { ExtendedMarkerOptions } from '../../interfaces'
 import Unit from '../../struct/unit'
@@ -12,66 +12,69 @@ import { isDefaultTool } from '../toolcontroller'
 const iconSize = 40
 
 
-export function createMarker(latlng: LatLng, unit: Unit) {
-    const { icon, svg, hitbox } = createIcon(unit.symbol, iconSize);
-    (icon as any).update = (symbol: MilSymbol, size: number) => {
-        setHitboxLocation(hitbox, applySymbol(svg, symbol, size))
+export default class UnitLayer extends Marker {
+    public unit: Unit
+    constructor(unit: Unit) {
+        const { icon, svg, hitbox } = createIcon(unit.symbol, iconSize);
+        (icon as any).update = (symbol: MilSymbol, size: number) => {
+            setHitboxLocation(hitbox, applySymbol(svg, symbol, size))
+        }
+        (svg as any).unitid = unit.id
+
+        super(unit.latlng, {
+            icon,
+            draggable: true,
+            contextmenu: true,
+            contextmenuItems: [{
+                text: '(Info)',
+                index: 0
+            }, {
+                separator: true,
+                index: 1
+            }, {
+                text: 'Add Link',
+                index: 2,
+                callback: () => showAddLinkMenu(getMap(), this)
+            }, {
+                separator: true,
+                index: 3
+            }, {
+                text: 'Edit',
+                index: 4,
+                callback: () => showEditUnitMenu(getMap(), this)
+            }, {
+                text: 'Remove',
+                index: 5,
+                callback: () => {
+                    structRemoveUnit(unit)
+                    lgRemoveUnit(this)
+                }
+            }, {
+                separator: true,
+                index: 6
+            }]
+        } as ExtendedMarkerOptions)
+
+        this.unit = unit
+
+        this.on('click', () => {
+            if (!isDefaultTool()) return
+            if (svg.classList.contains('unit-selected'))
+                svg.classList.remove('unit-selected')
+            else svg.classList.add('unit-selected')
+        })
+
+        this.on('dragend', (e: LeafletMouseEvent) => {
+            this.unit.latlng = this.getLatLng()
+        })
     }
-    (svg as any).unitid = unit.id
 
-    const marker = Lmarker(latlng, {
-        icon,
-        draggable: true,
-        contextmenu: true,
-        contextmenuItems: [{
-            text: '(Info)',
-            index: 0
-        }, {
-            separator: true,
-            index: 1
-        }, {
-            text: 'Add Link',
-            index: 2,
-            callback: () => showAddLinkMenu(getMap(), unit)
-        }, {
-            separator: true,
-            index: 3
-        }, {
-            text: 'Edit',
-            index: 4,
-            callback: () => showEditUnitMenu(getMap(), unit)
-        }, {
-            text: 'Remove',
-            index: 5,
-            callback: () => {
-                structRemoveUnit(unit)
-                lgRemoveUnit(unit)
-            }
-        }, {
-            separator: true,
-            index: 6
-        }]
-    } as ExtendedMarkerOptions)
-
-    marker.on('click', () => {
-        if (!isDefaultTool()) return
-        if (svg.classList.contains('unit-selected'))
-            svg.classList.remove('unit-selected')
-        else svg.classList.add('unit-selected')
-    })
-
-    marker.on('update', (
-        (data: { latlng: LatLng, symbol: MilSymbol }) =>
-            updateMarker(marker, data.latlng, data.symbol)
-    ) as any)
-
-    return marker
-}
-
-
-export function updateMarker(marker: Marker, latlng: LatLng, symbol: MilSymbol) {
-    marker.setLatLng(latlng);
-    (marker.getIcon() as any).update(symbol, iconSize)
+    setLatLngSymbol(latlng: LatLng, symbol: MilSymbol) {
+        this.unit.latlng = latlng
+        this.setLatLng(latlng);
+        (this.getIcon() as any).update(symbol, iconSize)
+        this.fire('update', { latlng, symbol })
+    }
 }
 
 
