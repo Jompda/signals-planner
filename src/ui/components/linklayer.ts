@@ -14,6 +14,8 @@ export default class LinkLayer extends Polyline {
     constructor(link: Link, unit0: UnitLayer, unit1: UnitLayer) {
         const endPoints = getEndPoints(unit0, unit1)
         super(endPoints, {
+            color: 'black',
+            opacity: 0.75,
             draggable: true,
             contextmenu: true,
             contextmenuItems: [{
@@ -50,11 +52,25 @@ export default class LinkLayer extends Polyline {
 
 
     async update() {
+        const { values, stats } = await this.link.calculate()
         const endPoints = getEndPoints(this.unit0, this.unit1)
         this.setLatLngs(endPoints)
-        const { values, stats } = await this.link.calculate()
-        console.log(values, stats)
+        let color = '#00ff0c', weight = 12
+        if (stats.highestObstacle.height > -5) {
+            color = '#00b9ff'
+            weight = 8
+        }
+        if (stats.highestObstacle.height > 0) {
+            color = '#ec2400'
+            weight = 4
+        }
+        this.setStyle({
+            weight,
+            color
+        })
+
         this.fire('update', { endPoints, values, stats })
+        console.log(values, stats)
     }
 }
 

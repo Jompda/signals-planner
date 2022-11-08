@@ -5,6 +5,9 @@ import { getUnitById } from '.'
 import { getGeodesocLine_PDist100to200, getLineStats, getValues } from '../topoutil'
 
 
+const emitterHeight = 25
+
+
 export default class Link {
     public id: string
     public unit0: Unit
@@ -35,8 +38,8 @@ export default class Link {
         const values = await getValues(latlngs, sourceNames, 10)
         const lineStats = getLineStats(values, sourceNames)
 
-        const unit0Elevation = values[0].elevation
-        const unit1Elevation = values[values.length - 1].elevation
+        const unit0Elevation = values[0].elevation + emitterHeight
+        const unit1Elevation = values[values.length - 1].elevation + emitterHeight
         const elevationDelta = unit1Elevation - unit0Elevation
 
         function losElevationAtIndex(i: number) {
@@ -46,8 +49,7 @@ export default class Link {
         let highestObstacle = lineStats.peaks.values[0] - losElevationAtIndex(1)
         let highestObstacleI = 0
         for (let i = 1; i < lineStats.peaks.indexes.length; i++) {
-            const losElevation = losElevationAtIndex(lineStats.peaks.indexes[i] + 1)
-            const obstacle = lineStats.peaks.values[i] - losElevation
+            const obstacle = lineStats.peaks.values[i] - losElevationAtIndex(lineStats.peaks.indexes[i] + 1)
             if (obstacle > highestObstacle) {
                 highestObstacle = obstacle
                 highestObstacleI = i
