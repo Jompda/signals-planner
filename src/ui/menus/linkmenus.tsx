@@ -67,7 +67,6 @@ export function showAddLinkMenu(map: LMap, unit0: UnitLayer) {
                 <div className='dialog-menu-submit'>
                     <br />
                     <button onClick={() => {
-                        console.log(unit1)
                         if (!unit1) return // Tell user to select link.
                         if (linkIdExists(Link.createId(unit0.unit, unit1.unit))) throw new Error('Link id already exists!')
                         const [u0, u1] = Link.orderUnits(unit0.unit, unit1.unit)

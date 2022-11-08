@@ -42,6 +42,24 @@ export interface LinkOptions {
     // Medium
 }
 
+export interface LineStats {
+    delta: number
+    extremes: {
+        min: number
+        iMin: number
+        max: number
+        iMax: number
+    }
+    peaks: {
+        values: Array<number>
+        indexes: Array<number>
+    }
+    highestObstacle: {
+        elevation: number
+        index: number
+    }
+}
+
 
 export interface SaveStructure {
     units: Array<SaveUnit>

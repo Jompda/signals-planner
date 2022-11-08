@@ -4,6 +4,7 @@ import * as utm from 'utm'
 import { Map as LMap, LatLng as LLatLng, latLng, Topography, popup } from 'leaflet'
 import { asyncOperation, getMaxWorkers, round, workers } from './util'
 import LatLon from 'geodesy/latlon-spherical'
+import { LineStats } from './interfaces'
 
 
 export async function getElevation(latlng: LatLng, zoom: number) {

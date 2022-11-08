@@ -1,5 +1,5 @@
 import { LatLng } from 'leaflet'
-import { LinkOptions, SaveLink } from '../interfaces'
+import { LineStats, LinkOptions, SaveLink } from '../interfaces'
 import Unit from './unit'
 import { getUnitById } from '.'
 import { getGeodesocLine_PDist100to200, getLineStats, getValues } from '../topoutil'
@@ -10,6 +10,8 @@ export default class Link {
     public unit0: Unit
     public unit1: Unit
     public points: Array<LatLng>
+    public values: Array<any>
+    public stats: LineStats
     constructor(options: LinkOptions) {
         Object.assign(this, options)
         this.id = Link.createId(this.unit0, this.unit1)
@@ -31,7 +33,6 @@ export default class Link {
         const { latlngs, delta } = getGeodesocLine_PDist100to200(this.unit0.latlng, this.unit1.latlng)
         const values = await getValues(latlngs, ['elevation', 'treeHeight'], 10)
         const lineStats = getLineStats(values, ['elevation', 'treeHeight'])
-        console.log(delta, values, lineStats)
 
         const unit0Elevation = values[0].elevation
         const unit1Elevation = values[values.length - 1].elevation
@@ -52,7 +53,17 @@ export default class Link {
             }
         }
 
-        return highestObstacle
+        this.values = values
+        this.stats = {
+            delta,
+            ...lineStats,
+            highestObstacle: {
+                elevation: highestObstacle,
+                index: highestObstacleI
+            }
+        }
+
+        return { values, stats: this.stats }
     }
 
 
