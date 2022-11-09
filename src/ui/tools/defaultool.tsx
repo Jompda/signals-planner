@@ -18,7 +18,8 @@ class DefaultTool extends Tool {
             )
         })
     }
-    async middlemouseclick(e: LeafletMouseEvent) {
+    middlemouseclick(e: LeafletMouseEvent) {
+        if ((e.originalEvent.target as HTMLElement).id != 'map') return
         openTopographyPopup(getMap(), e.latlng)
     }
 }

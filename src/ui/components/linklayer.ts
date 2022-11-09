@@ -1,9 +1,9 @@
-import { Polyline } from 'leaflet'
+import { LeafletMouseEvent, Polyline } from 'leaflet'
 import { ExtendedLayerOptions } from '../../interfaces'
 import { removeLink as structRemoveLink } from '../../struct'
 import Link from '../../struct/link'
 import { showLinkStatistics } from '../menus/linkstatistics'
-import { getMap, removeLink as lgRemoveLink } from '../structurecontroller'
+import { removeLink as lgRemoveLink } from '../structurecontroller'
 import { isDefaultTool } from '../toolcontroller'
 import UnitLayer from './unitlayer'
 
@@ -20,8 +20,9 @@ export default class LinkLayer extends Polyline {
             draggable: true,
             contextmenu: true,
             contextmenuItems: [{
-                text: '(Info)',
-                index: 0
+                text: 'Info',
+                index: 0,
+                callback: () => showLinkStatistics(this._map, this)
             }, {
                 separator: true,
                 index: 1
@@ -45,10 +46,20 @@ export default class LinkLayer extends Polyline {
         this.unit0 = unit0
         this.unit1 = unit1
 
+
         this.on('click', () => {
             if (!isDefaultTool()) return
             console.log('clicked link')
-            showLinkStatistics(getMap(), this)
+        })
+
+        this.on('middlemouseclick', () => {
+            if (!isDefaultTool()) return
+            showLinkStatistics(this._map, this)
+        })
+
+        this.on('mouseup', (e: LeafletMouseEvent) => {
+            if (e.originalEvent.button === 1)
+                this.fire('middlemouseclick', e)
         })
     }
 

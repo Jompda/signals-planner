@@ -1,4 +1,3 @@
-import { getMap } from '../ui/structurecontroller'
 import Link from './link'
 import Unit from './unit'
 import deepEqual from 'deep-equal'
@@ -61,7 +60,10 @@ export function getLinks() {
 }
 
 
-export function serialize() {
+export function serialize(view: {
+    center: LatLng,
+    zoom: number
+}) {
     const sUnits = new Array<SaveUnit>(), sLinks = new Array<SaveLink>()
     for (const unit of units.values())
         sUnits.push(unit.serialize())
@@ -70,16 +72,11 @@ export function serialize() {
     return {
         units: sUnits,
         links: sLinks,
-        view: {
-            center: getMap().getCenter(),
-            zoom: getMap().getZoom()
-        }
+        view
     } as SaveStructure
 }
 
 export function deserialize(obj: SaveStructure) {
-    getMap().setView([obj.view.center.lat, obj.view.center.lng], obj.view.zoom)
-
     const pUnits = [], pLinks = []
     const remappedIds = new Map<string, string>()
 
@@ -107,8 +104,6 @@ export function deserialize(obj: SaveStructure) {
         }
     }
 
-    console.log(remappedIds)
-
     for (const lObj of obj.links) {
         lObj.unit0 = remappedIds.get(lObj.unit0)
         lObj.unit1 = remappedIds.get(lObj.unit1)
@@ -120,6 +115,7 @@ export function deserialize(obj: SaveStructure) {
 
     return {
         units: pUnits,
-        links: pLinks
+        links: pLinks,
+        view: obj.view
     }
 }

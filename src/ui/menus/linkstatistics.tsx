@@ -17,7 +17,8 @@ import {
 } from 'chart.js'
 import * as helpers from 'chart.js/helpers'
 import { Chart } from 'react-chartjs-2'
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
+import { createLosGetter } from '../../topoutil'
 
 
 ChartJS.register(
@@ -32,6 +33,8 @@ ChartJS.register(
 )
 
 
+let closeActive: Function
+
 
 export function showLinkStatistics(map: LMap, linkLayer: LinkLayer) {
     const dialog = createDialog(map, {
@@ -43,6 +46,8 @@ export function showLinkStatistics(map: LMap, linkLayer: LinkLayer) {
         initOpen: true,
         onClose: onDialogClose
     })
+    if (closeActive) closeActive()
+    closeActive = () => dialog.close()
 
     const highlight = new CircleMarker(linkLayer.link.unit0.latlng, { radius: 10 }).addTo(map)
 
@@ -102,6 +107,12 @@ function LinkStatistics(props: any) {
     canvas.width = 600
     canvas.height = 260
 
+    const getLosElevationAtIndex = createLosGetter(
+        values[0].elevation + emitterHeight,
+        values[values.length - 1].elevation + emitterHeight,
+        values.length - 1
+    )
+
     const distanceLabels = new Array<number>()
     const elevations = new Array<number>()
     const treeHeights = new Array<number>()
@@ -122,6 +133,7 @@ function LinkStatistics(props: any) {
     const elevationRef = useRef<HTMLTableCellElement>()
     const treeHeightRef = useRef<HTMLTableCellElement>()
     const sumRef = useRef<HTMLTableCellElement>()
+    const losRef = useRef<HTMLTableCellElement>()
     const chartRef = useRef<ChartJS>()
     let mx = 0, my = 0
 
@@ -148,6 +160,7 @@ function LinkStatistics(props: any) {
         elevationRef.current.textContent = String(elevation) + 'm'
         treeHeightRef.current.textContent = String(treeHeight) + 'm'
         sumRef.current.textContent = String(elevation + treeHeight) + 'm'
+        losRef.current.textContent = String(Math.round(getLosElevationAtIndex(i))) + 'm'
         props.setHighlightLatLng(values[i].latlng)
     }
 
@@ -227,22 +240,28 @@ function LinkStatistics(props: any) {
                 plugins={plugins}
             />
             <table className='link-stats'>
-                <tr>
-                    <td>Distance:</td>
-                    <td ref={distanceRef}></td>
-                </tr>
-                <tr>
-                    <td>Elevation:</td>
-                    <td ref={elevationRef}></td>
-                </tr>
-                <tr>
-                    <td>Tree height:</td>
-                    <td ref={treeHeightRef}></td>
-                </tr>
-                <tr>
-                    <td>Sum:</td>
-                    <td ref={sumRef}></td>
-                </tr>
+                <tbody>
+                    <tr>
+                        <td>Distance:</td>
+                        <td ref={distanceRef}></td>
+                    </tr>
+                    <tr>
+                        <td>Elevation:</td>
+                        <td ref={elevationRef}></td>
+                    </tr>
+                    <tr>
+                        <td>Tree height:</td>
+                        <td ref={treeHeightRef}></td>
+                    </tr>
+                    <tr>
+                        <td>Sum:</td>
+                        <td ref={sumRef}></td>
+                    </tr>
+                    <tr>
+                        <td>Line-of-sight elevation:</td>
+                        <td ref={losRef}></td>
+                    </tr>
+                </tbody>
             </table>
         </div>
     )

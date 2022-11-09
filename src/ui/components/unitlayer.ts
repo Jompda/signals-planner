@@ -1,12 +1,13 @@
-import { LatLng, Marker, DomUtil, divIcon, point, LeafletMouseEvent } from 'leaflet'
+import { LatLng, Marker, DomUtil, divIcon, point, LeafletMouseEvent, popup } from 'leaflet'
 import { Symbol as MilSymbol } from 'milsymbol'
 import { ExtendedMarkerOptions } from '../../interfaces'
 import Unit from '../../struct/unit'
 import { removeUnit as structRemoveUnit } from '../../struct'
-import { getMap, removeUnit as lgRemoveUnit } from '../structurecontroller'
+import { removeUnit as lgRemoveUnit } from '../structurecontroller'
 import { showEditUnitMenu } from '../menus/unitmenus'
 import { showAddLinkMenu } from '../menus/linkmenus'
 import { isDefaultTool } from '../toolcontroller'
+import { getTopographyStr } from '../../topoutil'
 
 
 const iconSize = 40
@@ -16,9 +17,6 @@ export default class UnitLayer extends Marker {
     public unit: Unit
     constructor(unit: Unit) {
         const { icon, svg, hitbox } = createIcon(unit.symbol, iconSize);
-        (icon as any).update = (symbol: MilSymbol, size: number) => {
-            setHitboxLocation(hitbox, applySymbol(svg, symbol, size))
-        }
         (svg as any).unitid = unit.id
 
         super(unit.latlng, {
@@ -34,14 +32,14 @@ export default class UnitLayer extends Marker {
             }, {
                 text: 'Add Link',
                 index: 2,
-                callback: () => showAddLinkMenu(getMap(), this)
+                callback: () => showAddLinkMenu(this._map, this)
             }, {
                 separator: true,
                 index: 3
             }, {
                 text: 'Edit',
                 index: 4,
-                callback: () => showEditUnitMenu(getMap(), this)
+                callback: () => showEditUnitMenu(this._map, this)
             }, {
                 text: 'Remove',
                 index: 5,
@@ -57,6 +55,11 @@ export default class UnitLayer extends Marker {
 
         this.unit = unit
 
+
+        this.on('dragend', () => {
+            this.unit.latlng = this.getLatLng()
+        })
+
         this.on('click', () => {
             if (!isDefaultTool()) return
             if (svg.classList.contains('unit-selected'))
@@ -64,8 +67,11 @@ export default class UnitLayer extends Marker {
             else svg.classList.add('unit-selected')
         })
 
-        this.on('dragend', (e: LeafletMouseEvent) => {
-            this.unit.latlng = this.getLatLng()
+        this.on('middlemouseclick', () => this.openInfoPopup())
+
+        this.on('mouseup', (e: LeafletMouseEvent) => {
+            if (e.originalEvent.button === 1)
+                this.fire('middlemouseclick', e)
         })
     }
 
@@ -74,6 +80,20 @@ export default class UnitLayer extends Marker {
         this.setLatLng(latlng);
         (this.getIcon() as any).update(symbol, iconSize)
         this.fire('update', { latlng, symbol })
+    }
+
+    async openInfoPopup() {
+        if (!isDefaultTool()) return
+        const topographyStr = await getTopographyStr(this.unit.latlng)
+        const str = (
+            `${this.unit.toHierarchyString()}<br>` +
+            `Id: ${this.unit.id}<br>` +
+            '<hr>' +
+            topographyStr
+        )
+        this.bindPopup(str)
+        this.openPopup()
+        this.unbindPopup()
     }
 }
 
@@ -85,8 +105,6 @@ export function createIcon(symbol: MilSymbol, size: number) {
     const div = DomUtil.create('div', 'unit')
     const svg = DomUtil.create('svg', 'unit-milsymbol')
     const hitbox = DomUtil.create('div', 'unit-hitbox')
-    const hitboxAnchor = applySymbol(svg, symbol, size)
-    setHitboxLocation(hitbox, hitboxAnchor)
     hitbox.style.width = hitbox.style.height = size + 'px'
     div.append(svg, hitbox)
 
@@ -94,7 +112,16 @@ export function createIcon(symbol: MilSymbol, size: number) {
         className: 'unit-marker',
         html: div,
         iconAnchor: point(0, 0)
-    })
+    });
+
+    (icon as any).update = (symbol: MilSymbol, size: number) => {
+        const hitboxAnchor = applySymbol(svg, symbol, size)
+        icon.options.popupAnchor = [hitboxAnchor.x + iconSize / 2, hitboxAnchor.y]
+        setHitboxLocation(hitbox, hitboxAnchor)
+    };
+
+    (icon as any).update(symbol, size)
+
     return { icon, svg, hitbox }
 }
 

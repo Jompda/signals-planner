@@ -45,7 +45,7 @@ export default class Tool {
     }
     onEnabled() { }
     onDisabled() { }
-    mousedown(e: LeafletMouseEvent) {
+    mouseup(e: LeafletMouseEvent) {
         if (e.originalEvent.button === 1)
             if ('middlemouseclick' in this) (this as any).middlemouseclick(e)
     }

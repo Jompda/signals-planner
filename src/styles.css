@@ -253,9 +253,9 @@ body {
     border-collapse: collapse;
 }
 
-.link-stats>tr>td {
+.link-stats>tbody>tr>td {
     width: 6em;
-    border: 1px solid black;
+    border: 1px solid #adadad;
 }
 
 

@@ -6,6 +6,7 @@ import { showAddUnitMenu } from './unitmenus'
 import { addUnit as lgAddUnit, addLink as lgAddLink, getUnitById } from '../structurecontroller'
 import LinkLayer from '../components/linklayer'
 import UnitLayer from '../components/unitlayer'
+import { openTopographyPopup } from '../../topoutil'
 
 
 export function initContextMenu(map: LMap) {
@@ -20,7 +21,10 @@ export function initContextMenu(map: LMap) {
         text: 'Export',
         index: 6,
         callback: () => {
-            const str = JSON.stringify(serialize(), undefined, 2)
+            const str = JSON.stringify(serialize({
+                center: map.getCenter(),
+                zoom: map.getZoom()
+            }), undefined, 2)
             startDownload(new Date().toISOString() + '.json', 'application/json', str)
         }
     }, {
@@ -46,13 +50,14 @@ export function initContextMenu(map: LMap) {
             fileInput.click()
 
             function postLoad(parsed: any) {
-                const { units, links } = deserialize(parsed)
+                const { units, links, view } = deserialize(parsed)
                 for (const unit of units) {
                     lgAddUnit(new UnitLayer(unit))
                 }
                 for (const link of links) {
                     lgAddLink(new LinkLayer(link, getUnitById(link.unit0.id), getUnitById(link.unit1.id)))
                 }
+                map.setView([view.center.lat, view.center.lng], view.zoom)
             }
         }
     }, {
@@ -63,8 +68,9 @@ export function initContextMenu(map: LMap) {
         index: 9
     }]
     const baseContextMenuItems: Array<ContextMenuItem> = [{
-        text: '(Topography)',
-        index: 10
+        text: 'Topography',
+        index: 10,
+        callback: (e) => openTopographyPopup(map, e.latlng)
     }, {
         text: 'Center map here',
         index: 11,
