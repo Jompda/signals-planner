@@ -75,7 +75,7 @@ import './ui/menus/layercontrolmenu'
 import './ui/menus/toolbar'
 import { initContextMenu } from './ui/menus/contextmenu'
 import { addTo as lgAddTo } from './ui/structurecontroller'
-import { tileLayers } from './ui/tilelayers'
+import { baseLayers, overlays } from './ui/tilelayers'
 import addNodeTool from './ui/tools/addnodetool'
 import defaultTool from './ui/tools/defaultool'
 
@@ -92,5 +92,5 @@ lgAddTo(map)
 control.scale({ imperial: false }).addTo(map);
 
 
-(control as any).layerControl(tileLayers, { position: 'topright' }).addTo(map);
+(control as any).layerControl({ ...baseLayers, ...overlays }, { position: 'topright' }).addTo(map);
 (control as any).toolbar([defaultTool, addNodeTool], { position: 'topleft' }).addTo(map)
