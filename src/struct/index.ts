@@ -8,6 +8,13 @@ const units = new Map<string, Unit>()
 const links = new Map<string, Link>()
 
 
+let lastUnitId = 1
+export function getNewUnitId() {
+    while (unitIdExists(String(lastUnitId))) lastUnitId++
+    return String(lastUnitId)
+}
+
+
 export function getUnitById(id: string) {
     return units.get(id)
 }
