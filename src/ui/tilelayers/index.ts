@@ -13,7 +13,7 @@ export const baseLayers = {
 export const overlays = {
     'Topography: Elevation': customElevationLayer,
     'Luke: Avg. tree height': WMS.tileLayer('https://kartta.luke.fi/geoserver/MVMI/ows', {
-        attribution: '<a href="https://www.luke.fi/">Natural Resources Institute Finland</a> under <a href="https://creativecommons.org/licenses/by/4.0/legalcode">CC-4.0</a>',
+        attribution: '<a href="https://www.luke.fi/en">Natural Resources Institute Finland</a> under <a href="https://creativecommons.org/licenses/by/4.0/legalcode">CC-4.0</a>',
         tileSize: 256,
         layers: 'keskipituus_1519',
         transparent: true
