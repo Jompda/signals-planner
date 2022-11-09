@@ -24,3 +24,5 @@ declare module 'tiledata' {
     export function latlngToTileCoords(latlng: LatLng, z: number): TileCoords
     export function latlngToXYOnTile(latlng: LatLng, zoom: number): Point
 }
+
+declare module 'leaflet.wms'
