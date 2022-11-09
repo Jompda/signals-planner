@@ -17,6 +17,7 @@ export const overlays = {
         tileSize: 256,
         layers: 'keskipituus_1519',
         transparent: true,
-        format: 'image/png'
+        format: 'image/png',
+        lcOptions: '<img style="padding:0.5em" src="https://kartta.luke.fi/geoserver/MVMI/ows?service=WMS&version=1.3.0&request=GetLegendGraphic&format=image/png&layer=keskipituus_1519" />'
     })
 }

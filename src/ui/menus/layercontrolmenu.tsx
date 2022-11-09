@@ -174,7 +174,11 @@ function LayerModelOptions(props: any) {
                 />
                 <span>{state.toFixed(2)}</span>
             </div>
-            {props.layer.options.lcOptions}
+            {
+                (typeof props.layer.options.lcOptions) == 'string'
+                    ? <div dangerouslySetInnerHTML={{ __html: props.layer.options.lcOptions }}></div>
+                    : props.layer.options.lcOptions
+            }
         </>
     )
 }
