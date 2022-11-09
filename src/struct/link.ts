@@ -1,23 +1,20 @@
-import { LatLng } from 'leaflet'
 import { LineStats, LinkOptions, SaveLink } from '../interfaces'
 import Unit from './unit'
 import { getUnitById } from '.'
-import { getGeodesocLine_PDist100to200, getLineStats, getValues } from '../topoutil'
-
-
-const emitterHeight = 25
+import { createLosGetter, getGeodesocLine_PDist100to200, getLineStats, getValues } from '../topoutil'
 
 
 export default class Link {
     public id: string
     public unit0: Unit
     public unit1: Unit
-    public points: Array<LatLng>
+    public emitterHeight: number
     public values: Array<any>
     public stats: LineStats
     constructor(options: LinkOptions) {
         Object.assign(this, options)
         this.id = Link.createId(this.unit0, this.unit1)
+        this.emitterHeight = 25 // temp
     }
     static createId(unit0: Unit, unit1: Unit /* Medium etc.. */) {
         [unit0, unit1] = this.orderUnits(unit0, unit1)
@@ -38,13 +35,9 @@ export default class Link {
         const values = await getValues(latlngs, sourceNames, 10)
         const lineStats = getLineStats(values, sourceNames)
 
-        const unit0Elevation = values[0].elevation + emitterHeight
-        const unit1Elevation = values[values.length - 1].elevation + emitterHeight
-        const elevationDelta = unit1Elevation - unit0Elevation
-
-        function losElevationAtIndex(i: number) {
-            return unit0Elevation + (elevationDelta * (i / (values.length - 1)))
-        }
+        const unit0Elevation = values[0].elevation + this.emitterHeight
+        const unit1Elevation = values[values.length - 1].elevation + this.emitterHeight
+        const losElevationAtIndex = createLosGetter(unit0Elevation, unit1Elevation, values.length - 1)
 
         let highestObstacle = lineStats.peaks.values[0] - losElevationAtIndex(1)
         let highestObstacleI = 0

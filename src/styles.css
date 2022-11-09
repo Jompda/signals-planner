@@ -249,6 +249,18 @@ body {
 }
 
 
+.link-stats {
+    border-collapse: collapse;
+}
+
+.link-stats>tr>td {
+    width: 6em;
+    border: 1px solid black;
+}
+
+
+
+
 /*
  * Toolbar
  */

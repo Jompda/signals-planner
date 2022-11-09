@@ -1,7 +1,7 @@
 import { LatLng, latLng } from 'leaflet'
 import { SaveUnit, UnitOptions } from '../interfaces'
 import { Symbol as MilSymbol } from 'milsymbol'
-import { filterEmpty } from '../util'
+import { filterEmpty, symbolToHierarchyString } from '../util'
 
 
 export default class Unit {
@@ -16,6 +16,11 @@ export default class Unit {
     }
     setSymbol(symbol: MilSymbol) {
         this.symbol = symbol
+    }
+
+
+    toHierarchyString() {
+        return symbolToHierarchyString(this.symbol, this.id)
     }
 
 

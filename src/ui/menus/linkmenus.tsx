@@ -95,7 +95,7 @@ function LinkContructor(props: any) {
         <>
             <select disabled>
                 <option>
-                    {symbolToHierarchyString(props.unit.symbol, props.unit.id)}
+                    {props.unit.toHierarchyString()}
                 </option>
             </select>
             <UnitSelector
@@ -114,7 +114,7 @@ function UnitSelector(props: any) {
     const id = uuidv4()
 
     const units = props.units.map((u: Unit, i: number) => {
-        const str = symbolToHierarchyString(u.symbol, u.id)
+        const str = u.toHierarchyString()
         if (str.toLowerCase().indexOf(filter) < 0) return undefined
         return (
             <label key={i} className='unit-selector-button'>

@@ -4,7 +4,6 @@ import * as utm from 'utm'
 import { Map as LMap, LatLng as LLatLng, latLng, Topography, popup } from 'leaflet'
 import { asyncOperation, getMaxWorkers, round, workers } from './util'
 import LatLon from 'geodesy/latlon-spherical'
-import { LineStats } from './interfaces'
 
 
 export async function getElevation(latlng: LatLng, zoom: number) {
@@ -23,6 +22,12 @@ export async function openTopographyPopup(map: LMap, latlng: LLatLng) {
 }
 
 
+export function createLosGetter(elevation0: number, elevation1: number, lastIndex: number) {
+    const elevationDelta = elevation1 - elevation0
+    return (i: number) => elevation0 + (elevationDelta * (i / lastIndex))
+}
+
+
 export function getLineStats(latlngs: Array<any>, fields: Array<string>) {
     function sumAt(i: number) {
         let sum = 0
@@ -31,6 +36,7 @@ export function getLineStats(latlngs: Array<any>, fields: Array<string>) {
         return sum
     }
 
+    const distance = latlngs[0].latlng.distanceTo(latlngs[1].latlng)
     const extremes = {
         min: sumAt(0),
         iMin: 0,
@@ -62,6 +68,7 @@ export function getLineStats(latlngs: Array<any>, fields: Array<string>) {
     }
 
     return {
+        distance,
         extremes,
         peaks
     }

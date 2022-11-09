@@ -2,7 +2,8 @@ import { Polyline } from 'leaflet'
 import { ExtendedLayerOptions } from '../../interfaces'
 import { removeLink as structRemoveLink } from '../../struct'
 import Link from '../../struct/link'
-import { removeLink as lgRemoveLink } from '../structurecontroller'
+import { showLinkStatistics } from '../menus/linkstatistics'
+import { getMap, removeLink as lgRemoveLink } from '../structurecontroller'
 import { isDefaultTool } from '../toolcontroller'
 import UnitLayer from './unitlayer'
 
@@ -47,6 +48,7 @@ export default class LinkLayer extends Polyline {
         this.on('click', () => {
             if (!isDefaultTool()) return
             console.log('clicked link')
+            showLinkStatistics(getMap(), this)
         })
     }
 
