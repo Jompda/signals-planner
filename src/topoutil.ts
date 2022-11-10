@@ -1,4 +1,4 @@
-import * as tiledata from 'tiledata'
+import { latlngToTileCoords, latlngToXYOnTile, getTiledata } from 'tiledata'
 import * as mgrs from 'mgrs'
 import * as utm from 'utm'
 import { Map as LMap, LatLng as LLatLng, latLng, Topography, popup } from 'leaflet'
@@ -8,9 +8,9 @@ import { SourceName } from '.'
 
 
 export async function getElevation(latlng: LatLng, zoom: number) {
-    const coords = tiledata.latlngToTileCoords(latlng, zoom)
-    const xyOnTile = tiledata.latlngToXYOnTile(latlng, zoom)
-    const result = await tiledata.getTiledata<SourceName>(coords, ['elevation'])
+    const coords = latlngToTileCoords(latlng, zoom)
+    const xyOnTile = latlngToXYOnTile(latlng, zoom)
+    const result = await getTiledata<SourceName>(coords, ['elevation'])
     return result.elevation[xyOnTile.y * 256 + xyOnTile.x]
 }
 
@@ -81,7 +81,7 @@ export async function getValues(latlngs: Array<LatLng>, sourceNames: Array<Sourc
     const tiles = await getTiles(tileNames, sourceNames)
     for (const obj of mappedLatLngs) {
         const tile = tiles.get(obj.tileName)
-        const xyOnTile = tiledata.latlngToXYOnTile(obj.latlng, zoom)
+        const xyOnTile = latlngToXYOnTile(obj.latlng, zoom)
         for (const srcName of sourceNames) {
             obj[srcName] = tile[srcName][xyOnTile.y * 256 + xyOnTile.x]
         }
@@ -104,7 +104,7 @@ export function getTiles(tilesNames: Array<string>, sourceNames: Array<SourceNam
                     y: +parts[1],
                     z: +parts[2]
                 }
-                tiledata.getTiledata<SourceName>(tileCoords, sourceNames)
+                getTiledata<SourceName>(tileCoords, sourceNames)
                     .then(data => {
                         tiles.set(tileName, data)
                         check()
@@ -121,7 +121,7 @@ export function mapLatLngsToTiles(latlngs: Array<LatLng>, zoom: number) {
     const mapped = new Array()
     const tileNames = new Map<string, boolean>()
     for (const latlng of latlngs) {
-        const tileCoords = tiledata.latlngToTileCoords(latlng, zoom)
+        const tileCoords = latlngToTileCoords(latlng, zoom)
         const tileName = `${tileCoords.x}|${tileCoords.y}|${tileCoords.z}`
         const obj = { tileName, latlng }
         let arr = tileNames.get(tileName)

@@ -23,7 +23,7 @@ configure({
 })
 
 
-import * as tiledata from 'tiledata'
+import { setConfig as setTiledataConfig } from 'tiledata'
 export type SourceName = 'elevation' | 'treeHeight'
 const tileDataStorage = new Map<string, Record<SourceName, Int16Array>>()
 
@@ -44,7 +44,7 @@ const treeHeightsByColors = new Map([
     ['23,0,220', 21.9],
     ['40,31,149', 47]
 ])
-tiledata.setConfig<SourceName>({
+setTiledataConfig<SourceName>({
     sources: [
         {
             name: 'elevation',
