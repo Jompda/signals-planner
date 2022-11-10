@@ -19,14 +19,16 @@ declare interface TileCoords extends Point {
 }
 
 declare module 'tiledata' {
+    interface SourceDeclaration<T> {
+        name: T
+        url: string
+        valueFunction: (r: number, g: number, b: number) => number
+    }
     export function setConfig<SourceName extends string>(options: {
-        sources: Array<{
-            name: SourceName
-            type: 'wmts' | 'wms'
-            url: string
-            layers?: string
-            valueFunction: (r: number, g: number, b: number) => number
-        }>
+        sources: Array<
+            ({ type: 'wmts' } & SourceDeclaration<SourceName>) |
+            ({ type: 'wms', layers: string } & SourceDeclaration<SourceName>)
+        >
         saveDataByTile: (name: string, data: Record<SourceName, Int16Array>) => void
         getDataByTile: (name: string) => Record<SourceName, Int16Array>
     }): any
