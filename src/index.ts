@@ -3,7 +3,7 @@ import './styles.css'
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.css'
 import 'leaflet-dialog/Leaflet.Dialog.css'
 
-import { Map as LMap, MapOptions, control } from 'leaflet'
+import { Map as LMap, MapOptions, control, LeafletKeyboardEvent } from 'leaflet'
 import 'leaflet-contextmenu'
 import 'leaflet-dialog'
 
@@ -81,6 +81,7 @@ import { addTo as lgAddTo } from './ui/structurecontroller'
 import { baseLayers, overlays } from './ui/tilelayers'
 import addNodeTool from './ui/tools/addnodetool'
 import defaultTool from './ui/tools/defaultool'
+import { redo, undo } from './actionhistory'
 
 
 const map = new LMap('map', {
@@ -97,3 +98,18 @@ control.scale({ imperial: false }).addTo(map);
 
 (control as any).layerControl({ ...baseLayers, ...overlays }, { position: 'topright' }).addTo(map);
 (control as any).toolbar([defaultTool, addNodeTool], { position: 'topleft' }).addTo(map)
+
+map.on('keydown', (e: LeafletKeyboardEvent) => {
+    if (
+        e.originalEvent.ctrlKey
+        && !e.originalEvent.shiftKey
+        && !e.originalEvent.altKey
+        && e.originalEvent.key.toUpperCase() == 'Z'
+    ) undo()
+    if (
+        e.originalEvent.ctrlKey
+        && !e.originalEvent.shiftKey
+        && !e.originalEvent.altKey
+        && e.originalEvent.key.toUpperCase() == 'Y'
+    ) redo()
+})

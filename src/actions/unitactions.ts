@@ -1,6 +1,5 @@
 import { LatLng } from 'leaflet'
-import { addUnit as structAddUnit, getLinksByUnitId, removeUnit as structRemoveUnit } from '../struct'
-import LinkLayer from '../ui/components/linklayer'
+import { addUnit as structAddUnit, removeUnit as structRemoveUnit } from '../struct'
 import UnitLayer from '../ui/components/unitlayer'
 import { addUnit as lgAddUnit, getLinkLayersByUnitId, removeUnit as lgRemoveUnit } from '../ui/structurecontroller'
 import Action from './action'
