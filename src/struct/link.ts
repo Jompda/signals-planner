@@ -1,6 +1,5 @@
 import { LineStats, LinkOptions, SaveLink } from '../interfaces'
 import Unit from './unit'
-import { getUnitById } from '.'
 import { createLosGetter, getGeodesocLine_PDist100to200, getLineStats, getValues } from '../topoutil'
 import { SourceName } from '..'
 
@@ -77,7 +76,7 @@ export default class Link {
             unit1: this.unit1.id
         } as SaveLink
     }
-    static deserialize(obj: SaveLink) {
+    static deserialize(obj: SaveLink, getUnitById: (unitId: string) => Unit) {
         return new Link({
             unit0: getUnitById(obj.unit0),
             unit1: getUnitById(obj.unit1)

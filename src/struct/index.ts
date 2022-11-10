@@ -84,7 +84,7 @@ export function serialize(view: {
 }
 
 export function deserialize(obj: SaveStructure) {
-    const pUnits = [], pLinks = []
+    const pUnits = new Array<Unit>, pLinks = new Array<Link>
     const remappedIds = new Map<string, string>()
 
     for (const uObj of obj.units) {
@@ -109,10 +109,14 @@ export function deserialize(obj: SaveStructure) {
         }
     }
 
+    function linkUnitResolver(unitId: string) {
+        return pUnits.find(unit => unit.id == unitId)
+    }
+
     for (const lObj of obj.links) {
         lObj.unit0 = remappedIds.get(lObj.unit0)
         lObj.unit1 = remappedIds.get(lObj.unit1)
-        const link = Link.deserialize(lObj)
+        const link = Link.deserialize(lObj, linkUnitResolver)
         if (linkIdExists(link.id)) continue
         pLinks.push(link)
     }

@@ -13,12 +13,19 @@ export default class ImportAction extends Action {
     private links: Array<AddLinkAction>
     constructor(units: Array<Unit>, links: Array<Link>) {
         super()
+        const unitLayers = new Array<UnitLayer>()
         this.units = new Array<AddUnitAction>()
         this.links = new Array<AddLinkAction>()
-        for (const unit of units)
-            this.units.push(new AddUnitAction(new UnitLayer(unit)))
+        for (const unit of units) {
+            const unitLayer = new UnitLayer(unit)
+            unitLayers.push(unitLayer)
+            this.units.push(new AddUnitAction(unitLayer))
+        }
+        function linkUnitResolver(unitId: string) {
+            return unitLayers.find(unitLayer => unitLayer.unit.id == unitId)
+        }
         for (const link of links) {
-            this.links.push(new AddLinkAction(new LinkLayer(link, getUnitById(link.unit0.id), getUnitById(link.unit1.id))))
+            this.links.push(new AddLinkAction(new LinkLayer(link, linkUnitResolver(link.unit0.id), linkUnitResolver(link.unit1.id))))
         }
     }
     forward() {
