@@ -1,5 +1,5 @@
 import LinkLayer from '../ui/components/linklayer'
-import Action from "./action"
+import Action from './action'
 import { addLink as structAddLink, removeLink as structRemoveLink } from '../struct'
 import { addLink as lgAddLink, removeLink as lgRemoveLink } from '../ui/structurecontroller'
 
