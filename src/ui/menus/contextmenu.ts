@@ -7,10 +7,19 @@ import { addUnit as lgAddUnit, addLink as lgAddLink, getUnitById } from '../stru
 import LinkLayer from '../components/linklayer'
 import UnitLayer from '../components/unitlayer'
 import { openTopographyPopup } from '../../topoutil'
+import { redo, undo } from '../../actionhistory'
 
 
 export function initContextMenu(map: LMap) {
     const mapOnlyItems: Array<ContextMenuItem> = [{
+        text: 'Undo',
+        index: 2,
+        callback: (e) => undo()
+    }, {
+        text: 'Redo',
+        index: 3,
+        callback: (e) => redo()
+    }, {
         text: 'Add Unit',
         index: 4,
         callback: (e) => showAddUnitMenu(map, e)

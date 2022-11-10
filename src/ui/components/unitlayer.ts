@@ -8,6 +8,8 @@ import { showEditUnitMenu } from '../menus/unitmenus'
 import { showAddLinkMenu } from '../menus/linkmenus'
 import { isDefaultTool } from '../toolcontroller'
 import { getTopographyStr } from '../../topoutil'
+import { addAction } from '../../actionhistory'
+import { RemoveUnitAction } from '../../actions/unitactions'
 
 
 const iconSize = 40
@@ -16,7 +18,7 @@ const iconSize = 40
 export default class UnitLayer extends Marker {
     public unit: Unit
     constructor(unit: Unit) {
-        const { icon, svg, hitbox } = createIcon(unit.symbol, iconSize);
+        const { icon, svg } = createIcon(unit.symbol, iconSize);
         (svg as any).unitid = unit.id
 
         super(unit.latlng, {
@@ -24,8 +26,9 @@ export default class UnitLayer extends Marker {
             draggable: true,
             contextmenu: true,
             contextmenuItems: [{
-                text: '(Info)',
-                index: 0
+                text: 'Info',
+                index: 0,
+                callback: () => this.openInfoPopup()
             }, {
                 separator: true,
                 index: 1
@@ -43,10 +46,7 @@ export default class UnitLayer extends Marker {
             }, {
                 text: 'Remove',
                 index: 5,
-                callback: () => {
-                    structRemoveUnit(unit)
-                    lgRemoveUnit(this)
-                }
+                callback: () => addAction(new RemoveUnitAction(this).forward())
             }, {
                 separator: true,
                 index: 6

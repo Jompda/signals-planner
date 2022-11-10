@@ -2,10 +2,12 @@ import Tool from '../tool'
 import { Symbol as MilSymbol } from 'milsymbol'
 import { LeafletMouseEvent } from 'leaflet'
 import Unit from '../../struct/unit'
-import { addUnit as structAddUnit, getNewUnitId } from '../../struct'
-import { addUnit as lgAddUnit, getMap } from '../structurecontroller'
+import { getNewUnitId } from '../../struct'
+import { getMap } from '../structurecontroller'
 import { openTopographyPopup } from '../../topoutil'
 import UnitLayer from '../components/unitlayer'
+import { addAction } from '../../actionhistory'
+import { AddUnitAction } from '../../actions/unitactions'
 
 
 class AddNodeTool extends Tool {
@@ -28,13 +30,11 @@ class AddNodeTool extends Tool {
             uniqueDesignation: unitId,
             higherFormation: 'Node'
         })
-        const unitLayer = new UnitLayer(new Unit({
+        addAction(new AddUnitAction(new UnitLayer(new Unit({
             id: unitId,
             latlng: e.latlng,
             symbol
-        }))
-        structAddUnit(unitLayer.unit)
-        lgAddUnit(unitLayer)
+        }))).forward())
     }
     middlemouseclick(e: LeafletMouseEvent) {
         openTopographyPopup(getMap(), e.latlng)

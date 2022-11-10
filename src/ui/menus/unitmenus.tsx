@@ -4,10 +4,11 @@ import { CoordsInput } from '../components/coordsinput'
 import { MilSymbolEditor } from '../components/milsymboleditor'
 import { Symbol as MilSymbol } from 'milsymbol'
 import Unit from '../../struct/unit'
-import { addUnit as structAddUnit, getNewUnitId } from '../../struct'
-import { addUnit as lgAddUnit } from '../structurecontroller'
+import { getNewUnitId } from '../../struct'
 import { createDialog } from '../../util'
 import UnitLayer from '../components/unitlayer'
+import { AddUnitAction } from '../../actions/unitactions'
+import { addAction } from '../../actionhistory'
 
 
 export function showAddUnitMenu(map: LMap, e: LeafletMouseEvent) {
@@ -42,13 +43,11 @@ export function showAddUnitMenu(map: LMap, e: LeafletMouseEvent) {
             <div className='dialog-menu-submit'>
                 <br />
                 <button onClick={() => {
-                    const unitLayer = new UnitLayer(new Unit({
+                    addAction(new AddUnitAction(new UnitLayer(new Unit({
                         id: getNewUnitId(),
                         latlng: latlng || map.getCenter(),
                         symbol: milSymbol
-                    }))
-                    structAddUnit(unitLayer.unit)
-                    lgAddUnit(unitLayer)
+                    }))).forward())
                     dialog.close()
                 }}>Add</button>
                 <button onClick={() => {
