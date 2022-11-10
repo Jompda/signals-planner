@@ -100,13 +100,11 @@ export function deserialize(obj: SaveStructure) {
                 while (unitIdExists((lastId = unit.id + (i ? `(${i})` : '')))) i++
                 remappedIds.set(unit.id, lastId)
                 unit.id = lastId
-                addUnit(unit)
                 pUnits.push(unit)
             }
             else remappedIds.set(unit.id, unit.id)
         } else {
             remappedIds.set(unit.id, unit.id)
-            addUnit(unit)
             pUnits.push(unit)
         }
     }
@@ -116,7 +114,6 @@ export function deserialize(obj: SaveStructure) {
         lObj.unit1 = remappedIds.get(lObj.unit1)
         const link = Link.deserialize(lObj)
         if (linkIdExists(link.id)) continue
-        addLink(link)
         pLinks.push(link)
     }
 

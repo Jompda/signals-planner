@@ -3,11 +3,12 @@ import { ContextMenuItem } from '../../interfaces'
 import { deserialize, serialize } from '../../struct'
 import { startDownload } from '../../util'
 import { showAddUnitMenu } from './unitmenus'
-import { addUnit as lgAddUnit, addLink as lgAddLink, getUnitById } from '../structurecontroller'
+import { getUnitById } from '../structurecontroller'
 import LinkLayer from '../components/linklayer'
 import UnitLayer from '../components/unitlayer'
 import { openTopographyPopup } from '../../topoutil'
-import { redo, undo } from '../../actionhistory'
+import { addAction, redo, undo } from '../../actionhistory'
+import ImportAction from '../../actions/importaction'
 
 
 export function initContextMenu(map: LMap) {
@@ -42,6 +43,7 @@ export function initContextMenu(map: LMap) {
         callback: () => { // Create valid menus
             const fileInput = document.createElement('input')
             fileInput.setAttribute('type', 'file')
+            fileInput.setAttribute('accept', 'application/json')
             fileInput.setAttribute('multiple', '')
 
             fileInput.onchange = () => {
@@ -60,12 +62,7 @@ export function initContextMenu(map: LMap) {
 
             function postLoad(parsed: any) {
                 const { units, links, view } = deserialize(parsed)
-                for (const unit of units) {
-                    lgAddUnit(new UnitLayer(unit))
-                }
-                for (const link of links) {
-                    lgAddLink(new LinkLayer(link, getUnitById(link.unit0.id), getUnitById(link.unit1.id)))
-                }
+                addAction(new ImportAction(units, links).forward())
                 map.setView([view.center.lat, view.center.lng], view.zoom)
             }
         }
