@@ -1,5 +1,5 @@
 import { Map as LMap, LayerGroup } from 'leaflet'
-import { removeLink as structRemoveLink } from '../struct'
+import { getLinksByUnitId, removeLink as structRemoveLink } from '../struct'
 import UnitLayer from './components/unitlayer'
 import LinkLayer from './components/linklayer'
 
@@ -13,6 +13,13 @@ export function getUnitById(unitId: string) {
 }
 export function getLinkById(linkId: string) {
     return (linkLayers.getLayers() as Array<LinkLayer>).find(l => l.link.id == linkId)
+}
+
+export function getLinkLayersByUnitId(unitId: string) {
+    const linkLayers = new Array<LinkLayer>()
+    for (const link of getLinksByUnitId(unitId))
+        linkLayers.push(getLinkById(link.id))
+    return linkLayers
 }
 
 
@@ -78,32 +85,6 @@ export function removeUnit(unitLayer: UnitLayer) {
 
 
 export function addLink(linkLayer: LinkLayer) {
-    function update() {
-        linkLayer.update()
-    }
-
-    function rm() {
-        linkLayer.unit0.off('dragend', update)
-        linkLayer.unit1.off('dragend', update)
-        linkLayer.unit0.off('update', update)
-        linkLayer.unit1.off('update', update)
-        linkLayer.unit0.off('remove', rm)
-        linkLayer.unit1.off('remove', rm)
-        linkLayer.off('remove', rm)
-
-        removeLink(linkLayer)
-        structRemoveLink(linkLayer.link)
-    }
-
-    linkLayer.unit0.on('dragend', update)
-    linkLayer.unit1.on('dragend', update)
-    linkLayer.unit0.on('update', update)
-    linkLayer.unit1.on('update', update)
-    linkLayer.unit0.on('remove', rm)
-    linkLayer.unit1.on('remove', rm)
-    linkLayer.on('remove', rm)
-
-    update()
     linkLayers.addLayer(linkLayer)
 }
 export function removeLink(linkLayer: LinkLayer) {

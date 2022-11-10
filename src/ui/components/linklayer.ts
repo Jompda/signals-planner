@@ -1,9 +1,9 @@
 import { LeafletMouseEvent, Polyline } from 'leaflet'
+import { addAction } from '../../actionhistory'
+import { RemoveLinkAction } from '../../actions/linkactions'
 import { ExtendedLayerOptions } from '../../interfaces'
-import { removeLink as structRemoveLink } from '../../struct'
 import Link from '../../struct/link'
 import { showLinkStatistics } from '../menus/linkstatistics'
-import { removeLink as lgRemoveLink } from '../structurecontroller'
 import { isDefaultTool } from '../toolcontroller'
 import UnitLayer from './unitlayer'
 
@@ -32,10 +32,7 @@ export default class LinkLayer extends Polyline {
             }, {
                 text: 'Remove',
                 index: 3,
-                callback: () => {
-                    structRemoveLink(link)
-                    lgRemoveLink(this)
-                }
+                callback: () => addAction(new RemoveLinkAction(this).forward())
             }, {
                 separator: true,
                 index: 4
@@ -61,6 +58,23 @@ export default class LinkLayer extends Polyline {
             if (e.originalEvent.button === 1)
                 this.fire('middlemouseclick', e)
         })
+    }
+
+
+    addHandlers() {
+        this.unit0.on('dragend', this.update, this)
+        this.unit1.on('dragend', this.update, this)
+        this.unit0.on('update', this.update, this)
+        this.unit1.on('update', this.update, this)
+        this.update()
+    }
+
+
+    removeHandlers() {
+        this.unit0.off('dragend', this.update, this)
+        this.unit1.off('dragend', this.update, this)
+        this.unit0.off('update', this.update, this)
+        this.unit1.off('update', this.update, this)
     }
 
 

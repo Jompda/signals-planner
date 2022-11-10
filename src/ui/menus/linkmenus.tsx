@@ -9,6 +9,8 @@ import { createDialog } from '../../util'
 import { v4 as uuidv4 } from 'uuid'
 import UnitLayer from '../components/unitlayer'
 import LinkLayer from '../components/linklayer'
+import { addAction } from '../../actionhistory'
+import { AddLinkAction } from '../../actions/linkactions'
 
 
 export function showAddLinkMenu(map: LMap, unit0: UnitLayer) {
@@ -69,13 +71,9 @@ export function showAddLinkMenu(map: LMap, unit0: UnitLayer) {
                     <button onClick={() => {
                         if (!unit1) return // Tell user to select link.
                         if (linkIdExists(Link.createId(unit0.unit, unit1.unit))) throw new Error('Link id already exists!')
-                        const link = new Link({
-                            unit0: unit0.unit,
-                            unit1: unit1.unit
-                        })
+                        const link = new Link({ unit0: unit0.unit, unit1: unit1.unit })
                         const linkLayer = new LinkLayer(link, getUnitById(link.unit0.id), getUnitById(link.unit1.id))
-                        structAddLink(linkLayer.link)
-                        lgAddLink(linkLayer)
+                        addAction(new AddLinkAction(linkLayer).forward())
                         dialog.close()
                     }}>Add</button>
                     <button onClick={() => {

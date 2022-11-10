@@ -27,7 +27,6 @@ export function addUnit(unit: Unit) {
     return true
 }
 export function removeUnit(unit: Unit) {
-    console.log(units)
     if (!units.delete(unit.id)) return false
     for (const link of getLinksByUnitId(unit.id)) {
         removeLink(link)

@@ -1,8 +1,10 @@
 import { LatLng } from 'leaflet'
-import { addUnit as structAddUnit, removeUnit as structRemoveUnit } from '../struct'
+import { addUnit as structAddUnit, getLinksByUnitId, removeUnit as structRemoveUnit } from '../struct'
+import LinkLayer from '../ui/components/linklayer'
 import UnitLayer from '../ui/components/unitlayer'
-import { addUnit as lgAddUnit, removeUnit as lgRemoveUnit } from '../ui/structurecontroller'
+import { addUnit as lgAddUnit, getLinkLayersByUnitId, removeUnit as lgRemoveUnit } from '../ui/structurecontroller'
 import Action from './action'
+import { RemoveLinkAction } from './linkactions'
 
 
 abstract class UnitAction extends Action {
@@ -29,7 +31,10 @@ export class AddUnitAction extends UnitAction {
 
 
 export class RemoveUnitAction extends UnitAction {
+    private removedLinks: Array<RemoveLinkAction>
     forward() {
+        this.removedLinks = getLinkLayersByUnitId(this.unitLayer.unit.id)
+            .map(linkLayer => new RemoveLinkAction(linkLayer).forward())
         structRemoveUnit(this.unitLayer.unit)
         lgRemoveUnit(this.unitLayer)
         return this
@@ -37,6 +42,8 @@ export class RemoveUnitAction extends UnitAction {
     reverse() {
         structAddUnit(this.unitLayer.unit)
         lgAddUnit(this.unitLayer)
+        for (const rmAction of this.removedLinks)
+            rmAction.reverse()
         return this
     }
 }
