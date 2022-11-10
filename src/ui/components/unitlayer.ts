@@ -1,15 +1,13 @@
-import { LatLng, Marker, DomUtil, divIcon, point, LeafletMouseEvent, popup } from 'leaflet'
+import { LatLng, Marker, DomUtil, divIcon, point, LeafletMouseEvent } from 'leaflet'
 import { Symbol as MilSymbol } from 'milsymbol'
 import { ExtendedMarkerOptions } from '../../interfaces'
 import Unit from '../../struct/unit'
-import { removeUnit as structRemoveUnit } from '../../struct'
-import { removeUnit as lgRemoveUnit } from '../structurecontroller'
 import { showEditUnitMenu } from '../menus/unitmenus'
 import { showAddLinkMenu } from '../menus/linkmenus'
 import { isDefaultTool } from '../toolcontroller'
 import { getTopographyStr } from '../../topoutil'
 import { addAction } from '../../actionhistory'
-import { RemoveUnitAction } from '../../actions/unitactions'
+import { MoveUnitAction, RemoveUnitAction } from '../../actions/unitactions'
 
 
 const iconSize = 40
@@ -57,6 +55,7 @@ export default class UnitLayer extends Marker {
 
 
         this.on('dragend', () => {
+            addAction(new MoveUnitAction(this, this.unit.latlng, this.getLatLng()))
             this.unit.latlng = this.getLatLng()
         })
 
