@@ -74,6 +74,12 @@ export default class UnitLayer extends Marker {
         })
     }
 
+    setUnitLatLng(latlng: LatLng) {
+        this.unit.latlng = latlng
+        this.setLatLng(latlng)
+        this.fire('update', { latlng, symbol: this.unit.symbol })
+    }
+
     setLatLngSymbol(latlng: LatLng, symbol: MilSymbol) {
         this.unit.latlng = latlng
         this.setLatLng(latlng);

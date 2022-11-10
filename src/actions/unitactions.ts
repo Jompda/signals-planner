@@ -51,13 +51,11 @@ export class MoveUnitAction extends UnitAction {
         this.latlng1 = latlng1
     }
     forward() {
-        this.unitLayer.unit.latlng = this.latlng1
-        this.unitLayer.setLatLng(this.latlng1)
+        this.unitLayer.setUnitLatLng(this.latlng1)
         return this
     }
     reverse() {
-        this.unitLayer.unit.latlng = this.latlng0
-        this.unitLayer.setLatLng(this.latlng0)
+        this.unitLayer.setUnitLatLng(this.latlng0)
         return this
     }
 }
