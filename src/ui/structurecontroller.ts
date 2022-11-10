@@ -8,6 +8,14 @@ const unitLayers = new LayerGroup<UnitLayer>()
 const linkLayers = new LayerGroup<LinkLayer>()
 
 
+export function getUnitLayers() {
+    return unitLayers.getLayers() as Array<UnitLayer>
+}
+export function getLinkLayers() {
+    return linkLayers.getLayers() as Array<LinkLayer>
+}
+
+
 export function getUnitById(unitId: string) {
     return (unitLayers.getLayers() as Array<UnitLayer>).find(u => u.unit.id == unitId)
 }

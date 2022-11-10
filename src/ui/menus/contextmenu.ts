@@ -9,6 +9,7 @@ import UnitLayer from '../components/unitlayer'
 import { openTopographyPopup } from '../../topoutil'
 import { addAction, redo, undo } from '../../actionhistory'
 import ImportAction from '../../actions/importaction'
+import RemoveAllAction from '../../actions/removeallaction'
 
 
 export function initContextMenu(map: LMap) {
@@ -67,8 +68,9 @@ export function initContextMenu(map: LMap) {
             }
         }
     }, {
-        text: '(Remove All)',
-        index: 8
+        text: 'Remove All',
+        index: 8,
+        callback: () => addAction(new RemoveAllAction().forward())
     }, {
         separator: true,
         index: 9
