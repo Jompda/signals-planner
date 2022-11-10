@@ -69,11 +69,11 @@ export function showAddLinkMenu(map: LMap, unit0: UnitLayer) {
                     <button onClick={() => {
                         if (!unit1) return // Tell user to select link.
                         if (linkIdExists(Link.createId(unit0.unit, unit1.unit))) throw new Error('Link id already exists!')
-                        const [u0, u1] = Link.orderUnits(unit0.unit, unit1.unit)
-                        const linkLayer = new LinkLayer(new Link({
-                            unit0: u0,
-                            unit1: u1
-                        }), getUnitById(u0.id), getUnitById(u1.id))
+                        const link = new Link({
+                            unit0: unit0.unit,
+                            unit1: unit1.unit
+                        })
+                        const linkLayer = new LinkLayer(link, getUnitById(link.unit0.id), getUnitById(link.unit1.id))
                         structAddLink(linkLayer.link)
                         lgAddLink(linkLayer)
                         dialog.close()

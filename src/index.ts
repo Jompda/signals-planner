@@ -24,7 +24,10 @@ configure({
 
 
 import * as tiledata from 'tiledata'
-const tileDataStorage = new Map()
+export type SourceName = 'elevation' | 'treeHeight'
+const tileDataStorage = new Map<string, Record<SourceName, Int16Array>>()
+
+
 
 // Colors retrieved from: https://kartta.luke.fi/geoserver/MVMI/ows?service=WMS&version=1.3.0&request=GetLegendGraphic&format=image/png&width=20&height=20&layer=keskipituus_1519
 // Due to value incrementation and the last increment being 220dm - infinity, let's just use Finland's tallest tree as the max value :D
@@ -42,7 +45,7 @@ const treeHeightsByColors = new Map([
     ['23,0,220', 21.9],
     ['40,31,149', 47]
 ])
-tiledata.setConfig({
+tiledata.setConfig<SourceName>({
     sources: [
         {
             name: 'elevation',
@@ -64,7 +67,7 @@ tiledata.setConfig({
             }
         }
     ],
-    saveDataByTile: (name: string, data: any) => {
+    saveDataByTile: (name: string, data: Record<SourceName, Int16Array>) => {
         tileDataStorage.set(name, data)
     },
     getDataByTile: (name: string) => tileDataStorage.get(name)

@@ -4,12 +4,13 @@ import * as utm from 'utm'
 import { Map as LMap, LatLng as LLatLng, latLng, Topography, popup } from 'leaflet'
 import { asyncOperation, getMaxWorkers, round, workers } from './util'
 import LatLon from 'geodesy/latlon-spherical'
+import { SourceName } from '.'
 
 
 export async function getElevation(latlng: LatLng, zoom: number) {
     const coords = tiledata.latlngToTileCoords(latlng, zoom)
     const xyOnTile = tiledata.latlngToXYOnTile(latlng, zoom)
-    const result = await tiledata.getTiledata(coords, ['elevation'])
+    const result = await tiledata.getTiledata<SourceName>(coords, ['elevation'])
     return result.elevation[xyOnTile.y * 256 + xyOnTile.x]
 }
 
@@ -75,7 +76,7 @@ export function getLineStats(latlngs: Array<any>, fields: Array<string>) {
 }
 
 
-export async function getValues(latlngs: Array<LatLng>, sourceNames: Array<string>, zoom: number) {
+export async function getValues(latlngs: Array<LatLng>, sourceNames: Array<SourceName>, zoom: number) {
     const { latlngs: mappedLatLngs, tileNames } = mapLatLngsToTiles(latlngs, zoom)
     const tiles = await getTiles(tileNames, sourceNames)
     for (const obj of mappedLatLngs) {
@@ -89,7 +90,7 @@ export async function getValues(latlngs: Array<LatLng>, sourceNames: Array<strin
 }
 
 
-export function getTiles(tilesNames: Array<string>, sourceNames: Array<string>) {
+export function getTiles(tilesNames: Array<string>, sourceNames: Array<SourceName>) {
     return new Promise<Map<string, any>>((resolve, reject) => {
         const tiles = new Map<string, any>()
         const check = asyncOperation(tilesNames.length, undefined, () => {
@@ -103,7 +104,7 @@ export function getTiles(tilesNames: Array<string>, sourceNames: Array<string>) 
                     y: +parts[1],
                     z: +parts[2]
                 }
-                tiledata.getTiledata(tileCoords, sourceNames)
+                tiledata.getTiledata<SourceName>(tileCoords, sourceNames)
                     .then(data => {
                         tiles.set(tileName, data)
                         check()

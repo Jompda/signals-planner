@@ -2,6 +2,7 @@ import { LineStats, LinkOptions, SaveLink } from '../interfaces'
 import Unit from './unit'
 import { getUnitById } from '.'
 import { createLosGetter, getGeodesocLine_PDist100to200, getLineStats, getValues } from '../topoutil'
+import { SourceName } from '..'
 
 
 export default class Link {
@@ -13,8 +14,14 @@ export default class Link {
     public stats: LineStats
     constructor(options: LinkOptions) {
         Object.assign(this, options)
-        this.id = Link.createId(this.unit0, this.unit1)
+        this.reorder()
         this.emitterHeight = 25 // temp
+    }
+    reorder() {
+        const [unit0, unit1] = Link.orderUnits(this.unit0, this.unit1)
+        this.unit0 = unit0
+        this.unit1 = unit1
+        this.id = Link.createId(this.unit0, this.unit1)
     }
     static createId(unit0: Unit, unit1: Unit /* Medium etc.. */) {
         [unit0, unit1] = this.orderUnits(unit0, unit1)
@@ -30,7 +37,7 @@ export default class Link {
 
 
     async calculate() {
-        const sourceNames = ['elevation', 'treeHeight']
+        const sourceNames = ['elevation', 'treeHeight'] as Array<SourceName>
         const { latlngs, delta } = getGeodesocLine_PDist100to200(this.unit0.latlng, this.unit1.latlng)
         const values = await getValues(latlngs, sourceNames, 10)
         const lineStats = getLineStats(values, sourceNames)

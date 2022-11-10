@@ -65,6 +65,12 @@ export default class LinkLayer extends Polyline {
 
 
     async update() {
+        this.link.reorder()
+        if (this.unit0.unit.id != this.link.unit0.id) {
+            const temp = this.unit0
+            this.unit0 = this.unit1
+            this.unit1 = temp
+        }
         const { values, stats } = await this.link.calculate()
         const endPoints = getEndPoints(this.unit0, this.unit1)
         this.setLatLngs(endPoints)
@@ -83,7 +89,6 @@ export default class LinkLayer extends Polyline {
         })
 
         this.fire('update', { endPoints, values, stats })
-        console.log(values, stats)
     }
 }
 
