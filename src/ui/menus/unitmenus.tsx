@@ -7,7 +7,7 @@ import Unit from '../../struct/unit'
 import { getNewUnitId } from '../../struct'
 import { createDialog } from '../../util'
 import UnitLayer from '../components/unitlayer'
-import { AddUnitAction } from '../../actions/unitactions'
+import { AddUnitAction, EditUnitAction } from '../../actions/unitactions'
 import { addAction } from '../../actionhistory'
 
 
@@ -119,7 +119,11 @@ export function showEditUnitMenu(map: LMap, unitLayer: UnitLayer) {
                 <div className='dialog-menu-submit'>
                     <br />
                     <button onClick={() => {
-                        unitLayer.setLatLngSymbol(latlng || map.getCenter(), milSymbol)
+                        addAction(new EditUnitAction(
+                            unitLayer,
+                            unitLayer.unit.latlng, latlng || map.getCenter(),
+                            unitLayer.unit.symbol, milSymbol
+                        ).forward())
                         dialog.close()
                     }}>Save</button>
                     <button onClick={() => {

@@ -3,6 +3,7 @@ import { addAction } from '../../actionhistory'
 import { RemoveLinkAction } from '../../actions/linkactions'
 import { ExtendedLayerOptions } from '../../interfaces'
 import Link from '../../struct/link'
+import { showEditLinkMenu } from '../menus/linkmenus'
 import { showLinkStatistics } from '../menus/linkstatistics'
 import { isDefaultTool } from '../toolcontroller'
 import UnitLayer from './unitlayer'
@@ -27,8 +28,9 @@ export default class LinkLayer extends Polyline {
                 separator: true,
                 index: 1
             }, {
-                text: '(Edit)',
-                index: 2
+                text: 'Edit',
+                index: 2,
+                callback: () => showEditLinkMenu(this._map, this)
             }, {
                 text: 'Remove',
                 index: 3,

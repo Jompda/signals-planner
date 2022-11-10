@@ -28,7 +28,6 @@ export type SourceName = 'elevation' | 'treeHeight'
 const tileDataStorage = new Map<string, Record<SourceName, Int16Array>>()
 
 
-
 // Colors retrieved from: https://kartta.luke.fi/geoserver/MVMI/ows?service=WMS&version=1.3.0&request=GetLegendGraphic&format=image/png&width=20&height=20&layer=keskipituus_1519
 // Due to value incrementation and the last increment being 220dm - infinity, let's just use Finland's tallest tree as the max value :D
 const treeHeightsByColors = new Map([
@@ -100,16 +99,13 @@ control.scale({ imperial: false }).addTo(map);
 (control as any).toolbar([defaultTool, addNodeTool], { position: 'topleft' }).addTo(map)
 
 map.on('keydown', (e: LeafletKeyboardEvent) => {
+    const event = e.originalEvent
     if (
-        e.originalEvent.ctrlKey
-        && !e.originalEvent.shiftKey
-        && !e.originalEvent.altKey
-        && e.originalEvent.key.toUpperCase() == 'Z'
+        event.ctrlKey && !event.shiftKey && !event.altKey
+        && event.key.toUpperCase() == 'Z'
     ) undo()
     if (
-        e.originalEvent.ctrlKey
-        && !e.originalEvent.shiftKey
-        && !e.originalEvent.altKey
-        && e.originalEvent.key.toUpperCase() == 'Y'
+        event.ctrlKey && !event.shiftKey && !event.altKey
+        && event.key.toUpperCase() == 'Y'
     ) redo()
 })

@@ -5,6 +5,7 @@ import { createLosGetter, getGeodesocLine_PDist100to200, getLineStats, getValues
 import { SourceName } from '..'
 
 
+// TODO: Add support for mediums (radios and cables).
 export default class Link {
     public id: string
     public unit0: Unit

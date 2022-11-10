@@ -43,3 +43,16 @@ export class RemoveLinkAction extends LinkAction {
         return this
     }
 }
+
+
+export class EditLinkAction extends LinkAction {
+    forward() {
+        // TODO: After adding mediums implement EditLinkAction.
+        console.log('implement')
+        return this
+    }
+    reverse() {
+        console.log('implement')
+        return this
+    }
+}

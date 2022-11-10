@@ -4,6 +4,7 @@ import UnitLayer from '../ui/components/unitlayer'
 import { addUnit as lgAddUnit, getLinkLayersByUnitId, removeUnit as lgRemoveUnit } from '../ui/structurecontroller'
 import Action from './action'
 import { RemoveLinkAction } from './linkactions'
+import { Symbol as MilSymbol } from 'milsymbol'
 
 
 abstract class UnitAction extends Action {
@@ -49,8 +50,8 @@ export class RemoveUnitAction extends UnitAction {
 
 
 export class MoveUnitAction extends UnitAction {
-    private latlng0: LatLng
-    private latlng1: LatLng
+    protected latlng0: LatLng
+    protected latlng1: LatLng
     constructor(unitLayer: UnitLayer, latlng0: LatLng, latlng1: LatLng) {
         super(unitLayer)
         this.latlng0 = latlng0
@@ -62,6 +63,25 @@ export class MoveUnitAction extends UnitAction {
     }
     reverse() {
         this.unitLayer.setUnitLatLng(this.latlng0)
+        return this
+    }
+}
+
+
+export class EditUnitAction extends MoveUnitAction {
+    private symbol0: MilSymbol
+    private symbol1: MilSymbol
+    constructor(unitLayer: UnitLayer, latlng0: LatLng, latlng1: LatLng, symbol0: MilSymbol, symbol1: MilSymbol) {
+        super(unitLayer, latlng0, latlng1)
+        this.symbol0 = symbol0
+        this.symbol1 = symbol1
+    }
+    forward() {
+        this.unitLayer.setLatLngSymbol(this.latlng1, this.symbol1)
+        return this
+    }
+    reverse() {
+        this.unitLayer.setLatLngSymbol(this.latlng0, this.symbol0)
         return this
     }
 }

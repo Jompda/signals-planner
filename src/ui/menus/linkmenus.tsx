@@ -2,8 +2,8 @@ import { Map as LMap, DomUtil, DomEvent } from 'leaflet'
 import { createRoot } from 'react-dom/client'
 import Link from '../../struct/link'
 import Unit from '../../struct/unit'
-import { addLink as structAddLink, getUnits, linkIdExists } from '../../struct'
-import { addLink as lgAddLink, getUnitById, structureEvents } from '../structurecontroller'
+import { getUnits, linkIdExists } from '../../struct'
+import { getUnitById, structureEvents } from '../structurecontroller'
 import { useRef, useState } from 'react'
 import { createDialog } from '../../util'
 import { v4 as uuidv4 } from 'uuid'
@@ -13,7 +13,7 @@ import { addAction } from '../../actionhistory'
 import { AddLinkAction } from '../../actions/linkactions'
 
 
-export function showAddLinkMenu(map: LMap, unit0: UnitLayer) {
+export function showAddLinkMenu(map: LMap, unitLayer0: UnitLayer) {
     const dialog = createDialog(map, {
         size: [400, 400],
         maxSize: [400, 700],
@@ -35,10 +35,9 @@ export function showAddLinkMenu(map: LMap, unit0: UnitLayer) {
     structureEvents.addEventListener('updateunit', onUpdateUnits)
     structureEvents.addEventListener('addunit', onUpdateUnits)
     structureEvents.addEventListener('removeunit', onUpdateUnits)
-    unit0.on('remove', onUnitRemove)
+    unitLayer0.on('remove', onUnitRemove)
 
     function onUpdateUnits() {
-        console.log('updateunits')
         root.unmount()
         root = createUI(container)
     }
@@ -49,7 +48,7 @@ export function showAddLinkMenu(map: LMap, unit0: UnitLayer) {
         structureEvents.removeEventListener('updateunit', onUpdateUnits)
         structureEvents.removeEventListener('addunit', onUpdateUnits)
         structureEvents.removeEventListener('removeunit', onUpdateUnits)
-        unit0.off('remove', onUnitRemove)
+        unitLayer0.off('remove', onUnitRemove)
     }
 
 
@@ -59,7 +58,7 @@ export function showAddLinkMenu(map: LMap, unit0: UnitLayer) {
             <>
                 <h1>Add Link:</h1>
                 <LinkContructor
-                    unit={unit0.unit}
+                    unit={unitLayer0.unit}
                     updateTargetUnit={(unit1Id: string) =>
                         unit1 = getUnitById(unit1Id)
                     }
@@ -70,8 +69,8 @@ export function showAddLinkMenu(map: LMap, unit0: UnitLayer) {
                     <br />
                     <button onClick={() => {
                         if (!unit1) return // Tell user to select link.
-                        if (linkIdExists(Link.createId(unit0.unit, unit1.unit))) throw new Error('Link id already exists!')
-                        const link = new Link({ unit0: unit0.unit, unit1: unit1.unit })
+                        if (linkIdExists(Link.createId(unitLayer0.unit, unit1.unit))) throw new Error('Link id already exists!')
+                        const link = new Link({ unit0: unitLayer0.unit, unit1: unit1.unit })
                         const linkLayer = new LinkLayer(link, getUnitById(link.unit0.id), getUnitById(link.unit1.id))
                         addAction(new AddLinkAction(linkLayer).forward())
                         dialog.close()
@@ -144,4 +143,67 @@ function UnitSelector(props: any) {
             </div>
         </>
     )
+}
+
+
+export function showEditLinkMenu(map: LMap, linkLayer: LinkLayer) {
+    const dialog = createDialog(map, {
+        size: [400, 400],
+        maxSize: [400, 700],
+        minSize: [400, 400],
+        anchor: [innerHeight / 2 - 350, 0],
+        position: 'topleft',
+        initOpen: true,
+        onClose: onDialogClose
+    })
+
+    const container = DomUtil.create('div', 'dialog-menu')
+    DomEvent.disableClickPropagation(container)
+    DomEvent.disableScrollPropagation(container)
+    dialog.setContent(container)
+    let root = createUI(container)
+
+    linkLayer.on('update', onUpdateLink)
+    linkLayer.on('remove', onLinkRemove)
+
+    function onUpdateLink() {
+        root.unmount()
+        root = createUI(container)
+    }
+    function onLinkRemove() {
+        dialog.close()
+    }
+    function onDialogClose() {
+        linkLayer.off('update', onUpdateLink)
+        linkLayer.off('remove', onLinkRemove)
+    }
+
+
+    function createUI(container: HTMLElement) {
+        const root = createRoot(container)
+        root.render(
+            <>
+                <h1>Edit Link:</h1>
+                <select disabled>
+                    <option>{linkLayer.unit0.unit.toHierarchyString()}</option>
+                </select>
+                <select disabled>
+                    <option>{linkLayer.unit1.unit.toHierarchyString()}</option>
+                </select>
+                <hr />
+                <div className='grower'></div>
+                <div className='dialog-menu-submit'>
+                    <br />
+                    <button onClick={() => {
+                        // edit
+                        dialog.close()
+                    }}>Add</button>
+                    <button onClick={() => {
+                        dialog.close()
+                    }}>Cancel</button>
+                </div>
+            </>
+        )
+        return root
+    }
 }
