@@ -36,6 +36,9 @@ export default class Link {
     }
 
 
+    // TODO: Read "Sotilassovelluksissa käytettävät vaimenemismallit VHF-taajuusalueella" and implement a model
+    // Author: Mikkonen, Simo (2015)
+    // https://www.doria.fi/handle/10024/118719
     async calculate() {
         const sourceNames = ['elevation', 'treeHeight'] as Array<SourceName>
         const { latlngs, delta } = getGeodesocLine_PDist100to200(this.unit0.latlng, this.unit1.latlng)
