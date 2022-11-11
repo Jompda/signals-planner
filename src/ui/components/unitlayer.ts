@@ -15,6 +15,7 @@ const iconSize = 40
 
 export default class UnitLayer extends Marker {
     public unit: Unit
+    private svg: HTMLElement
     constructor(unit: Unit) {
         const { icon, svg } = createIcon(unit.symbol, iconSize);
         (svg as any).unitid = unit.id
@@ -52,27 +53,26 @@ export default class UnitLayer extends Marker {
         } as ExtendedMarkerOptions)
 
         this.unit = unit
+        this.svg = svg
 
-
-        this.on('dragend', () => {
-            addAction(new MoveUnitAction(this, this.unit.latlng, this.getLatLng()))
-            this.unit.latlng = this.getLatLng()
-        })
-
-        this.on('click', () => {
-            if (!isDefaultTool()) return
-            if (svg.classList.contains('unit-selected'))
-                svg.classList.remove('unit-selected')
-            else svg.classList.add('unit-selected')
-        })
-
-        this.on('middlemouseclick', () => this.openInfoPopup())
-
-        this.on('mouseup', (e: LeafletMouseEvent) => {
-            if (e.originalEvent.button === 1)
-                this.fire('middlemouseclick', e)
-        })
+        this.addHandlers()
     }
+
+
+    addHandlers() {
+        this.on('dragend', this.dragEnd, this)
+        this.on('click', this.click, this)
+        this.on('middlemouseclick', this.openInfoPopup, this)
+        this.on('mouseup', this.mouseUp, this)
+    }
+
+    removeHandlers() {
+        this.off('dragend', this.dragEnd)
+        this.off('click', this.click)
+        this.off('middlemouseclick', this.openInfoPopup)
+        this.off('mouseup', this.mouseUp)
+    }
+
 
     setUnitLatLng(latlng: LatLng) {
         this.unit.latlng = latlng
@@ -99,6 +99,22 @@ export default class UnitLayer extends Marker {
         this.bindPopup(str)
         this.openPopup()
         this.unbindPopup()
+    }
+
+
+    dragEnd() {
+        addAction(new MoveUnitAction(this, this.unit.latlng, this.getLatLng()))
+        this.unit.latlng = this.getLatLng()
+    }
+    click() {
+        if (!isDefaultTool()) return
+        if (this.svg.classList.contains('unit-selected'))
+            this.svg.classList.remove('unit-selected')
+        else this.svg.classList.add('unit-selected')
+    }
+    mouseUp(e: LeafletMouseEvent) {
+        if (e.originalEvent.button === 1)
+            this.fire('middlemouseclick', e)
     }
 }
 

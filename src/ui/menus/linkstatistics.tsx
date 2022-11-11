@@ -47,7 +47,7 @@ export function showLinkStatistics(map: LMap, linkLayer: LinkLayer) {
         onClose: onDialogClose
     })
     if (closeActive) closeActive()
-    closeActive = () => dialog.close()
+    const closer = closeActive = () => dialog.close()
 
     const highlight = new CircleMarker(linkLayer.link.unit0.latlng, { radius: 10 }).addTo(map)
 
@@ -73,6 +73,7 @@ export function showLinkStatistics(map: LMap, linkLayer: LinkLayer) {
         linkLayer.off('update', onLinkUpdate)
         linkLayer.off('remove', onLinkRemove)
         highlight.remove()
+        if (closeActive == closer) closeActive = undefined
     }
 
 

@@ -45,38 +45,32 @@ export default class LinkLayer extends Polyline {
         this.unit0 = unit0
         this.unit1 = unit1
 
-
-        this.on('click', () => {
-            if (!isDefaultTool()) return
-            console.log('clicked link')
-        })
-
-        this.on('middlemouseclick', () => {
-            if (!isDefaultTool()) return
-            showLinkStatistics(this._map, this)
-        })
-
-        this.on('mouseup', (e: LeafletMouseEvent) => {
-            if (e.originalEvent.button === 1)
-                this.fire('middlemouseclick', e)
-        })
-    }
-
-
-    addHandlers() {
-        this.unit0.on('dragend', this.update, this)
-        this.unit1.on('dragend', this.update, this)
-        this.unit0.on('update', this.update, this)
-        this.unit1.on('update', this.update, this)
+        this.addHandlers()
         this.update()
     }
 
 
+    addHandlers() {
+        this.on('click', this.click, this)
+        this.on('middlemouseclick', this.middleMouseClick, this)
+        this.on('mouseup', this.mouseUp, this)
+
+        this.unit0.on('dragend', this.update, this)
+        this.unit1.on('dragend', this.update, this)
+        this.unit0.on('update', this.update, this)
+        this.unit1.on('update', this.update, this)
+    }
+
+
     removeHandlers() {
-        this.unit0.off('dragend', this.update, this)
-        this.unit1.off('dragend', this.update, this)
-        this.unit0.off('update', this.update, this)
-        this.unit1.off('update', this.update, this)
+        this.off('click', this.click)
+        this.off('middlemouseclick', this.middleMouseClick)
+        this.off('mouseup', this.mouseUp)
+
+        this.unit0.off('dragend', this.update)
+        this.unit1.off('dragend', this.update)
+        this.unit0.off('update', this.update)
+        this.unit1.off('update', this.update)
     }
 
 
@@ -105,6 +99,20 @@ export default class LinkLayer extends Polyline {
         })
 
         this.fire('update', { endPoints, values, stats })
+    }
+
+
+    click() {
+        if (!isDefaultTool()) return
+        console.log('clicked link')
+    }
+    middleMouseClick() {
+        if (!isDefaultTool()) return
+        showLinkStatistics(this._map, this)
+    }
+    mouseUp(e: LeafletMouseEvent) {
+        if (e.originalEvent.button === 1)
+            this.fire('middlemouseclick', e)
     }
 }
 
