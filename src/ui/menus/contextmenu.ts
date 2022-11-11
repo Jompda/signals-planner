@@ -15,12 +15,15 @@ import RemoveAllAction from '../../actions/removeallaction'
 export function initContextMenu(map: LMap) {
     const mapOnlyItems: Array<ContextMenuItem> = [{
         text: 'Undo',
-        index: 2,
-        callback: (e) => undo()
+        index: 1,
+        callback: undo
     }, {
         text: 'Redo',
-        index: 3,
-        callback: (e) => redo()
+        index: 2,
+        callback: redo
+    }, {
+        separator: true,
+        index: 3
     }, {
         text: 'Add Unit',
         index: 4,
