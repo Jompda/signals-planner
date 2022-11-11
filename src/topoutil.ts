@@ -7,11 +7,11 @@ import LatLon from 'geodesy/latlon-spherical'
 import { SourceName } from '.'
 
 
-export async function getElevation(latlng: LatLng, zoom: number) {
+export async function getTopographyValues<SourceName extends string>(sourceNames: Array<SourceName>, latlng: LatLng, zoom: number) {
     const coords = latlngToTileCoords(latlng, zoom)
     const xyOnTile = latlngToXYOnTile(latlng, zoom)
-    const result = await getTiledata<SourceName>(coords, ['elevation'])
-    return result.elevation[xyOnTile.y * 256 + xyOnTile.x]
+    const result = await getTiledata<SourceName>(coords, sourceNames)
+    return sourceNames.map(sourceName => result[sourceName][xyOnTile.y * 256 + xyOnTile.x])
 }
 
 
@@ -168,16 +168,20 @@ export function getGeodesicLine(latlng0: LatLng, latlng1: LatLng, steps: number)
 
 
 export async function getTopographyStr(latlng: LLatLng) {
-    const result = await Topography.getTopography(latlng)
+    const [topography, treeHeight] = await Promise.all([
+        Topography.getTopography(latlng),
+        getTopographyValues(['treeHeight'], latlng, 10)
+    ])
     let str =
         'Lat: ' + String(round(latlng.lat, 6)).padEnd(9, '0') + '<br>' +
         'Lng: ' + String(round(latlng.lng, 6)).padEnd(9, '0') + '<br>' +
         'MGRS: ' + mgrs.forward([latlng.lng, latlng.lat]) + '<br>' +
         'UTM: ' + latlngToUtm(latlng) + '<br>' +
-        'Elevation: ' + round(result.elevation) + 'm<br>' +
-        'Slope: ' + round(result.slope) + '°<br>' +
-        'Aspect: ' + round(result.aspect) + '°<br>' +
-        'Resolution: ' + round(result.resolution)
+        'Tree height: ' + treeHeight[0] + 'm<br>' +
+        'Elevation: ' + round(topography.elevation) + 'm<br>' +
+        'Slope: ' + round(topography.slope) + '°<br>' +
+        'Aspect: ' + round(topography.aspect) + '°<br>' +
+        'Resolution: ' + round(topography.resolution)
     return str
 }
 

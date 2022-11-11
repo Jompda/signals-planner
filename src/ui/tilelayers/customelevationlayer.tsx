@@ -2,7 +2,8 @@ import { TopoLayer, TopoLayerOptions } from 'leaflet-topography'
 import { useRef, useState } from 'react'
 import { asyncOperation, createMapboxTerrainAttribution, workers, getMaxWorkers } from '../../util'
 import { getMap } from '../structurecontroller'
-import { getElevation } from '../../topoutil'
+import { getTopographyValues } from '../../topoutil'
+import { SourceName } from '../..'
 
 
 const breakpoints = [0, 150, 250, 350, 500]
@@ -166,7 +167,7 @@ function fitToView(progressFunction: (state: number) => any, done: Function) {
     let i = 0
     const elevations = new Array<number>()
     workers(latlngs, async (latlng: LatLng) => {
-        elevations.push(await getElevation(latlng, zoom))
+        elevations.push((await getTopographyValues(['elevation'] as Array<SourceName>, latlng, zoom))[0])
         progressFunction(++i / latlngs.length)
         check()
     }, getMaxWorkers())
