@@ -66,7 +66,6 @@ export function showAddLinkMenu(map: LMap, unitLayer0: UnitLayer) {
                 <hr />
                 <div className='grower'></div>
                 <div className='dialog-menu-submit'>
-                    <br />
                     <button onClick={() => {
                         if (!unit1) return // Tell user to select link.
                         if (linkIdExists(Link.createId(unitLayer0.unit, unit1.unit))) throw new Error('Link id already exists!')
@@ -193,7 +192,6 @@ export function showEditLinkMenu(map: LMap, linkLayer: LinkLayer) {
                 <hr />
                 <div className='grower'></div>
                 <div className='dialog-menu-submit'>
-                    <br />
                     <button onClick={() => {
                         // edit
                         dialog.close()

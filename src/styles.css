@@ -44,9 +44,12 @@ body {
 }
 
 .dialog-menu-submit {
-    display: grid;
-    grid-template-columns: auto 5em 5em;
-    grid-column-gap: 0.5em;
+    display: flex;
+    justify-content: end;
+}
+
+.dialog-menu-submit>*:not(:last-child) {
+    margin: 0 0.5em;
 }
 
 

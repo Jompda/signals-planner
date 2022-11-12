@@ -36,6 +36,17 @@ import { createDialog } from '../../util';
         return container
     },
 
+    toggleDialog: function () {
+        if (this.dialogShowing) {
+            this._dialog.close()
+            this.dialogShowing = false
+        }
+        else {
+            this._dialog.open()
+            this.dialogShowing = true
+        }
+    },
+
     createDialog: function () {
         const dialog = this._dialog = createDialog(this._map, {
             size: [600, 500],
@@ -51,16 +62,26 @@ import { createDialog } from '../../util';
         DomEvent.disableScrollPropagation(container)
         dialog.setContent(container)
         dialog.close()
-    },
 
-    toggleDialog: function () {
-        if (this.dialogShowing) {
-            this._dialog.close()
-            this.dialogShowing = false
-        }
-        else {
-            this._dialog.open()
-            this.dialogShowing = true
-        }
-    }
+        const root = createRoot(container)
+        root.render(<OptionsMenu />)
+    },
 })
+
+
+function OptionsMenu(props: any) {
+
+    return (
+        <>
+            <h1>Options Menu</h1>
+            <hr />
+            <div className='grower'></div>
+            <div className='dialog-menu-submit'>
+                <button onClick={() => props.apply()}>Apply</button>
+                <button onClick={() => {
+                    console.log('TODO: RESET')
+                }}>Restore defaults</button>
+            </div>
+        </>
+    )
+}

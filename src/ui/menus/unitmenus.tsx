@@ -41,7 +41,6 @@ export function showAddUnitMenu(map: LMap, e: LeafletMouseEvent) {
             <hr />
             <div className='grower'></div>
             <div className='dialog-menu-submit'>
-                <br />
                 <button onClick={() => {
                     addAction(new AddUnitAction(new UnitLayer(new Unit({
                         id: getNewUnitId(),
@@ -117,7 +116,6 @@ export function showEditUnitMenu(map: LMap, unitLayer: UnitLayer) {
                 <hr />
                 <div className='grower'></div>
                 <div className='dialog-menu-submit'>
-                    <br />
                     <button onClick={() => {
                         addAction(new EditUnitAction(
                             unitLayer,
