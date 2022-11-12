@@ -4,11 +4,12 @@ import Link from "./link"
 export type MediumType = 'radio' | 'cable'
 
 
-export class Medium {
+export abstract class Medium {
     public type: MediumType
     constructor(type: MediumType) {
         this.type = type
     }
+    abstract calculateLinkStats(link: Link): any
 }
 
 
@@ -24,7 +25,7 @@ export class RadioMedium extends Medium {
         Object.apply(this, options)
     }
     // TODO: Implement a prediction model i.e. Egli.
-    calculate(link: Link) {
+    calculateLinkStats(link: Link) {
         return {
             dBm: NaN,
             RSSI: NaN,
@@ -46,7 +47,7 @@ export class CableMedium extends Medium {
         super('cable')
         Object.apply(this, options)
     }
-    calculate(link: Link) {
+    calculateLinkStats(link: Link) {
         return {
             cost: NaN
         }
