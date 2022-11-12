@@ -73,6 +73,7 @@ setTiledataConfig<SourceName>({
 })
 
 
+import './ui/menus/optionsmenu'
 import './ui/menus/layercontrolmenu'
 import './ui/menus/toolbar'
 import { initContextMenu } from './ui/menus/contextmenu'
@@ -95,6 +96,7 @@ lgAddTo(map)
 control.scale({ imperial: false }).addTo(map);
 
 
+(control as any).optionsMenu({ position: 'topright' }).addTo(map);
 (control as any).layerControl({ ...baseLayers, ...overlays }, { position: 'topright' }).addTo(map);
 (control as any).toolbar([defaultTool, addNodeTool], { position: 'topleft' }).addTo(map)
 

@@ -140,8 +140,10 @@ export function createDialog(map: LMap, options: any) {
     function onDialogClose(element: any) {
         if (element.identifier != dialog.identifier) return
         if (options.onClose) options.onClose(element)
-        map.off('dialog:closed', onDialogClose)
-        dialog.destroy()
+        if (options.destroyOnClose !== false) {
+            map.off('dialog:closed', onDialogClose)
+            dialog.destroy()
+        }
     }
 
     return dialog

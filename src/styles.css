@@ -136,6 +136,23 @@ body {
 
 
 /*
+ * Options menu
+ */
+.optionsmenu-button {
+    padding: 1.5em;
+    color: #b3b3b3
+}
+
+.optionsmenu-button>* {
+    transform: scale(3);
+}
+
+.optionsmenu-button>*:hover {
+    color: #4ada6e;
+}
+
+
+/*
  * Layer Control
  */
 .layercontrol {
