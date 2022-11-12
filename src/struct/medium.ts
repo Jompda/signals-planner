@@ -1,4 +1,4 @@
-import Link from "./link"
+import Link from './link'
 
 
 export type MediumType = 'radio' | 'cable'
