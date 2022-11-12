@@ -45,10 +45,10 @@ function LayerControl(props: any) {
     const layers = new Array<JSX.Element>()
     let firstLayer = true
     for (const layerName in props.layers) {
-        if (firstLayer) props.layers[layerName].addTo(props.map)
+        //if (firstLayer) props.layers[layerName].addTo(props.map)
         layers.push(
             <LayerModel
-                hidden={!firstLayer}
+                enabled={props.layers[layerName]._map}
                 map={props.map}
                 key={layerName}
                 layerName={layerName}
@@ -96,7 +96,7 @@ function LayerModel(props: any) {
         <div className='lc-layermodel'>
             <div
                 ref={headRef}
-                className={'lc-layermodel-head' + (props.hidden ? '' : ' lclayermodel-head-selected')}
+                className={'lc-layermodel-head' + (props.enabled ? ' lclayermodel-head-selected' : '')}
                 onClick={() => {
                     if ($(optionsRef.current).is(':visible')) {
                         $(optionsRef.current).slideUp()
@@ -120,7 +120,7 @@ function LayerModel(props: any) {
                     <input
                         ref={checkboxRef}
                         type='checkbox'
-                        defaultChecked={!props.hidden}
+                        defaultChecked={props.enabled}
                     />
                     <div className='toggler-slider'>
                         <div className='toggler-knob'></div>
@@ -140,7 +140,7 @@ function LayerModel(props: any) {
             </div>
             <div
                 ref={optionsRef}
-                className={(props.hidden ? ' hidden' : '')}
+                className={('hidden')}
             >
                 <LayerModelOptions
                     layer={props.layer}

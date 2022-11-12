@@ -95,6 +95,7 @@ initContextMenu(map)
 lgAddTo(map)
 control.scale({ imperial: false }).addTo(map);
 
+baseLayers.OSM.addTo(map);
 
 (control as any).optionsMenu({ position: 'topright' }).addTo(map);
 (control as any).layerControl({ ...baseLayers, ...overlays }, { position: 'topright' }).addTo(map);
