@@ -2,20 +2,22 @@ import { LineStats, LinkOptions, SaveLink } from '../interfaces'
 import Unit from './unit'
 import { createLosGetter, getGeodesocLine_PDist100to200, getLineStats, getValues } from '../topoutil'
 import { SourceName } from '..'
+import { Medium, resolveMedium } from './medium'
 
 
-// TODO: Add support for mediums (radios and cables).
 export default class Link {
     public id: string
     public unit0: Unit
     public unit1: Unit
     public emitterHeight: number
+    public medium: Medium
     public values: Array<any>
     public stats: LineStats
     constructor(options: LinkOptions) {
         Object.assign(this, options)
-        this.reorder()
+        this.medium = resolveMedium(options.medium)
         this.emitterHeight = 25 // temp
+        this.reorder()
     }
     reorder() {
         const [unit0, unit1] = Link.orderUnits(this.unit0, this.unit1)
@@ -70,6 +72,8 @@ export default class Link {
             }
         }
 
+        console.log(this.medium.calculateLinkStats(this))
+
         return { values, stats: this.stats }
     }
 
@@ -77,13 +81,15 @@ export default class Link {
     serialize() {
         return {
             unit0: this.unit0.id,
-            unit1: this.unit1.id
+            unit1: this.unit1.id,
+            medium: this.medium.serialize()
         } as SaveLink
     }
     static deserialize(obj: SaveLink, getUnitById: (unitId: string) => Unit) {
         return new Link({
             unit0: getUnitById(obj.unit0),
-            unit1: getUnitById(obj.unit1)
+            unit1: getUnitById(obj.unit1),
+            medium: resolveMedium(obj.medium)
         })
     }
 }

@@ -37,7 +37,7 @@ export function getLineStats(latlngs: Array<any>, fields: Array<string>) {
         return sum
     }
 
-    const distance = latlngs[0].latlng.distanceTo(latlngs[1].latlng)
+    const distance = latlngs[0].latlng.distanceTo(latlngs[latlngs.length - 1].latlng)
     const extremes = {
         min: sumAt(0),
         iMin: 0,

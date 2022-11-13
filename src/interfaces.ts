@@ -1,5 +1,6 @@
 import { LatLng as LLatLng, MapOptions, LayerOptions, MarkerOptions, LeafletMouseEvent } from 'leaflet'
 import { Symbol as MilSymbol } from 'milsymbol'
+import { CableMedium, Medium, RadioMedium } from './struct/medium'
 import Unit from './struct/unit'
 
 
@@ -39,10 +40,27 @@ export interface UnitOptions {
 export interface LinkOptions {
     unit0: Unit
     unit1: Unit
-    // Medium
+    medium: MediumResolvable
+}
+
+export interface MediumOptions {
+    name: string
+    preset?: boolean
+}
+
+export interface RadioMediumOptions extends MediumOptions {
+    frequency: number
+    beamWidth?: number
+}
+
+export interface CableMediumOptions extends MediumOptions {
+    cableLength: number
+    cableCost: number
+    resistance: number
 }
 
 export interface LineStats {
+    distance: number
     delta: number
     extremes: {
         min: number
@@ -79,4 +97,25 @@ export interface SaveUnit {
 export interface SaveLink {
     unit0: string
     unit1: string
+    medium: SaveRadioMedium | SaveCableMedium | string
 }
+
+export interface SaveMedium {
+    type: 'radio' | 'cable'
+    name: string
+}
+
+export interface SaveRadioMedium extends SaveMedium {
+    type: 'radio'
+    frequency: number
+    beamWidth?: number
+}
+
+export interface SaveCableMedium extends SaveMedium {
+    type: 'cable'
+    cableLength: number
+    cableCost: number
+    resistance: number
+}
+
+export type MediumResolvable = RadioMedium | SaveRadioMedium | CableMedium | SaveCableMedium | string
