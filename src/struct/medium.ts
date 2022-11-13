@@ -6,7 +6,6 @@ export type MediumType = 'radio' | 'cable'
 
 
 export function resolveMedium(obj: MediumResolvable) {
-    let resolved: RadioMedium | CableMedium
     if (typeof obj == 'string') {
         return radioPresets.get(obj) || cablePresets.get(obj)
     }
@@ -18,7 +17,7 @@ export function resolveMedium(obj: MediumResolvable) {
         if (obj instanceof Medium) return obj
         return CableMedium.deserialize(obj)
     }
-    throw new Error('Unresolvable SaveMedium object!')
+    throw new Error('Couldn\'t resolve medium!')
 }
 
 
@@ -72,21 +71,23 @@ export class RadioMedium extends Medium {
 
 export class CableMedium extends Medium {
     public cableLength: number
-    public cableCost: number
-    public resistance: number
+    public resistivity: number
+    public sliceArea: number
     constructor(options: CableMediumOptions) {
         super('cable', options.name, options.preset)
         this.cableLength = options.cableLength
-        this.cableCost = options.cableCost
-        this.resistance = options.resistance
+        this.resistivity = options.resistivity
+        this.sliceArea = options.sliceArea
     }
     calculateLinkStats(link: Link) {
-        const length = Math.floor(link.stats.distance / this.cableLength) * this.cableLength
-        const resistance = 1.68 * (10 ** (-8)) * length / ((3.14 * (10 ** (-3))) ** 2)
+        // R = (Rho) * l / A
+        const cables = Math.ceil(link.stats.distance / this.cableLength)
+        const length = cables * this.cableLength
+        const resistance = this.resistivity * length / this.sliceArea
         return {
             length,
-            resistance,
-            cost: this.cableCost + resistance * length
+            cables,
+            resistance
         }
     }
 
@@ -97,8 +98,8 @@ export class CableMedium extends Medium {
             type: 'cable',
             name: this.name,
             cableLength: this.cableLength,
-            cableCost: this.cableCost,
-            resistance: this.resistance
+            resistivity: this.resistivity,
+            sliceArea: this.sliceArea
         } as SaveCableMedium
     }
     static deserialize(obj: SaveCableMedium) {
@@ -118,10 +119,9 @@ const radioPresetArray = [
 const cablePresetArray = [
     new CableMedium({
         name: 'Copper',
-
         cableLength: 400,
-        cableCost: 2000,
-        resistance: 68,
+        resistivity: 1.68 * 10 ** (-8),
+        sliceArea: Math.PI * (0.012 / 2) ** 2,
         preset: true
     })
 ]
