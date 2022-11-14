@@ -121,4 +121,4 @@ export interface SaveCableMedium extends SaveMedium {
     sliceArea: number
 }
 
-export type MediumResolvable = RadioMedium | SaveRadioMedium | CableMedium | SaveCableMedium | string
+export type MediumResolvable = RadioMedium | SaveRadioMedium | CableMedium | SaveCableMedium | Medium | string

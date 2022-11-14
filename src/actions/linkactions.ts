@@ -2,6 +2,8 @@ import LinkLayer from '../ui/components/linklayer'
 import Action from './action'
 import { addLink as structAddLink, removeLink as structRemoveLink } from '../struct'
 import { addLink as lgAddLink, removeLink as lgRemoveLink } from '../ui/structurecontroller'
+import { Medium } from '../struct/medium'
+import { MediumResolvable } from '../interfaces'
 
 
 abstract class LinkAction extends Action {
@@ -46,13 +48,21 @@ export class RemoveLinkAction extends LinkAction {
 
 
 export class EditLinkAction extends LinkAction {
+    private medium0: MediumResolvable
+    private medium1: MediumResolvable
+    constructor(linkLayer: LinkLayer, medium0: MediumResolvable, medium1: MediumResolvable) {
+        super(linkLayer)
+        this.medium0 = medium0
+        this.medium1 = medium1
+    }
     forward() {
-        // TODO: After adding mediums implement EditLinkAction.
-        console.log('implement')
+        this.linkLayer.link.setMedium(this.medium1)
+        this.linkLayer.update()
         return this
     }
     reverse() {
-        console.log('implement')
+        this.linkLayer.link.setMedium(this.medium0)
+        this.linkLayer.update()
         return this
     }
 }

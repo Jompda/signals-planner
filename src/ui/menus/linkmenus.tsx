@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from 'uuid'
 import UnitLayer from '../components/unitlayer'
 import LinkLayer from '../components/linklayer'
 import { addAction } from '../../actionhistory'
-import { AddLinkAction } from '../../actions/linkactions'
+import { AddLinkAction, EditLinkAction } from '../../actions/linkactions'
 import { cables, radios } from '../../struct/medium'
 
 
@@ -146,8 +146,7 @@ export function showEditLinkMenu(map: LMap, linkLayer: LinkLayer) {
                 <div className='grower'></div>
                 <div className='dialog-menu-submit'>
                     <button onClick={() => {
-                        linkLayer.link.setMedium(medium)
-                        linkLayer.update()
+                        addAction(new EditLinkAction(linkLayer, linkLayer.link.medium, medium).forward())
                         dialog.close()
                     }}>Apply</button>
                     <button onClick={() => {
