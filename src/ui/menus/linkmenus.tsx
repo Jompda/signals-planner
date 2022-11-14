@@ -5,7 +5,7 @@ import Unit from '../../struct/unit'
 import { getUnits, linkIdExists } from '../../struct'
 import { getUnitById, structureEvents } from '../structurecontroller'
 import { useRef, useState } from 'react'
-import { createDialog, round } from '../../util'
+import { createDialog } from '../../util'
 import { v4 as uuidv4 } from 'uuid'
 import UnitLayer from '../components/unitlayer'
 import LinkLayer from '../components/linklayer'
@@ -64,6 +64,7 @@ export function showAddLinkMenu(map: LMap, unitLayer0: UnitLayer) {
                     updateTargetUnit={(unit1Id: string) => unit1 = getUnitById(unit1Id)}
                 />
                 <hr />
+                <span>Type:</span>
                 <MediumSelector
                     updateMedium={(value: string) => medium = value}
                 />
@@ -128,13 +129,16 @@ export function showEditLinkMenu(map: LMap, linkLayer: LinkLayer) {
         root.render(
             <>
                 <h1>Edit Link:</h1>
+                <span>Source:</span>
                 <select disabled>
-                    <option>{linkLayer.unit0.unit.toHierarchyString()}</option>
+                    <option>{unitIdentifier(linkLayer.unit0.unit)}</option>
                 </select>
+                <span>Target:</span>
                 <select disabled>
-                    <option>{linkLayer.unit1.unit.toHierarchyString()}</option>
+                    <option>{unitIdentifier(linkLayer.unit1.unit)}</option>
                 </select>
                 <hr />
+                <span>Type:</span>
                 <MediumSelector
                     defaultValue={linkLayer.link.medium.name}
                     updateMedium={(value: string) => medium = value}
@@ -161,17 +165,29 @@ function LinkContructor(props: any) {
     const units = getUnits().filter(u => u.id != props.unit.id)
     return (
         <>
+            <span>Source:</span>
             <select disabled>
                 <option>
-                    {props.unit.toHierarchyString()}
+                    {unitIdentifier(props.unit)}
                 </option>
             </select>
+            <span>Target:</span>
             <UnitSelector
                 units={units}
                 updateTargetUnit={props.updateTargetUnit}
             />
         </>
     )
+}
+
+
+function unitIdentifier(unit: Unit) {
+    const hstring = unit.toHierarchyString()
+    const opt = unit.symbol.getOptions(false)
+
+    if (isNaN(parseInt(opt.uniqueDesignation))) return hstring
+    if (opt.higherFormation != 'Node') return hstring
+    return 'Node ' + opt.uniqueDesignation
 }
 
 
@@ -182,7 +198,7 @@ function UnitSelector(props: any) {
     const id = uuidv4()
 
     const units = props.units.map((u: Unit, i: number) => {
-        const str = u.toHierarchyString()
+        const str = unitIdentifier(u)
         if (str.toLowerCase().indexOf(filter) < 0) return undefined
         return (
             <label key={i} className='unit-selector-button'>
