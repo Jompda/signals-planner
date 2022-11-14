@@ -1,4 +1,4 @@
-import { LineStats, LinkOptions, SaveLink } from '../interfaces'
+import { LineStats, LinkOptions, MediumResolvable, SaveLink } from '../interfaces'
 import Unit from './unit'
 import { createLosGetter, getGeodesocLine_PDist100to200, getLineStats, getValues } from '../topoutil'
 import { SourceName } from '..'
@@ -35,6 +35,11 @@ export default class Link {
         if (ll0.lat + ll0.lng < ll1.lat + ll1.lng)
             return [unit1, unit0]
         return [unit0, unit1]
+    }
+
+
+    setMedium(medium: MediumResolvable) {
+        this.medium = resolveMedium(medium)
     }
 
 

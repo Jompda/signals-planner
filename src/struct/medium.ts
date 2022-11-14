@@ -71,13 +71,11 @@ export class RadioMedium extends Medium {
 
 export class CableMedium extends Medium {
     public cableLength: number
-    public cableExtension: number
     public resistivity: number
     public sliceArea: number
     constructor(options: CableMediumOptions) {
         super('cable', options.name, options.preset)
         this.cableLength = options.cableLength
-        this.cableExtension = options.cableExtension
         this.resistivity = options.resistivity
         this.sliceArea = options.sliceArea
     }
@@ -86,7 +84,6 @@ export class CableMedium extends Medium {
         const cables = Math.ceil(link.stats.distance / this.cableLength)
         const length = cables * this.cableLength
         let resistance = this.resistivity * length / this.sliceArea
-        if (this.cableExtension) resistance += this.cableExtension * (cables - 1)
         return {
             length,
             cables,
@@ -101,7 +98,6 @@ export class CableMedium extends Medium {
             type: this.type,
             name: this.name,
             cableLength: this.cableLength,
-            cableExtension: this.cableExtension,
             resistivity: this.resistivity,
             sliceArea: this.sliceArea
         } as SaveCableMedium
@@ -143,7 +139,6 @@ const cablePresetArray = [
     new CableMedium({
         name: 'Optical Fiber',
         cableLength: 500,
-        cableExtension: 1,
         resistivity: 0.1 * 10 ** (-8),
         sliceArea: Math.PI * (0.012 / 2) ** 2,
         preset: true

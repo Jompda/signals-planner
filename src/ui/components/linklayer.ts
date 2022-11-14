@@ -1,7 +1,7 @@
 import { LeafletMouseEvent, Polyline } from 'leaflet'
 import { addAction } from '../../actionhistory'
 import { RemoveLinkAction } from '../../actions/linkactions'
-import { ExtendedLayerOptions } from '../../interfaces'
+import { ExtendedLayerOptions, MediumResolvable } from '../../interfaces'
 import Link from '../../struct/link'
 import { showEditLinkMenu } from '../menus/linkmenus'
 import { showLinkStatistics } from '../menus/linkstatistics'
