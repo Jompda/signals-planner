@@ -7,7 +7,7 @@ export type MediumType = 'radio' | 'cable'
 
 export function resolveMedium(obj: MediumResolvable) {
     if (typeof obj == 'string') {
-        return radioPresets.get(obj) || cablePresets.get(obj)
+        return radios.get(obj) || cables.get(obj)
     }
     if (obj.type == 'radio') {
         if (obj instanceof Medium) return obj
@@ -150,12 +150,12 @@ const cablePresetArray = [
     })
 ]
 
-const radioPresets = new Map<string, RadioMedium>()
-for (const radio of radioPresetArray) radioPresets.set(radio.name, radio)
-const cablePresets = new Map<string, CableMedium>()
-for (const cable of cablePresetArray) cablePresets.set(cable.name, cable)
+const radios = new Map<string, RadioMedium>()
+for (const radio of radioPresetArray) radios.set(radio.name, radio)
+const cables = new Map<string, CableMedium>()
+for (const cable of cablePresetArray) cables.set(cable.name, cable)
 
 export {
-    radioPresets,
-    cablePresets
+    radios,
+    cables
 }
