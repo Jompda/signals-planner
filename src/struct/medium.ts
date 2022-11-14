@@ -48,8 +48,8 @@ export class RadioMedium extends Medium {
         return {
             dBm: NaN,
             RSSI: NaN,
-            CINR: NaN,
-            cost: NaN
+            //CINR: NaN,
+            //cost: NaN
         }
     }
 
@@ -57,7 +57,7 @@ export class RadioMedium extends Medium {
     serialize() {
         if (this.preset) return this.name
         return {
-            type: 'radio',
+            type: this.type,
             name: this.name,
             frequency: this.frequency,
             beamWidth: this.beamWidth
@@ -71,11 +71,13 @@ export class RadioMedium extends Medium {
 
 export class CableMedium extends Medium {
     public cableLength: number
+    public cableExtension: number
     public resistivity: number
     public sliceArea: number
     constructor(options: CableMediumOptions) {
         super('cable', options.name, options.preset)
         this.cableLength = options.cableLength
+        this.cableExtension = options.cableExtension
         this.resistivity = options.resistivity
         this.sliceArea = options.sliceArea
     }
@@ -83,7 +85,8 @@ export class CableMedium extends Medium {
         // R = (Rho) * l / A
         const cables = Math.ceil(link.stats.distance / this.cableLength)
         const length = cables * this.cableLength
-        const resistance = this.resistivity * length / this.sliceArea
+        let resistance = this.resistivity * length / this.sliceArea
+        if (this.cableExtension) resistance += this.cableExtension * (cables - 1)
         return {
             length,
             cables,
@@ -95,9 +98,10 @@ export class CableMedium extends Medium {
     serialize() {
         if (this.preset) return this.name
         return {
-            type: 'cable',
+            type: this.type,
             name: this.name,
             cableLength: this.cableLength,
+            cableExtension: this.cableExtension,
             resistivity: this.resistivity,
             sliceArea: this.sliceArea
         } as SaveCableMedium
@@ -114,6 +118,18 @@ const radioPresetArray = [
         frequency: 88,
         preset: true
     }),
+    new RadioMedium({
+        name: 'Link1',
+        frequency: 1200,
+        beamWidth: 16,
+        preset: true
+    }),
+    new RadioMedium({
+        name: 'Link2',
+        frequency: 4000,
+        beamWidth: 6,
+        preset: true
+    })
 ]
 
 const cablePresetArray = [
@@ -121,6 +137,14 @@ const cablePresetArray = [
         name: 'Copper',
         cableLength: 400,
         resistivity: 1.68 * 10 ** (-8),
+        sliceArea: Math.PI * (0.010 / 2) ** 2,
+        preset: true
+    }),
+    new CableMedium({
+        name: 'Optical Fiber',
+        cableLength: 500,
+        cableExtension: 1,
+        resistivity: 0.1 * 10 ** (-8),
         sliceArea: Math.PI * (0.012 / 2) ** 2,
         preset: true
     })

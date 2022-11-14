@@ -56,9 +56,11 @@ export interface RadioMediumOptions extends MediumOptions {
 export interface CableMediumOptions extends MediumOptions {
     /** Length of a single extendable cable. */
     cableLength: number
+    /** For instance to limit extending a optical fiber. */
+    cableExtension?: number
     /** For instance copper: 1.68 * 10**(-8) ohm m. */
     resistivity: number
-    /** For instance from diameter of 12mm to area = PI*(d/2)^2 => PI*(0.012 / 2)**2 */
+    /** For instance from diameter of 12mm to area = PI*(d/2)^2 => PI*(0.012 / 2)**2. */
     sliceArea: number
 }
 
@@ -117,6 +119,7 @@ export interface SaveRadioMedium extends SaveMedium {
 export interface SaveCableMedium extends SaveMedium {
     type: 'cable'
     cableLength: number
+    cableExtension?: number
     resistivity: number
     sliceArea: number
 }
