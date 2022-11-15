@@ -29,7 +29,8 @@ const tileDataStorage = new Map<string, Record<SourceName, Int16Array>>()
 
 
 // Colors retrieved from: https://kartta.luke.fi/geoserver/MVMI/ows?service=WMS&version=1.3.0&request=GetLegendGraphic&format=image/png&width=20&height=20&layer=keskipituus_1519
-// Due to value incrementation and the last increment being 220dm - infinity, let's just use Finland's tallest tree as the max value :D
+// 
+// Due to value incrementation and the last increment being 220dm - infinity, let's just use value 30 as a compromise even though Finland's tallest tree is 47m.
 const treeHeightsByColors = new Map([
     ['255,255,255', 0],
     ['151,71,73', 0],
