@@ -107,36 +107,36 @@ function LayerModel(props: any) {
                     }
                 }}
             >
-                <label
-                    className='toggler-wrapper'
-                    onClick={(e) => {
-                        e.stopPropagation()
-                        // Checked get changed to the new value before this function is called.
-                        !checkboxRef.current.checked
-                            ? props.layer.remove()
-                            : props.layer.addTo(props.map)
-                    }}
-                >
-                    <input
-                        ref={checkboxRef}
-                        type='checkbox'
-                        defaultChecked={props.enabled}
-                    />
-                    <div className='toggler-slider'>
-                        <div className='toggler-knob'></div>
-                    </div>
-                </label>
                 <div>
-                    <span>{props.layerName}</span>
-                    <i
-                        title='Bring to Front'
-                        className='lc-bringtofront fa-solid fa-ellipsis'
+                    <label
+                        className='toggler-wrapper'
                         onClick={(e) => {
                             e.stopPropagation()
-                            props.layer.bringToFront()
+                            // Checked get changed to the new value before this function is called.
+                            !checkboxRef.current.checked
+                                ? props.layer.remove()
+                                : props.layer.addTo(props.map)
                         }}
-                    ></i>
+                    >
+                        <input
+                            ref={checkboxRef}
+                            type='checkbox'
+                            defaultChecked={props.enabled}
+                        />
+                        <div className='toggler-slider'>
+                            <div className='toggler-knob'></div>
+                        </div>
+                    </label>
+                    <span>{props.layerName}</span>
                 </div>
+                <i
+                    title='Bring to Front'
+                    className='lc-bringtofront fa-solid fa-ellipsis'
+                    onClick={(e) => {
+                        e.stopPropagation()
+                        props.layer.bringToFront()
+                    }}
+                ></i>
             </div>
             <div
                 ref={optionsRef}

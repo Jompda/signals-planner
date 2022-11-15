@@ -198,11 +198,6 @@ body {
     cursor: pointer;
 }
 
-.lc-layermodel-head>div,
-.lc-layermodel-head>div>span {
-    padding-right: 0.5em;
-}
-
 .lc-layermodel-head:hover {
     background-color: #e8e8e8;
 }
@@ -211,10 +206,14 @@ body {
     background-color: #e8e8e8;
 }
 
+.lc-layermodel-head>div {
+    display: flex;
+    align-items: center;
+}
+
 .lc-bringtofront {
     border-radius: 0.4em;
     width: 1.5em;
-    text-align: center;
 }
 
 .lc-bringtofront:hover {
