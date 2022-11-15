@@ -246,15 +246,15 @@ function LinkStatistics(props: any) {
                         <td>Distance:</td>
                         <td>{Math.round(lineStats.distance)}m</td>
                     </tr>
-                    {stats.dBm
+                    {stats.dB
                         ? <>
                             <tr>
                                 <td>ITM Loss:</td>
-                                <td>{Math.round(stats.itmLoss)}dBm</td>
+                                <td>{Math.round(stats.itmLoss)}dB</td>
                             </tr>
                             <tr>
-                                <td>dBm:</td>
-                                <td>{Math.round(stats.dBm)}dBm</td>
+                                <td>dB:</td>
+                                <td>{Math.round(stats.dB)}dB</td>
                             </tr>
                         </>
                         : undefined

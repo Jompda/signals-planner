@@ -86,14 +86,14 @@ export default class LinkLayer extends Polyline {
         const { values, lineStats, stats } = await this.link.calculate()
 
         let color: string, weight: number
-        if ('dBm' in stats) {
+        if ('dB' in stats) {
             color = '#00ff0c'
             weight = 12
-            if (stats.dBm < 55) {
+            if (stats.dB < -50) {
                 color = '#00b9ff'
                 weight = 8
             }
-            if (stats.dBm < 45) {
+            if (stats.dB < -70) {
                 color = '#ec2400'
                 weight = 4
             }

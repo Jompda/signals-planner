@@ -51,6 +51,9 @@ export interface MediumOptions {
 export interface RadioMediumOptions extends MediumOptions {
     frequency: number
     beamWidth?: number
+    Pt: number
+    Gt: number
+    Gr: number
 }
 
 export interface CableMediumOptions extends MediumOptions {
@@ -112,6 +115,9 @@ export interface SaveRadioMedium extends SaveMedium {
     type: 'radio'
     frequency: number
     beamWidth?: number
+    Pt: number
+    Gt: number
+    Gr: number
 }
 
 export interface SaveCableMedium extends SaveMedium {

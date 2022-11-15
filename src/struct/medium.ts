@@ -39,10 +39,16 @@ export abstract class Medium {
 export class RadioMedium extends Medium {
     public frequency: number
     public beamWidth?: number
+    public Pt: number
+    public Gt: number
+    public Gr: number
     constructor(options: RadioMediumOptions) {
         super('radio', options.name, options.preset)
         this.frequency = options.frequency
         this.beamWidth = options.beamWidth
+        this.Pt = options.Pt
+        this.Gt = options.Gt
+        this.Gr = options.Gr
     }
     // TODO: Implement a prediction model i.e. Egli or Freshnel method+.
     // Current implementation https://en.wikipedia.org/wiki/ITU_terrain_model
@@ -77,18 +83,12 @@ export class RadioMedium extends Medium {
             if (A > 6) itmLoss += A
         }
 
-        // TODO: Implement free space path loss.
-        // https://en.wikipedia.org/wiki/Free-space_path_loss
-
         // https://en.wikipedia.org/wiki/Friis_transmission_equation
-        const Pt = 10
-        const Gt = 100
-        const Gr = 100
-        const Pr = Pt + Gt + Gr + 20 * Math.log10(waveLength / (4 * Math.PI * distance)) - itmLoss
+        const Pr = this.Pt + this.Gt + this.Gr + 20 * Math.log10(waveLength / (4 * Math.PI * distance)) - itmLoss
 
         return {
             itmLoss,
-            dBm: Pr
+            dB: Pr
             //dBm: NaN,
             //RSSI: NaN,
             //CINR: NaN,
@@ -153,20 +153,29 @@ export class CableMedium extends Medium {
 
 const radioPresetArray = [
     new RadioMedium({
-        name: 'VHF',
+        name: 'VHF1',
         frequency: 88,
+        Pt: 1,
+        Gt: 2.15,
+        Gr: 2.15,
         preset: true
     }),
     new RadioMedium({
-        name: 'Link1',
+        name: 'UHF1',
         frequency: 1200,
-        beamWidth: 16,
+        beamWidth: 14,
+        Pt: 12,
+        Gt: 20,
+        Gr: 20,
         preset: true
     }),
     new RadioMedium({
-        name: 'Link2',
+        name: 'SHF1',
         frequency: 4000,
         beamWidth: 6,
+        Pt: 10,
+        Gt: 40,
+        Gr: 40,
         preset: true
     })
 ]
