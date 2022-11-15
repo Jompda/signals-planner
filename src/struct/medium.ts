@@ -81,10 +81,10 @@ export class RadioMedium extends Medium {
         // https://en.wikipedia.org/wiki/Free-space_path_loss
 
         // https://en.wikipedia.org/wiki/Friis_transmission_equation
-        const Pt = 20
-        const Gt = 10
-        const Gr = 10
-        const Pr = Pt + Gt + Gr + 20 * Math.log10(waveLength / 4 * Math.PI * distance) - itmLoss
+        const Pt = 10
+        const Gt = 100
+        const Gr = 100
+        const Pr = Pt + Gt + Gr + 20 * Math.log10(waveLength / (4 * Math.PI * distance)) - itmLoss
 
         return {
             itmLoss,
