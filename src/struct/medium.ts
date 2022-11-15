@@ -54,19 +54,23 @@ export class RadioMedium extends Medium {
         const srcElevation = values[0].elevation + link.emitterHeight
         const trgtElevation = values[values.length - 1].elevation + link.emitterHeight
 
-        const iToDist = (i: number) => distance * (i / (values.length - 1))
+        const iToDist = (i: number) => distance * (i / (values.length - 1)) / 1000
         const losElevationAtIndex = createLosGetter(srcElevation, trgtElevation, values.length - 1)
 
         let additionalLoss = 0
 
-        const RF1Max = 274 * Math.sqrt((distance / 1000) / this.frequency)
+        const R1Fmax = 274 * Math.sqrt((distance / 1000) / this.frequency)
 
         for (let i = 1; i < values.length - 1; i++) {
             const obstructionElevation = values[i].elevation + values[i].treeHeight
             const losElevation = losElevationAtIndex(i)
             const h = losElevation - obstructionElevation
-            if (h >= RF1Max) continue
             const d1 = iToDist(i), d2 = iToDist(values.length - 1 - i)
+            if (h > R1Fmax) {
+                // https://www.doria.fi/handle/10024/118719
+                const R1F = 548 * Math.sqrt((d1 * d2) / (this.frequency * (d1 + d2)))
+                if (h > R1F) continue // Outside 1. Fresnel zone
+            }
             const F1 = 17.3 * Math.sqrt((d1 * d2) / ((this.frequency / 1000) * (distance / 1000)))
             const Cn = h / F1
             const A = 10 - 20 * Cn
