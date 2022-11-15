@@ -1,4 +1,5 @@
 import { CableMediumOptions, MediumResolvable, RadioMediumOptions, SaveCableMedium, SaveMedium, SaveRadioMedium } from '../interfaces'
+import { createLosGetter } from '../topoutil'
 import Link from './link'
 
 
@@ -44,10 +45,44 @@ export class RadioMedium extends Medium {
         this.beamWidth = options.beamWidth
     }
     // TODO: Implement a prediction model i.e. Egli or Freshnel method+.
+    // Current implementation https://en.wikipedia.org/wiki/ITU_terrain_model
     calculateLinkStats(link: Link) {
+        const waveLength = (299_792_458) / (this.frequency * 1_000_000)
+        const distance = link.lineStats.distance
+        const values = link.values
+
+        const srcElevation = values[0].elevation + link.emitterHeight
+        const trgtElevation = values[values.length - 1].elevation + link.emitterHeight
+
+        const iToDist = (i: number) => distance * (i / (values.length - 1))
+        const losElevationAtIndex = createLosGetter(srcElevation, trgtElevation, values.length - 1)
+
+        let additionalLoss = 0
+
+        const RF1Max = 274 * Math.sqrt((distance / 1000) / this.frequency)
+
+        for (let i = 1; i < values.length - 1; i++) {
+            const obstructionElevation = values[i].elevation + values[i].treeHeight
+            const losElevation = losElevationAtIndex(i)
+            const h = losElevation - obstructionElevation
+            if (h >= RF1Max) continue
+            const d1 = iToDist(i), d2 = iToDist(values.length - 1 - i)
+            const F1 = 17.3 * Math.sqrt((d1 * d2) / ((this.frequency / 1000) * (distance / 1000)))
+            const Cn = h / F1
+            const A = 10 - 20 * Cn
+            if (A > 6) additionalLoss += A
+        }
+
+        // https://en.wikipedia.org/wiki/Friis_transmission_equation
+        const Pt = 20
+        const Gt = 10
+        const Gr = 10
+        const Pr = Pt + Gt + Gr + 20 * Math.log10(waveLength / 4 * Math.PI * distance) - additionalLoss
+
         return {
-            dBm: NaN,
-            RSSI: NaN,
+            dBm: Pr
+            //dBm: NaN,
+            //RSSI: NaN,
             //CINR: NaN,
             //cost: NaN
         }
@@ -81,7 +116,7 @@ export class CableMedium extends Medium {
     }
     calculateLinkStats(link: Link) {
         // R = (Rho) * l / A
-        const cables = Math.ceil(link.stats.distance / this.cableLength)
+        const cables = Math.ceil(link.lineStats.distance / this.cableLength)
         const length = cables * this.cableLength
         let resistance = this.resistivity * length / this.sliceArea
         return {

@@ -83,22 +83,30 @@ export default class LinkLayer extends Polyline {
         }
         const endPoints = getEndPoints(this.unit0, this.unit1)
         this.setLatLngs(endPoints)
-        const { values, stats } = await this.link.calculate()
-        let color = '#00ff0c', weight = 12
-        if (stats.highestObstacle.height > -5) {
-            color = '#00b9ff'
-            weight = 8
-        }
-        if (stats.highestObstacle.height > 0) {
-            color = '#ec2400'
-            weight = 4
+        const { values, lineStats, stats } = await this.link.calculate()
+
+        let color: string, weight: number
+        if ('dBm' in stats) {
+            color = '#00ff0c'
+            weight = 12
+            if (stats.dBm < 55) {
+                color = '#00b9ff'
+                weight = 8
+            }
+            if (stats.dBm < 45) {
+                color = '#ec2400'
+                weight = 4
+            }
+        } else {
+            color = 'gray'
+            weight = 12
         }
         this.setStyle({
             weight,
             color
         })
 
-        this.fire('update', { endPoints, values, stats })
+        this.fire('update', { endPoints, values, lineStats, stats })
     }
 
 

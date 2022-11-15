@@ -103,7 +103,7 @@ export function showLinkStatistics(map: LMap, linkLayer: LinkLayer) {
 
 
 function LinkStatistics(props: any) {
-    const { emitterHeight, values, stats } = props.linkLayer.link as Link
+    const { emitterHeight, values, lineStats, stats } = props.linkLayer.link as Link
     const canvas = DomUtil.create('canvas')
     canvas.width = 600
     canvas.height = 260
@@ -127,7 +127,7 @@ function LinkStatistics(props: any) {
         distanceLabels.push(Math.round(dist))
         elevations.push(Math.round(values[i].elevation))
         treeHeights.push(Math.round(values[i].treeHeight))
-        dist += stats.delta
+        dist += lineStats.delta
     }
 
     const distanceRef = useRef<HTMLTableCellElement>()
@@ -135,6 +135,7 @@ function LinkStatistics(props: any) {
     const treeHeightRef = useRef<HTMLTableCellElement>()
     const sumRef = useRef<HTMLTableCellElement>()
     const losRef = useRef<HTMLTableCellElement>()
+    const dBmRef = useRef<HTMLTableCellElement>()
     const chartRef = useRef<ChartJS>()
     let mx = 0, my = 0
 
@@ -146,7 +147,7 @@ function LinkStatistics(props: any) {
         const dataY = chart.scales.y.getValueForPixel(canvasPosition.y)
         if (dataX < 0 || dataX >= values.length || dataY < 0 || canvasPosition.y < chart.scales.y.top) return
 
-        const distance = Math.floor(stats.delta * dataX)
+        const distance = Math.floor(lineStats.delta * dataX)
         const sum = elevations[dataX] + treeHeights[dataX]
 
         mx = chart.scales.x.getPixelForValue(dataX)
@@ -162,6 +163,7 @@ function LinkStatistics(props: any) {
         treeHeightRef.current.textContent = String(treeHeight) + 'm'
         sumRef.current.textContent = String(elevation + treeHeight) + 'm'
         losRef.current.textContent = String(Math.round(getLosElevationAtIndex(i))) + 'm'
+        dBmRef.current.textContent = String(Math.round(stats.dBm)) + 'dBm'
         props.setHighlightLatLng(values[i].latlng)
     }
 
@@ -245,6 +247,8 @@ function LinkStatistics(props: any) {
                     <tr>
                         <td>Distance:</td>
                         <td ref={distanceRef}></td>
+                        <td>dBm:</td>
+                        <td ref={dBmRef}>{String(Math.round(stats.dBm)) + 'dBm'}</td>
                     </tr>
                     <tr>
                         <td>Elevation:</td>

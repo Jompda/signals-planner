@@ -42,7 +42,7 @@ const treeHeightsByColors = new Map([
     ['2,205,0', 16.1],
     ['1,130,0', 18.4],
     ['23,0,220', 21.9],
-    ['40,31,149', 47]
+    ['40,31,149', 30]
 ])
 setTiledataConfig<SourceName>({
     sources: [

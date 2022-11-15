@@ -12,7 +12,8 @@ export default class Link {
     public emitterHeight: number
     public medium: Medium
     public values: Array<any>
-    public stats: LineStats
+    public lineStats: LineStats
+    public stats: any
     constructor(options: LinkOptions) {
         Object.assign(this, options)
         this.medium = resolveMedium(options.medium)
@@ -68,7 +69,7 @@ export default class Link {
         }
 
         this.values = values
-        this.stats = {
+        this.lineStats = {
             delta,
             ...lineStats,
             highestObstacle: {
@@ -77,9 +78,9 @@ export default class Link {
             }
         }
 
-        console.log(this.medium.calculateLinkStats(this))
+        this.stats = this.medium.calculateLinkStats(this)
 
-        return { values, stats: this.stats }
+        return { values, lineStats: this.lineStats, stats: this.stats }
     }
 
 
