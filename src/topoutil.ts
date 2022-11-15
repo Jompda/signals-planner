@@ -29,11 +29,11 @@ export function createLosGetter(elevation0: number, elevation1: number, lastInde
 }
 
 
-export function getLineStats(latlngs: Array<any>, fields: Array<string>) {
+export function getLineStats(latlngs: Array<TiledataLatLng>, sourceNames: Array<SourceName>) {
     function sumAt(i: number) {
         let sum = 0
-        for (let j = 0; j < fields.length; j++)
-            sum += latlngs[i][fields[j]]
+        for (let j = 0; j < sourceNames.length; j++)
+            sum += latlngs[i][sourceNames[j]]
         return sum
     }
 

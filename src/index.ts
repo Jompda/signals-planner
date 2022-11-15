@@ -3,7 +3,7 @@ import './styles.css'
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.css'
 import 'leaflet-dialog/Leaflet.Dialog.css'
 
-import { Map as LMap, MapOptions, control, LeafletKeyboardEvent } from 'leaflet'
+import { Map as LMap, MapOptions, control, LeafletKeyboardEvent, LatLng as LLatLng } from 'leaflet'
 import 'leaflet-contextmenu'
 import 'leaflet-dialog'
 
@@ -27,7 +27,7 @@ import { setConfig as setTiledataConfig } from 'tiledata'
 export type SourceName = 'elevation' | 'treeHeight'
 export interface TiledataLatLng extends Record<SourceName, number> {
     tileName: string
-    latlng: LatLng
+    latlng: LLatLng
 }
 const tileDataStorage = new Map<string, Record<SourceName, Int16Array>>()
 
