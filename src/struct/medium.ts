@@ -164,9 +164,9 @@ const radioPresetArray = [
         name: 'UHF1',
         frequency: 1200,
         beamWidth: 14,
-        Pt: 12,
-        Gt: 20,
-        Gr: 20,
+        Pt: 10,
+        Gt: 25,
+        Gr: 25,
         preset: true
     }),
     new RadioMedium({

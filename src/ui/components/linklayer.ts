@@ -89,11 +89,15 @@ export default class LinkLayer extends Polyline {
         if ('dB' in stats) {
             color = '#00ff0c'
             weight = 12
-            if (stats.dB < -50) {
+            if (stats.dB < -55) {
                 color = '#00b9ff'
                 weight = 8
             }
             if (stats.dB < -70) {
+                color = '#e77800'
+                weight = 6
+            }
+            if (stats.dB <= -80) {
                 color = '#ec2400'
                 weight = 4
             }

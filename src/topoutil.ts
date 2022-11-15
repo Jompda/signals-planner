@@ -4,7 +4,7 @@ import * as utm from 'utm'
 import { Map as LMap, LatLng as LLatLng, latLng, Topography, popup } from 'leaflet'
 import { asyncOperation, getMaxWorkers, round, workers } from './util'
 import LatLon from 'geodesy/latlon-spherical'
-import { SourceName } from '.'
+import { SourceName, TiledataLatLng } from '.'
 
 
 export async function getTopographyValues<SourceName extends string>(sourceNames: Array<SourceName>, latlng: LatLng, zoom: number) {
@@ -77,7 +77,8 @@ export function getLineStats(latlngs: Array<any>, fields: Array<string>) {
 
 
 export async function getValues(latlngs: Array<LatLng>, sourceNames: Array<SourceName>, zoom: number) {
-    const { latlngs: mappedLatLngs, tileNames } = mapLatLngsToTiles(latlngs, zoom)
+    const { latlngs: latlngs2, tileNames } = mapLatLngsToTiles(latlngs, zoom)
+    const mappedLatLngs = latlngs2 as Array<TiledataLatLng>
     const tiles = await getTiles(tileNames, sourceNames)
     for (const obj of mappedLatLngs) {
         const tile = tiles.get(obj.tileName)
@@ -89,10 +90,9 @@ export async function getValues(latlngs: Array<LatLng>, sourceNames: Array<Sourc
     return mappedLatLngs
 }
 
-
-export function getTiles(tilesNames: Array<string>, sourceNames: Array<SourceName>) {
+export function getTiles(tilesNames: Array<string>, sourceNames: Array<SourceName>): Promise<Map<string, Record<SourceName, Int16Array>>> {
     return new Promise<Map<string, any>>((resolve, reject) => {
-        const tiles = new Map<string, any>()
+        const tiles = new Map<string, Record<SourceName, Int16Array>>()
         const check = asyncOperation(tilesNames.length, undefined, () => {
             resolve(tiles)
         })
@@ -116,9 +116,8 @@ export function getTiles(tilesNames: Array<string>, sourceNames: Array<SourceNam
     })
 }
 
-
 export function mapLatLngsToTiles(latlngs: Array<LatLng>, zoom: number) {
-    const mapped = new Array()
+    const mapped = new Array<{ tileName: string, latlng: LatLng }>()
     const tileNames = new Map<string, boolean>()
     for (const latlng of latlngs) {
         const tileCoords = latlngToTileCoords(latlng, zoom)

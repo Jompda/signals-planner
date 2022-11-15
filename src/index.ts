@@ -23,8 +23,12 @@ configure({
 })
 
 
-import { getImage, setConfig as setTiledataConfig } from 'tiledata'
+import { setConfig as setTiledataConfig } from 'tiledata'
 export type SourceName = 'elevation' | 'treeHeight'
+export interface TiledataLatLng extends Record<SourceName, number> {
+    tileName: string
+    latlng: LatLng
+}
 const tileDataStorage = new Map<string, Record<SourceName, Int16Array>>()
 
 
