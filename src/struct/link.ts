@@ -78,7 +78,7 @@ export default class Link {
             }
         }
 
-        this.stats = this.medium.calculateLinkStats(this)
+        this.stats = this.medium.estimateLinkStats(this)
 
         return { values, lineStats: this.lineStats, stats: this.stats }
     }

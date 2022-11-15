@@ -31,7 +31,7 @@ export abstract class Medium {
         this.name = name
         this.preset = preset
     }
-    abstract calculateLinkStats(link: Link): any
+    abstract estimateLinkStats(link: Link): any
     abstract serialize(): MediumResolvable
 }
 
@@ -46,7 +46,7 @@ export class RadioMedium extends Medium {
     }
     // TODO: Implement a prediction model i.e. Egli or Freshnel method+.
     // Current implementation https://en.wikipedia.org/wiki/ITU_terrain_model
-    calculateLinkStats(link: Link) {
+    estimateLinkStats(link: Link) {
         const waveLength = (299_792_458) / (this.frequency * 1_000_000)
         const distance = link.lineStats.distance
         const values = link.values
@@ -57,7 +57,7 @@ export class RadioMedium extends Medium {
         const iToDist = (i: number) => distance * (i / (values.length - 1)) / 1000
         const losElevationAtIndex = createLosGetter(srcElevation, trgtElevation, values.length - 1)
 
-        let additionalLoss = 0
+        let itmLoss = 0
 
         const R1Fmax = 274 * Math.sqrt((distance / 1000) / this.frequency)
 
@@ -74,16 +74,20 @@ export class RadioMedium extends Medium {
             const F1 = 17.3 * Math.sqrt((d1 * d2) / ((this.frequency / 1000) * (distance / 1000)))
             const Cn = h / F1
             const A = 10 - 20 * Cn
-            if (A > 6) additionalLoss += A
+            if (A > 6) itmLoss += A
         }
+
+        // TODO: Implement free space path loss.
+        // https://en.wikipedia.org/wiki/Free-space_path_loss
 
         // https://en.wikipedia.org/wiki/Friis_transmission_equation
         const Pt = 20
         const Gt = 10
         const Gr = 10
-        const Pr = Pt + Gt + Gr + 20 * Math.log10(waveLength / 4 * Math.PI * distance) - additionalLoss
+        const Pr = Pt + Gt + Gr + 20 * Math.log10(waveLength / 4 * Math.PI * distance) - itmLoss
 
         return {
+            itmLoss,
             dBm: Pr
             //dBm: NaN,
             //RSSI: NaN,
@@ -118,7 +122,7 @@ export class CableMedium extends Medium {
         this.resistivity = options.resistivity
         this.sliceArea = options.sliceArea
     }
-    calculateLinkStats(link: Link) {
+    estimateLinkStats(link: Link) {
         // R = (Rho) * l / A
         const cables = Math.ceil(link.lineStats.distance / this.cableLength)
         const length = cables * this.cableLength

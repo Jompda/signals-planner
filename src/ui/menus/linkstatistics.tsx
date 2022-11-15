@@ -38,7 +38,7 @@ let closeActive: Function
 
 export function showLinkStatistics(map: LMap, linkLayer: LinkLayer) {
     const dialog = createDialog(map, {
-        size: [600, 500],
+        size: [600, 520],
         maxSize: [600, 700],
         minSize: [600, 400],
         anchor: [innerHeight / 2 - 350, 0],
@@ -61,7 +61,6 @@ export function showLinkStatistics(map: LMap, linkLayer: LinkLayer) {
     linkLayer.on('remove', onLinkRemove)
 
     function onLinkUpdate() {
-        console.log('update link')
         root.unmount()
         root = createUI(container)
         highlight.setLatLng(linkLayer.link.unit0.latlng)
@@ -130,12 +129,11 @@ function LinkStatistics(props: any) {
         dist += lineStats.delta
     }
 
-    const distanceRef = useRef<HTMLTableCellElement>()
+    const positionRef = useRef<HTMLTableCellElement>()
     const elevationRef = useRef<HTMLTableCellElement>()
     const treeHeightRef = useRef<HTMLTableCellElement>()
     const sumRef = useRef<HTMLTableCellElement>()
     const losRef = useRef<HTMLTableCellElement>()
-    const dBmRef = useRef<HTMLTableCellElement>()
     const chartRef = useRef<ChartJS>()
     let mx = 0, my = 0
 
@@ -158,12 +156,11 @@ function LinkStatistics(props: any) {
     }
 
     function updateInfo(i: number, distance: number, elevation: number, treeHeight: number) {
-        distanceRef.current.textContent = String(distance) + 'm'
+        positionRef.current.textContent = String(distance) + 'm'
         elevationRef.current.textContent = String(elevation) + 'm'
         treeHeightRef.current.textContent = String(treeHeight) + 'm'
         sumRef.current.textContent = String(elevation + treeHeight) + 'm'
         losRef.current.textContent = String(Math.round(getLosElevationAtIndex(i))) + 'm'
-        dBmRef.current.textContent = String(Math.round(stats.dBm)) + 'dBm'
         props.setHighlightLatLng(values[i].latlng)
     }
 
@@ -242,13 +239,50 @@ function LinkStatistics(props: any) {
                 }}
                 plugins={plugins}
             />
+            <br />
             <table className='link-stats'>
                 <tbody>
                     <tr>
                         <td>Distance:</td>
-                        <td ref={distanceRef}></td>
-                        <td>dBm:</td>
-                        <td ref={dBmRef}>{String(Math.round(stats.dBm)) + 'dBm'}</td>
+                        <td>{Math.round(lineStats.distance)}m</td>
+                    </tr>
+                    {stats.dBm
+                        ? <>
+                            <tr>
+                                <td>ITM Loss:</td>
+                                <td>{Math.round(stats.itmLoss)}dBm</td>
+                            </tr>
+                            <tr>
+                                <td>dBm:</td>
+                                <td>{Math.round(stats.dBm)}dBm</td>
+                            </tr>
+                        </>
+                        : undefined
+                    }
+                    {stats.resistance
+                        ? <>
+                            <tr>
+                                <td>Cables:</td>
+                                <td>{stats.cables}</td>
+                            </tr>
+                            <tr>
+                                <td>Length:</td>
+                                <td>{stats.length}m</td>
+                            </tr>
+                            <tr>
+                                <td>Resistance:</td>
+                                <td>{stats.resistance.toFixed(3)}Ω</td>
+                            </tr>
+                        </>
+                        : undefined
+                    }
+                </tbody>
+            </table>
+            <table className='link-stats'>
+                <tbody>
+                    <tr>
+                        <td>Position:</td>
+                        <td ref={positionRef}></td>
                     </tr>
                     <tr>
                         <td>Elevation:</td>
