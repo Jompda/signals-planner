@@ -4,7 +4,7 @@ import 'leaflet-contextmenu/dist/leaflet.contextmenu.css'
 import 'leaflet-dialog/Leaflet.Dialog.css'
 import 'leaflet-draw/dist/leaflet.draw.css'
 
-import { Map as LMap, MapOptions, control, LeafletKeyboardEvent, LatLng as LLatLng, FeatureGroup, Control, Draw, DrawEvents } from 'leaflet'
+import { Map as LMap, MapOptions, control, LeafletKeyboardEvent, LatLng as LLatLng, FeatureGroup, Control, Draw, DrawEvents, DrawOptions } from 'leaflet'
 import 'leaflet-contextmenu'
 import 'leaflet-dialog'
 import 'leaflet-draw'
@@ -119,9 +119,31 @@ baseLayers.OSM.addTo(map);
 // TODO: Ability to save and load leaflet-draw:ings
 const drawnItems = new FeatureGroup().addTo(map)
 
+const drawOptions: DrawOptions.PolygonOptions = {
+    shapeOptions: {
+        color: 'black',
+        interactive: false,
+        fill: true,
+        fillColor: 'black',
+        fillOpacity: 0.1
+    },
+}
+
 new Control.Draw({
     edit: {
         featureGroup: drawnItems
+    },
+    draw: {
+        polyline: {
+            shapeOptions: {
+                color: 'black'
+            }
+        },
+        polygon: drawOptions,
+        rectangle: drawOptions,
+        circle: drawOptions,
+        circlemarker: false,
+        marker: false
     }
 }).addTo(map)
 
