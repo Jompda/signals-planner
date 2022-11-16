@@ -2,15 +2,19 @@
 import './styles.css'
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.css'
 import 'leaflet-dialog/Leaflet.Dialog.css'
+import 'leaflet-draw/dist/leaflet.draw.css'
 
-import { Map as LMap, MapOptions, control, LeafletKeyboardEvent, LatLng as LLatLng } from 'leaflet'
+import { Map as LMap, MapOptions, control, LeafletKeyboardEvent, LatLng as LLatLng, FeatureGroup, Control, Draw, DrawEvents } from 'leaflet'
 import 'leaflet-contextmenu'
 import 'leaflet-dialog'
-
+import 'leaflet-draw'
 
 import options from '../options'
 
 
+/*
+ * Setup leaflet-topography
+ */
 import 'regenerator-runtime'
 import { configure } from 'leaflet-topography'
 const topoLayerTileCache = new Map<string, any>()
@@ -23,6 +27,9 @@ configure({
 })
 
 
+/*
+ * Setup tiledata
+ */
 import { setConfig as setTiledataConfig } from 'tiledata'
 export type SourceName = 'elevation' | 'treeHeight'
 export interface TiledataLatLng extends Record<SourceName, number> {
@@ -31,9 +38,7 @@ export interface TiledataLatLng extends Record<SourceName, number> {
 }
 const tileDataStorage = new Map<string, Record<SourceName, Int16Array>>()
 
-
 // Colors retrieved from: https://kartta.luke.fi/geoserver/MVMI/ows?service=WMS&version=1.3.0&request=GetLegendGraphic&format=image/png&width=20&height=20&layer=keskipituus_1519
-// 
 // Due to value incrementation and the last increment being 220dm - infinity, let's just use value 30 as a compromise even though Finland's tallest tree is 47m.
 const treeHeightsByColors = new Map([
     ['255,255,255', 0],
@@ -78,6 +83,9 @@ setTiledataConfig<SourceName>({
 })
 
 
+/*
+ * Setup the UI
+ */
 import './ui/menus/optionsmenu'
 import './ui/menus/layercontrolmenu'
 import './ui/menus/toolbar'
@@ -102,9 +110,26 @@ control.scale({ imperial: false }).addTo(map);
 
 baseLayers.OSM.addTo(map);
 
+
 (control as any).optionsMenu({ position: 'topright' }).addTo(map);
 (control as any).layerControl({ ...baseLayers, ...overlays }, { position: 'topright' }).addTo(map);
 (control as any).toolbar([defaultTool, addNodeTool], { position: 'topleft' }).addTo(map)
+
+
+// TODO: Ability to save and load leaflet-draw:ings
+const drawnItems = new FeatureGroup().addTo(map)
+
+new Control.Draw({
+    edit: {
+        featureGroup: drawnItems
+    }
+}).addTo(map)
+
+// TODO: Actionize leaflet-draw events
+map.on(Draw.Event.CREATED, (e: DrawEvents.Created) =>
+    drawnItems.addLayer(e.layer)
+)
+
 
 map.on('keydown', (e: LeafletKeyboardEvent) => {
     const event = e.originalEvent
