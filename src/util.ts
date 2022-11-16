@@ -20,6 +20,28 @@ export function startDownload(name: string, type: string, content: string) {
 }
 
 
+export function requestFileUpload(accept: string, callback: (content: string) => any) {
+    const fileInput = DomUtil.create('input')
+    fileInput.setAttribute('type', 'file')
+    fileInput.setAttribute('accept', accept)
+    //fileInput.setAttribute('multiple', '')
+
+    fileInput.onchange = () => {
+        const file = fileInput.files[0]
+        if (!file) return alert('Select a file to load!')
+        console.log(`Reading "${file.name}" ..`)
+        const reader = new FileReader()
+        reader.onload = function (e) {
+            //console.log(e.target.result)
+            callback(e.target.result.toString())
+        }
+        reader.readAsText(file)
+    }
+
+    fileInput.click()
+}
+
+
 export function round(value: number, decimal = 2) {
     const m = Math.pow(10, decimal)
     return Math.round(value * m) / m

@@ -1,7 +1,7 @@
 import { Map as LMap, LeafletMouseEvent } from 'leaflet'
 import { ContextMenuItem } from '../../interfaces'
 import { deserialize, serialize } from '../../struct'
-import { startDownload } from '../../util'
+import { requestFileUpload, startDownload } from '../../util'
 import { showAddUnitMenu } from './unitmenus'
 import { openTopographyPopup } from '../../topoutil'
 import { addAction, redo, undo } from '../../actionhistory'
@@ -41,32 +41,12 @@ export function initContextMenu(map: LMap) {
     }, {
         text: 'Import',
         index: 7,
-        callback: () => { // Create valid menus
-            const fileInput = document.createElement('input')
-            fileInput.setAttribute('type', 'file')
-            fileInput.setAttribute('accept', 'application/json')
-            fileInput.setAttribute('multiple', '')
-
-            fileInput.onchange = () => {
-                const file = fileInput.files[0]
-                if (!file) return alert('Select a file to load!')
-                console.log(`Reading "${file.name}" ..`)
-                const reader = new FileReader()
-                reader.onload = function (e) {
-                    //console.log(e.target.result)
-                    postLoad(JSON.parse(e.target.result.toString()))
-                }
-                reader.readAsText(file)
-            }
-
-            fileInput.click()
-
-            function postLoad(parsed: any) {
-                const { units, links, view } = deserialize(parsed)
-                addAction(new ImportAction(units, links).forward())
-                map.setView([view.center.lat, view.center.lng], view.zoom)
-            }
-        }
+        callback: () => requestFileUpload('application/json', (content) => {
+            const parsed = JSON.parse(content)
+            const { units, links, view } = deserialize(parsed)
+            addAction(new ImportAction(units, links).forward())
+            map.setView([view.center.lat, view.center.lng], view.zoom)
+        })
     }, {
         text: 'Remove All',
         index: 8,
