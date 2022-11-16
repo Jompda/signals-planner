@@ -122,6 +122,7 @@ const drawnItems = new FeatureGroup().addTo(map)
 const drawOptions: DrawOptions.PolygonOptions = {
     shapeOptions: {
         color: 'black',
+        opacity: 0.8,
         interactive: false,
         fill: true,
         fillColor: 'black',
@@ -131,12 +132,16 @@ const drawOptions: DrawOptions.PolygonOptions = {
 
 new Control.Draw({
     edit: {
-        featureGroup: drawnItems
+        featureGroup: drawnItems,
+        remove: true
     },
     draw: {
         polyline: {
+            metric: true,
             shapeOptions: {
-                color: 'black'
+                interactive: false,
+                color: 'black',
+                opacity: 0.8
             }
         },
         polygon: drawOptions,
