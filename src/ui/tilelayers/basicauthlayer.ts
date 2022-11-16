@@ -6,7 +6,6 @@ import { getImage } from 'tiledata'
     initialize: function (url: string, options: any) {
         this._url = url
         this._auth = 'Basic ' + btoa(options.username + ':' + (options.password || ''))
-        console.log(this._auth)
         Util.setOptions(this, options)
     },
 
