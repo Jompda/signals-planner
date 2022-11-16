@@ -158,6 +158,13 @@ map.on(Draw.Event.CREATED, (e: DrawEvents.Created) =>
     drawnItems.addLayer(e.layer)
 )
 
+map.on(Draw.Event.DELETESTART, () =>
+    (drawnItems as any).setInteractive(true)
+)
+map.on(Draw.Event.DELETESTOP, () =>
+    (drawnItems as any).setInteractive(false)
+)
+
 
 map.on('keydown', (e: LeafletKeyboardEvent) => {
     const event = e.originalEvent
