@@ -37,17 +37,23 @@ let closeActive: Function
 
 
 export function showLinkStatistics(map: LMap, linkLayer: LinkLayer) {
+    const anchor = closeActive ? closeActive() : { x: 0, y: innerHeight / 2 - 350 }
     const dialog = createDialog(map, {
         size: [600, 520],
         maxSize: [600, 700],
         minSize: [600, 400],
-        anchor: [innerHeight / 2 - 350, 0],
+        anchor: [anchor.y, anchor.x],
         position: 'topleft',
         initOpen: true,
         onClose: onDialogClose
     })
-    if (closeActive) closeActive()
-    const closer = closeActive = () => dialog.close()
+    const closer = closeActive = () => {
+        dialog.close()
+        return {
+            x: parseFloat(dialog._container.style.left),
+            y: parseFloat(dialog._container.style.top)
+        }
+    }
 
     const highlight = new CircleMarker(linkLayer.link.unit0.latlng, { radius: 10 }).addTo(map)
 
