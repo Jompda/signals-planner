@@ -1,7 +1,6 @@
 import { useRef, useState } from 'react'
 import * as mgrs from 'mgrs'
-import * as utm from 'utm'
-import { LatLng, latLng } from 'leaflet'
+import { latLng } from 'leaflet'
 import { round } from '../../util'
 import { latlngToUtm, utmToLatLng } from '../../topoutil'
 
