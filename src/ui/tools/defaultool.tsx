@@ -15,7 +15,9 @@ class DefaultTool extends Tool {
                 <div className='toolbutton-icon' title='Cursor'>
                     <i className="fa fa-mouse-pointer"></i>
                 </div>
-            )
+            ),
+            unitSelecting: true,
+            mmbTopography: true
         })
     }
     middlemouseclick(e: LeafletMouseEvent) {

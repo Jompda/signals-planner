@@ -19,7 +19,9 @@ class AddNodeTool extends Tool {
                 <div className='toolbutton-icon' title='Add Node'>
                     <img src={symbol.toDataURL()} />
                 </div>
-            )
+            ),
+            unitSelecting: true,
+            mmbTopography: true
         })
         this.symbol = symbol
     }

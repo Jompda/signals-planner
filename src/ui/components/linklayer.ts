@@ -1,11 +1,11 @@
 import { LeafletMouseEvent, Polyline } from 'leaflet'
 import { addAction } from '../../actionhistory'
 import { RemoveLinkAction } from '../../actions/linkactions'
-import { ExtendedLayerOptions, MediumResolvable } from '../../interfaces'
+import { ExtendedLayerOptions } from '../../interfaces'
 import Link from '../../struct/link'
 import { showEditLinkMenu } from '../menus/linkmenus'
 import { showLinkStatistics } from '../menus/linkstatistics'
-import { isDefaultTool } from '../toolcontroller'
+import { getActiveTool } from '../toolcontroller'
 import UnitLayer from './unitlayer'
 
 
@@ -115,11 +115,11 @@ export default class LinkLayer extends Polyline {
 
 
     click() {
-        if (!isDefaultTool()) return
+        if (!getActiveTool().unitSelecting) return
         console.log('clicked link')
     }
     middleMouseClick() {
-        if (!isDefaultTool()) return
+        if (!getActiveTool().mmbTopography) return
         showLinkStatistics(this._map, this)
     }
     mouseUp(e: LeafletMouseEvent) {

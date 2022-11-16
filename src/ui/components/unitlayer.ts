@@ -4,7 +4,7 @@ import { ExtendedMarkerOptions } from '../../interfaces'
 import Unit from '../../struct/unit'
 import { showEditUnitMenu } from '../menus/unitmenus'
 import { showAddLinkMenu } from '../menus/linkmenus'
-import { isDefaultTool } from '../toolcontroller'
+import { getActiveTool } from '../toolcontroller'
 import { getTopographyStr } from '../../topoutil'
 import { addAction } from '../../actionhistory'
 import { MoveUnitAction, RemoveUnitAction } from '../../actions/unitactions'
@@ -89,7 +89,7 @@ export default class UnitLayer extends Marker {
     }
 
     async openInfoPopup() {
-        if (!isDefaultTool()) return
+        if (!getActiveTool().mmbTopography) return
         const topographyStr = await getTopographyStr(this.unit.latlng)
         const str = (
             `${this.unit.toHierarchyString()}<br>` +
@@ -108,7 +108,7 @@ export default class UnitLayer extends Marker {
         this.unit.latlng = this.getLatLng()
     }
     click() {
-        if (!isDefaultTool()) return
+        if (!getActiveTool().unitSelecting) return
         if (this.svg.classList.contains('unit-selected'))
             this.svg.classList.remove('unit-selected')
         else this.svg.classList.add('unit-selected')
