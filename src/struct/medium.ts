@@ -88,7 +88,7 @@ export class RadioMedium extends Medium {
 
         return {
             itmLoss,
-            dB: Pr
+            dB: Math.max(-108, Pr)
             //dBm: NaN,
             //RSSI: NaN,
             //CINR: NaN,

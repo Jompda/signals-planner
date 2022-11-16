@@ -49,10 +49,15 @@ export interface MediumOptions {
 }
 
 export interface RadioMediumOptions extends MediumOptions {
+    /** Frequency in MHz. */
     frequency: number
+    /** Beam width in degrees. */
     beamWidth?: number
+    /** Transmitted power. */
     Pt: number
+    /** Transmitting antenna gain. */
     Gt: number
+    /** Receiving antenna gain. */
     Gr: number
 }
 
