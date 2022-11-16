@@ -116,6 +116,7 @@ baseLayers.OSM.addTo(map);
 (control as any).toolbar([defaultTool, addNodeTool], { position: 'topleft' }).addTo(map)
 
 
+// TODO: Add a text writing tool
 // TODO: Ability to save and load leaflet-draw:ings
 const drawnItems = new FeatureGroup().addTo(map)
 
