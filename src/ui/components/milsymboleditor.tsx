@@ -7,6 +7,67 @@ interface Field {
     option: keyof ms.SymbolOptions
 }
 
+// SIDC layuot:
+// 0. Overall symbology: (S)GWIMO
+// 1. Affiliation: PUAFNSHJKO
+const affiliations = {
+    'PENDING': 'P',
+    'UNKNOWN': 'U',
+    'ASSUMED FRIEND': 'A',
+    'FRIEND': 'F',
+    'NEUTRAL': 'N',
+    'SUSPECT': 'S',
+    'HOSTILE': 'H',
+    'JOKER': 'J',
+    'FAKER': 'K',
+    'NONE SPECIFIED': 'O'
+}
+// 2. Battle Dimension: PAGSUFX
+const battleDimensions = {
+    'SPACE': 'P',
+    'AIR': 'A',
+    'GROUND': 'G',
+    'SEA SURFACE': 'S',
+    'SEA SUBSURFACE': 'U',
+    'SOF': 'F',
+    'OTHER': 'X',
+}
+// 3. Status: AP
+const status = {
+    'ANTICIPATED/PLANNED': 'A',
+    'PRESENT': 'P'
+}
+// 4-9. Specialization with increasing detail: US----
+// 10. Modifier such as HQ: A-H, M-N
+const unitSizeModifier = {
+    'HQ': 'A',
+    'TF HQ': 'B',
+    'FD HQ': 'C',
+    'FD/TF HQ': 'D',
+    'TF': 'E',
+    'FD': 'F',
+    'FD/TF': 'G',
+}
+// 11. Unit size: A to M (Team to Region) null is -.
+const unitSize = {
+    'NULL': '-',
+    'TEAM/CREW': 'A',
+    'SQUAD': 'B',
+    'SECTION': 'C',
+    'PLATOON/DETACHMENT': 'D',
+    'COMPANY/BATTERY/TROOP': 'E',
+    'BATTALION/SQUADRON': 'F',
+    'REGIMENT/GROUP': 'G',
+    'BRIGADE': 'H',
+    'DIVISION': 'I',
+    'CORPS/MEF': 'J',
+    'ARMY': 'K',
+    'ARMY GROUP/FRONT': 'L',
+    'REGION': 'M'
+}
+// 12-13. Associated country code: CA, US etc..
+// 14. Order of battle: ACGNS
+
 
 // SIDC explained
 // https://help.perforce.com/visualization/jviews/8.9/jviews-maps-defense89/doc/html/en-US/Content/Visualization/Documentation/JViews/JViews_Defense/_pubskel/ps_usrprgdef811.html
@@ -16,6 +77,7 @@ export function MilSymbolEditor(props: any) {
         ? props.milSymbol as ms.Symbol
         : new ms.Symbol('SFGPU-------')
     const soptions = symbol.getOptions()
+
 
     const fields: Array<Field> = [
         { title: 'SIDC', option: 'sidc' },
