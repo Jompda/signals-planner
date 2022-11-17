@@ -155,7 +155,7 @@ const radioPresetArray = [
     new RadioMedium({
         name: 'VHF1',
         frequency: 88,
-        Pt: 1,
+        Pt: 17,
         Gt: 2.15,
         Gr: 2.15,
         preset: true
