@@ -2,9 +2,20 @@ import { Map as LMap } from 'leaflet'
 import { LeafletMouseEvent } from 'leaflet'
 
 
+export interface ToolAction {
+    html: string
+    /** To close call "this.action.disable()" */
+    enable?: Function
+    /** To close call "this.action.disable()" */
+    disable?: Function
+}
+
+
 export interface ToolOptions {
     icon: any
-    actions?: any
+    /** true by default */
+    enableOnClick?: boolean
+    actions?: Array<ToolAction>
     unitSelecting?: boolean
     mmbTopography?: boolean
 }
@@ -29,12 +40,14 @@ const interactionEvents = [
 
 export default class Tool {
     public icon: any
-    public actions: any
+    public enableOnClick: boolean
+    public actions: Array<ToolAction>
     public unitSelecting: boolean
     public mmbTopography: boolean
     private events: any
     constructor(options?: ToolOptions) {
         Object.assign(this, options)
+        if (!('enableOnClick' in options)) this.enableOnClick = true
         this.events = {}
         for (const event of interactionEvents)
             if (event in this) this.events[event] = (this as any)[event]

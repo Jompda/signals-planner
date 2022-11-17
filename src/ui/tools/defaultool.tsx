@@ -17,7 +17,7 @@ class DefaultTool extends Tool {
             },
             actions: [
                 {
-                    title: 'test',
+                    html: '<i class="fa fa-mouse-pointer" />',
                     enable: function () { this.action.disable() },
                 }
             ],
