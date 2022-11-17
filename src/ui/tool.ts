@@ -3,7 +3,8 @@ import { LeafletMouseEvent } from 'leaflet'
 
 
 export interface ToolOptions {
-    icon: JSX.Element
+    icon: any
+    actions?: any
     unitSelecting?: boolean
     mmbTopography?: boolean
 }
@@ -27,7 +28,8 @@ const interactionEvents = [
 
 
 export default class Tool {
-    public icon: JSX.Element
+    public icon: any
+    public actions: any
     public unitSelecting: boolean
     public mmbTopography: boolean
     private events: any

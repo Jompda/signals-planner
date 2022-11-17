@@ -9,3 +9,5 @@ declare interface LatLng {
     lat: number
     lng: number
 }
+
+declare module 'leaflet-toolbar'

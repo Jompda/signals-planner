@@ -1,69 +1,69 @@
-import { createRoot } from 'react-dom/client'
-import { Map as LMap, Control, control, Util, DomUtil, DomEvent } from 'leaflet'
 import Tool from '../tool'
 import { setActiveTool } from '../toolcontroller';
 
+import 'leaflet-toolbar'
+import * as L from 'leaflet'
+const Toolbar2 = (L as any).Toolbar2;
 
-(control as any).toolbar = function (options: any) {
-    return new (Control as any).Toolbar(options)
-};
-
-(Control as any).Toolbar = Control.extend({
-    options: {
-        position: 'topleft'
+/*const ImmediateSubAction = Toolbar2.Action.extend({
+    initialize: function (map: L.Map, myAction: any) {
+        this.map = map
+        this.myAction = myAction
+        console.log(myAction)
+        Toolbar2.Action.prototype.initialize.call(this)
     },
+    addHooks: function () {
+        this.myAction.disable()
+    }
+})*/
 
-    initialize: function (tools: Array<Tool>, options: any) {
-        Util.setOptions(this, options)
+export function createSpToolbar(map: L.Map, tools: Array<Tool>, options: any) {
+    setActiveTool(tools[0], map)
 
-        this._tools = tools
+    const tb = new Toolbar2.Control({
+        position: 'topleft',
+        actions: toolsToActions(map, tools)
+    })
 
-        const container = this._container = DomUtil.create('div', 'toolbar')
+    return tb
+}
 
-        const toolbuttons = new Array<JSX.Element>()
-        for (let i = 0; i < tools.length; i++) {
-            toolbuttons.push(
-                <ToolButton
-                    key={i}
-                    defaultChecked={!Boolean(i)}
-                    callback={() => setActiveTool(tools[i], this._map)}
-                    tool={tools[i]}
-                />
-            )
+
+function toolsToActions(map: L.Map, tools: Array<Tool>) {
+    const actions = new Array()
+    for (const tool of tools) {
+        const options: any = {
+            toolbarIcon: tool.icon,
         }
-
-        const root = createRoot(container)
-        root.render(
-            <>
-                {toolbuttons}
-            </>
-        )
-    },
-
-    onAdd: function (map: LMap) {
-        this._map = map
-        this._tools
-        setActiveTool(this._tools[0], this._map)
-        DomEvent.disableClickPropagation(this._container)
-        DomEvent.disableScrollPropagation(this._container)
-        return this._container
-    },
-})
+        if (tool.actions) options.subToolbar = createSubToolbar(tool.actions)
+        actions.push(Toolbar2.Action.extend({
+            options,
+            addHooks: function () {
+                setActiveTool(tool, map)
+            },
+        }))
+    }
+    return actions
+}
 
 
-function ToolButton(props: any) {
-    return (
-        <label className='toolbutton'>
-            <input
-                type='radio'
-                id={props.tool.icon}
-                defaultChecked={props.defaultChecked}
-                name='toolbartool'
-                onChange={() => {
-                    props.callback()
-                }}
-            />
-            {props.tool.icon}
-        </label>
-    )
+function createSubToolbar(actions: Array<any>) {
+    return new Toolbar2({
+        actions: actions.map(action => {
+            return Toolbar2.Action.extend({
+                options: {
+                    toolbarIcon: {
+                        html: 'test'
+                    }
+                },
+                initialize: function (map: L.Map, action: any) {
+                    this.map = map
+                    this.action = action
+                    Toolbar2.Action.prototype.initialize.call(this)
+                },
+                addHooks: action.enable,
+                removeHooks: action.disable
+            })
+        })
+    })
 }

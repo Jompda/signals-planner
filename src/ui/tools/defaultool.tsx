@@ -11,11 +11,16 @@ import { getMap } from '../structurecontroller'
 class DefaultTool extends Tool {
     constructor() {
         super({
-            icon: (
-                <div className='toolbutton-icon' title='Cursor'>
-                    <i className="fa fa-mouse-pointer"></i>
-                </div>
-            ),
+            icon: {
+                tooltip: 'Default',
+                className: 'fa fa-mouse-pointer'
+            },
+            actions: [
+                {
+                    title: 'test',
+                    enable: function () { this.action.disable() },
+                }
+            ],
             unitSelecting: true,
             mmbTopography: true
         })

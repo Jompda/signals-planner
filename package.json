@@ -38,6 +38,7 @@
         "leaflet-contextmenu": "^1.4.0",
         "leaflet-dialog": "^1.0.5",
         "leaflet-draw": "^1.0.4",
+        "leaflet-toolbar": "^0.4.0-alpha.2",
         "leaflet-topography": "^0.2.1",
         "leaflet.wms": "^0.2.0",
         "mgrs": "^1.0.0",

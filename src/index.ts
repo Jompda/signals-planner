@@ -3,6 +3,7 @@ import './styles.css'
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.css'
 import 'leaflet-dialog/Leaflet.Dialog.css'
 import 'leaflet-draw/dist/leaflet.draw.css'
+import 'leaflet-toolbar/dist/leaflet.toolbar.css'
 
 import { Map as LMap, MapOptions, control, LeafletKeyboardEvent, LatLng as LLatLng, FeatureGroup, Control, Draw, DrawEvents, DrawOptions } from 'leaflet'
 import 'leaflet-contextmenu'
@@ -95,6 +96,7 @@ import { baseLayers, overlays } from './ui/tilelayers'
 import addNodeTool from './ui/tools/addnodetool'
 import defaultTool from './ui/tools/defaultool'
 import { redo, undo } from './actionhistory'
+import { createSpToolbar } from './ui/menus/toolbar'
 
 
 const map = new LMap('map', {
@@ -113,7 +115,8 @@ baseLayers.OSM.addTo(map);
 
 (control as any).optionsMenu({ position: 'topright' }).addTo(map);
 (control as any).layerControl({ ...baseLayers, ...overlays }, { position: 'topright' }).addTo(map);
-(control as any).toolbar([defaultTool, addNodeTool], { position: 'topleft' }).addTo(map)
+createSpToolbar(map, [defaultTool, addNodeTool], { position: 'topleft' }).addTo(map)
+
 
 
 // TODO: Add a text writing tool

@@ -15,11 +15,10 @@ class AddNodeTool extends Tool {
     constructor() {
         const symbol = new MilSymbol({ sidc: 'SFGPUUS----B', size: 15 })
         super({
-            icon: (
-                <div className='toolbutton-icon' title='Add Node'>
-                    <img src={symbol.toDataURL()} />
-                </div>
-            ),
+            icon: {
+                tooltip: 'Add Node',
+                html: `<div class="center-content"><img src="${symbol.toDataURL()}" /></div>`
+            },
             unitSelecting: true,
             mmbTopography: true
         })
