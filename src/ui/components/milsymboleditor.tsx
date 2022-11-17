@@ -2,6 +2,12 @@ import * as ms from 'milsymbol'
 import { useRef, useState } from 'react'
 
 
+interface Field {
+    title: string
+    option: keyof ms.SymbolOptions
+}
+
+
 // SIDC explained
 // https://help.perforce.com/visualization/jviews/8.9/jviews-maps-defense89/doc/html/en-US/Content/Visualization/Documentation/JViews/JViews_Defense/_pubskel/ps_usrprgdef811.html
 // TODO: Create a SIDC editor.
@@ -11,27 +17,36 @@ export function MilSymbolEditor(props: any) {
         : new ms.Symbol('SFGPU-------')
     const soptions = symbol.getOptions()
 
-
-    const sidcRef = useRef<HTMLInputElement>()
-    const uniqueDesignationRef = useRef<HTMLInputElement>()
-    const higherFormationRef = useRef<HTMLInputElement>()
-    const reinforcedreducedRef = useRef<HTMLInputElement>()
-    const typeRef = useRef<HTMLInputElement>()
-    const additionalInformationRef = useRef<HTMLInputElement>()
+    const fields: Array<Field> = [
+        { title: 'SIDC', option: 'sidc' },
+        { title: 'Unique Designation', option: 'uniqueDesignation' },
+        { title: 'Higher Formation', option: 'higherFormation' },
+        { title: 'Reinforced or Reduced', option: 'reinforcedReduced' },
+        { title: 'Type', option: 'type' },
+        { title: 'Additional Information', option: 'additionalInformation' }
+    ]
+    const inputFields = new Array<JSX.Element>()
+    for (const field of fields) {
+        const fieldRef = useRef<HTMLInputElement>()
+        inputFields.push(<span key={field.option + 1}>{field.title}:</span>)
+        inputFields.push(
+            <input
+                key={field.option + 2}
+                ref={fieldRef}
+                type='text'
+                defaultValue={String(soptions[field.option])}
+                onChange={() => {
+                    (soptions[field.option] as any) = fieldRef.current.value
+                    updateSvg()
+                }}
+            />
+        )
+    }
 
     let updateSvgTimeout: any = null
-
     const [svg, setSvg] = useState(symbol.toDataURL())
-
     function updateSvg() {
-        symbol.setOptions({
-            sidc: sidcRef.current.value,
-            uniqueDesignation: uniqueDesignationRef.current.value,
-            higherFormation: higherFormationRef.current.value,
-            reinforcedReduced: reinforcedreducedRef.current.value,
-            type: typeRef.current.value,
-            additionalInformation: additionalInformationRef.current.value
-        })
+        symbol.setOptions(soptions)
         if (updateSvg) clearTimeout(updateSvgTimeout)
         updateSvgTimeout = setTimeout(() => {
             setSvg(symbol.toDataURL())
@@ -45,48 +60,7 @@ export function MilSymbolEditor(props: any) {
     return (
         <div className='milsymbol-editor'>
             <div className='milsymbol-editor-fields'>
-                <span>SIDC:</span>
-                <input
-                    ref={sidcRef}
-                    type='text'
-                    defaultValue={soptions.sidc}
-                    onChange={updateSvg}
-                />
-                <span>Unique Designation:</span>
-                <input
-                    ref={uniqueDesignationRef}
-                    type='text'
-                    defaultValue={soptions.uniqueDesignation}
-                    onChange={updateSvg}
-                />
-                <span>Higher Formation:</span>
-                <input
-                    ref={higherFormationRef}
-                    type='text'
-                    defaultValue={soptions.higherFormation}
-                    onChange={updateSvg}
-                />
-                <span>Reinforced or Reduced:</span>
-                <input
-                    ref={reinforcedreducedRef}
-                    type='text'
-                    defaultValue={soptions.reinforcedReduced}
-                    onChange={updateSvg}
-                />
-                <span>Type:</span>
-                <input
-                    ref={typeRef}
-                    type='text'
-                    defaultValue={soptions.type}
-                    onChange={updateSvg}
-                />
-                <span>Additional Information:</span>
-                <input
-                    ref={additionalInformationRef}
-                    type='text'
-                    defaultValue={soptions.additionalInformation}
-                    onChange={updateSvg}
-                />
+                {inputFields}
             </div>
             <div>
                 <img src={svg} />
