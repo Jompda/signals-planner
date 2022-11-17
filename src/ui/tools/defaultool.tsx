@@ -15,12 +15,6 @@ class DefaultTool extends Tool {
                 tooltip: 'Default',
                 className: 'fa fa-mouse-pointer'
             },
-            actions: [
-                {
-                    html: '<i class="fa fa-mouse-pointer" />',
-                    enable: function () { this.action.disable() },
-                }
-            ],
             unitSelecting: true,
             mmbTopography: true
         })

@@ -4,7 +4,7 @@ import { useRef, useState } from 'react'
 
 // SIDC explained
 // https://help.perforce.com/visualization/jviews/8.9/jviews-maps-defense89/doc/html/en-US/Content/Visualization/Documentation/JViews/JViews_Defense/_pubskel/ps_usrprgdef811.html
-
+// TODO: Create a SIDC editor.
 export function MilSymbolEditor(props: any) {
     const symbol = props.milSymbol
         ? props.milSymbol as ms.Symbol

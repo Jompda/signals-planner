@@ -50,8 +50,8 @@ export class RadioMedium extends Medium {
         this.Gt = options.Gt
         this.Gr = options.Gr
     }
-    // TODO: Implement a prediction model i.e. Egli or Freshnel method+.
-    // Current implementation https://en.wikipedia.org/wiki/ITU_terrain_model
+
+
     estimateLinkStats(link: Link) {
         const waveLength = (299_792_458) / (this.frequency * 1_000_000)
         const distance = link.lineStats.distance
@@ -63,10 +63,9 @@ export class RadioMedium extends Medium {
         const iToDist = (i: number) => distance * (i / (values.length - 1)) / 1000
         const losElevationAtIndex = createLosGetter(srcElevation, trgtElevation, values.length - 1)
 
+        // https://en.wikipedia.org/wiki/ITU_terrain_model
         let itmLoss = 0
-
         const R1Fmax = 274 * Math.sqrt((distance / 1000) / this.frequency)
-
         for (let i = 1; i < values.length - 1; i++) {
             const obstructionElevation = values[i].elevation + values[i].treeHeight
             const losElevation = losElevationAtIndex(i)

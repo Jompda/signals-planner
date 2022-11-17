@@ -19,6 +19,15 @@ class AddNodeTool extends Tool {
                 tooltip: 'Add Node',
                 html: `<div class="center-content"><img src="${symbol.toDataURL()}" /></div>`
             },
+            actions: [
+                {
+                    html: 'Edit',
+                    enable: function () {
+                        // TODO: Open MilSymbolEditor.
+                        this.action.disable()
+                    },
+                }
+            ],
             unitSelecting: true,
             mmbTopography: true
         })
