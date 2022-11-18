@@ -1,11 +1,10 @@
-import { Circle, Control, Draw, DrawEvents, DrawOptions, FeatureGroup, Map as LMap } from "leaflet"
+import { Control, Draw, DrawEvents, DrawOptions, FeatureGroup, Map as LMap, Toolbar } from "leaflet"
 import { addAction } from "./actionhistory"
 import { AddDrawLayerAction, EditDrawLayersAction, RemoveDrawLayersAction } from "./actions/drawactions"
 import { setLinkInteraction, setUnitInteraction } from "./ui/structurecontroller"
 
 
-// TODO: Add a text writing tool
-
+// TODO: Integrate better with the custom toolbar.
 export function initDraw(map: LMap) {
     // TODO: Ability to save and load leaflet-draw:ings
     const drawnLayers = new FeatureGroup().addTo(map)
@@ -21,7 +20,7 @@ export function initDraw(map: LMap) {
         },
     }
 
-    const drawControl = new Control.Draw({
+    const options = {
         edit: {
             featureGroup: drawnLayers,
             remove: true
@@ -41,7 +40,8 @@ export function initDraw(map: LMap) {
             circlemarker: false,
             marker: false
         }
-    }).addTo(map)
+    }
+    const drawControl = new Control.Draw(options as any).addTo(map)
 
     map.on(Draw.Event.DRAWSTART, disableStructureControls)
     map.on(Draw.Event.EDITSTART, disableStructureControls)
@@ -79,4 +79,6 @@ export function initDraw(map: LMap) {
     map.on(Draw.Event.DELETESTOP, () =>
         (drawnLayers as any).setInteractive(false)
     )
+
+    return drawControl
 }
