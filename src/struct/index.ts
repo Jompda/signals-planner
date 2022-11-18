@@ -67,10 +67,7 @@ export function getLinks() {
 }
 
 
-export function serialize(view: {
-    center: LatLng,
-    zoom: number
-}) {
+export function serialize() {
     const sUnits = new Array<SaveUnit>(), sLinks = new Array<SaveLink>()
     for (const unit of units.values())
         sUnits.push(unit.serialize())
@@ -78,8 +75,7 @@ export function serialize(view: {
         sLinks.push(link.serialize())
     return {
         units: sUnits,
-        links: sLinks,
-        view
+        links: sLinks
     } as SaveStructure
 }
 
@@ -122,8 +118,8 @@ export function deserialize(obj: SaveStructure) {
     }
 
     return {
+        ...obj,
         units: pUnits,
         links: pLinks,
-        view: obj.view
     }
 }

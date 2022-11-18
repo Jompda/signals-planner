@@ -1,4 +1,4 @@
-import { Map as LMap, LeafletMouseEvent } from 'leaflet'
+import { Map as LMap, LeafletMouseEvent, Polygon, Circle, Polyline, geoJson } from 'leaflet'
 import { ContextMenuItem } from '../../interfaces'
 import { deserialize, serialize } from '../../struct'
 import { requestFileUpload, startDownload } from '../../util'
@@ -7,6 +7,7 @@ import { openTopographyPopup } from '../../topoutil'
 import { addAction, redo, undo } from '../../actionhistory'
 import ImportAction from '../../actions/importaction'
 import RemoveAllAction from '../../actions/removeallaction'
+import { addDrawnLayers, getDrawnLayers } from '../../drawsetup'
 
 
 export function initContextMenu(map: LMap) {
@@ -32,10 +33,13 @@ export function initContextMenu(map: LMap) {
         text: 'Export',
         index: 6,
         callback: () => {
-            const str = JSON.stringify(serialize({
+            const structure = serialize()
+            const str = JSON.stringify({
+                ...structure,
                 center: map.getCenter(),
-                zoom: map.getZoom()
-            }), undefined, 2)
+                zoom: map.getZoom(),
+                drawings: (getDrawnLayers().getLayers() as Array<Polyline | Polygon | Circle>).map(polygon => polygon.toGeoJSON())
+            }, undefined, 2)
             startDownload(new Date().toISOString() + '.json', 'application/json', str)
         }
     }, {
@@ -43,9 +47,10 @@ export function initContextMenu(map: LMap) {
         index: 7,
         callback: () => requestFileUpload('application/json', (content) => {
             const parsed = JSON.parse(content)
-            const { units, links, view } = deserialize(parsed)
+            const { units, links, center, zoom, drawings } = deserialize(parsed)
+            addDrawnLayers(drawings.map(json => geoJson(json)))
             addAction(new ImportAction(units, links).forward())
-            map.setView([view.center.lat, view.center.lng], view.zoom)
+            map.setView([center.lat, center.lng], zoom)
         })
     }, {
         text: 'Remove All',

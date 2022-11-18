@@ -1,13 +1,22 @@
-import { Control, Draw, DrawEvents, DrawOptions, FeatureGroup, Map as LMap, Toolbar } from "leaflet"
-import { addAction } from "./actionhistory"
-import { AddDrawLayerAction, EditDrawLayersAction, RemoveDrawLayersAction } from "./actions/drawactions"
-import { setLinkInteraction, setUnitInteraction } from "./ui/structurecontroller"
+import { Control, Draw, DrawEvents, DrawOptions, FeatureGroup, Map as LMap, Toolbar } from 'leaflet'
+import { addAction } from './actionhistory'
+import { AddDrawLayerAction, EditDrawLayersAction, RemoveDrawLayersAction } from './actions/drawactions'
+import { setLinkInteraction, setUnitInteraction } from './ui/structurecontroller'
+
+
+const drawnLayers = new FeatureGroup()
+export function getDrawnLayers() {
+    return drawnLayers
+}
+export function addDrawnLayers(a: any) {
+    for (const b of a) drawnLayers.addLayer(b)
+}
 
 
 // TODO: Integrate better with the custom toolbar.
 export function initDraw(map: LMap) {
     // TODO: Ability to save and load leaflet-draw:ings
-    const drawnLayers = new FeatureGroup().addTo(map)
+    drawnLayers.addTo(map)
 
     const drawOptions: DrawOptions.PolygonOptions = {
         shapeOptions: {
@@ -79,6 +88,4 @@ export function initDraw(map: LMap) {
     map.on(Draw.Event.DELETESTOP, () =>
         (drawnLayers as any).setInteractive(false)
     )
-
-    return drawControl
 }

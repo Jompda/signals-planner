@@ -132,4 +132,4 @@ map.on('keydown', (e: LeafletKeyboardEvent) => {
 
 
 import { initDraw } from './drawsetup'
-const drawControl = initDraw(map)
+initDraw(map)
