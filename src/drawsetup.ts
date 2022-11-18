@@ -1,6 +1,6 @@
 import { Circle, Control, Draw, DrawEvents, DrawOptions, FeatureGroup, Map as LMap } from "leaflet"
 import { addAction } from "./actionhistory"
-import { AddDrawLayerAction, RemoveDrawLayersAction } from "./actions/drawactions"
+import { AddDrawLayerAction, EditDrawLayersAction, RemoveDrawLayersAction } from "./actions/drawactions"
 import { setLinkInteraction, setUnitInteraction } from "./ui/structurecontroller"
 
 
@@ -58,15 +58,17 @@ export function initDraw(map: LMap) {
         setLinkInteraction(false)
     }
 
-    // TODO: Actionize leaflet-draw events
+
     map.on(Draw.Event.CREATED, (e: DrawEvents.Created) =>
         addAction(new AddDrawLayerAction(drawnLayers, e.layer).forward())
     )
-    map.on(Draw.Event.EDITED, (e: DrawEvents.Edited) => {
-        for (const layer of drawnLayers.getLayers()) {
-            console.log('Circle?', layer instanceof Circle)
-        }
-    })
+    let editAction: EditDrawLayersAction
+    map.on(Draw.Event.EDITSTART, () =>
+        editAction = new EditDrawLayersAction(drawnLayers).saveOld()
+    )
+    map.on(Draw.Event.EDITED, () =>
+        addAction(editAction.saveNew())
+    )
     map.on(Draw.Event.DELETED, (e: DrawEvents.Deleted) =>
         addAction(new RemoveDrawLayersAction(drawnLayers, e.layers.getLayers()).forward())
     )
