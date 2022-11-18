@@ -91,7 +91,7 @@ import './ui/menus/optionsmenu'
 import './ui/menus/layercontrolmenu'
 import './ui/menus/toolbar'
 import { initContextMenu } from './ui/menus/contextmenu'
-import { addTo as lgAddTo } from './ui/structurecontroller'
+import { addTo as lgAddTo, setLinkInteraction, setUnitInteraction } from './ui/structurecontroller'
 import { baseLayers, overlays } from './ui/tilelayers'
 import addNodeTool from './ui/tools/addnodetool'
 import defaultTool from './ui/tools/defaultool'
@@ -155,6 +155,21 @@ new Control.Draw({
         marker: false
     }
 }).addTo(map)
+
+map.on(Draw.Event.DRAWSTART, disableStructureControls)
+map.on(Draw.Event.EDITSTART, disableStructureControls)
+map.on(Draw.Event.DELETESTART, disableStructureControls)
+map.on(Draw.Event.DRAWSTOP, enableStructureControls)
+map.on(Draw.Event.EDITSTOP, enableStructureControls)
+map.on(Draw.Event.DELETESTOP, enableStructureControls)
+function enableStructureControls() {
+    setUnitInteraction(true)
+    setLinkInteraction(true)
+}
+function disableStructureControls() {
+    setUnitInteraction(false)
+    setLinkInteraction(false)
+}
 
 // TODO: Actionize leaflet-draw events
 map.on(Draw.Event.CREATED, (e: DrawEvents.Created) =>
