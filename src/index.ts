@@ -5,7 +5,7 @@ import 'leaflet-dialog/Leaflet.Dialog.css'
 import 'leaflet-draw/dist/leaflet.draw.css'
 import 'leaflet-toolbar/dist/leaflet.toolbar.css'
 
-import { Map as LMap, MapOptions, control, LeafletKeyboardEvent, LatLng as LLatLng, FeatureGroup, Control, Draw, DrawEvents, DrawOptions } from 'leaflet'
+import { Map as LMap, MapOptions, control, LeafletKeyboardEvent, LatLng as LLatLng } from 'leaflet'
 import 'leaflet-contextmenu'
 import 'leaflet-dialog'
 import 'leaflet-draw'
@@ -91,7 +91,7 @@ import './ui/menus/optionsmenu'
 import './ui/menus/layercontrolmenu'
 import './ui/menus/toolbar'
 import { initContextMenu } from './ui/menus/contextmenu'
-import { addTo as lgAddTo, setLinkInteraction, setUnitInteraction } from './ui/structurecontroller'
+import { addTo as lgAddTo } from './ui/structurecontroller'
 import { baseLayers, overlays } from './ui/tilelayers'
 import addNodeTool from './ui/tools/addnodetool'
 import defaultTool from './ui/tools/defaultool'
@@ -118,72 +118,6 @@ baseLayers.OSM.addTo(map);
 createSpToolbar(map, [defaultTool, addNodeTool], { position: 'topleft' }).addTo(map)
 
 
-
-// TODO: Add a text writing tool
-// TODO: Ability to save and load leaflet-draw:ings
-const drawnItems = new FeatureGroup().addTo(map)
-
-const drawOptions: DrawOptions.PolygonOptions = {
-    shapeOptions: {
-        color: 'black',
-        opacity: 0.8,
-        interactive: false,
-        fill: true,
-        fillColor: 'black',
-        fillOpacity: 0.1
-    },
-}
-
-new Control.Draw({
-    edit: {
-        featureGroup: drawnItems,
-        remove: true
-    },
-    draw: {
-        polyline: {
-            metric: true,
-            shapeOptions: {
-                interactive: false,
-                color: 'black',
-                opacity: 0.8
-            }
-        },
-        polygon: drawOptions,
-        rectangle: drawOptions,
-        circle: drawOptions,
-        circlemarker: false,
-        marker: false
-    }
-}).addTo(map)
-
-map.on(Draw.Event.DRAWSTART, disableStructureControls)
-map.on(Draw.Event.EDITSTART, disableStructureControls)
-map.on(Draw.Event.DELETESTART, disableStructureControls)
-map.on(Draw.Event.DRAWSTOP, enableStructureControls)
-map.on(Draw.Event.EDITSTOP, enableStructureControls)
-map.on(Draw.Event.DELETESTOP, enableStructureControls)
-function enableStructureControls() {
-    setUnitInteraction(true)
-    setLinkInteraction(true)
-}
-function disableStructureControls() {
-    setUnitInteraction(false)
-    setLinkInteraction(false)
-}
-
-// TODO: Actionize leaflet-draw events
-map.on(Draw.Event.CREATED, (e: DrawEvents.Created) =>
-    drawnItems.addLayer(e.layer)
-)
-
-map.on(Draw.Event.DELETESTART, () =>
-    (drawnItems as any).setInteractive(true)
-)
-map.on(Draw.Event.DELETESTOP, () =>
-    (drawnItems as any).setInteractive(false)
-)
-
-
 map.on('keydown', (e: LeafletKeyboardEvent) => {
     const event = e.originalEvent
     if (
@@ -195,3 +129,7 @@ map.on('keydown', (e: LeafletKeyboardEvent) => {
         && event.key.toUpperCase() == 'Y'
     ) redo()
 })
+
+
+import { initDraw } from './drawsetup'
+initDraw(map)
