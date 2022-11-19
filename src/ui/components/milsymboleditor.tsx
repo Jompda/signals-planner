@@ -71,7 +71,7 @@ const unitSize = {
 
 // SIDC explained
 // https://help.perforce.com/visualization/jviews/8.9/jviews-maps-defense89/doc/html/en-US/Content/Visualization/Documentation/JViews/JViews_Defense/_pubskel/ps_usrprgdef811.html
-// TODO: Create a SIDC editor.
+// TODO: Create a SIDC editor. Or just rely on third party editors and take the SIDC? Embed somehow?
 export function MilSymbolEditor(props: any) {
     const symbol = props.milSymbol
         ? props.milSymbol as ms.Symbol

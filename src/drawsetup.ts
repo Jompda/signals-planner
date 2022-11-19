@@ -13,7 +13,7 @@ export function addDrawnLayers(a: any) {
 }
 
 
-// TODO: Integrate better with the custom toolbar.
+// TODO: Create the control toolbar with leaflet.toolbar (Toolbar2) from scratch for better compatability.
 export function initDraw(map: LMap) {
     // TODO: Ability to save and load leaflet-draw:ings
     drawnLayers.addTo(map)
