@@ -2,13 +2,15 @@
 import './styles.css'
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.css'
 import 'leaflet-dialog/Leaflet.Dialog.css'
-import 'leaflet-draw/dist/leaflet.draw.css'
+//import 'leaflet-draw/dist/leaflet.draw.css'
 import 'leaflet-toolbar/dist/leaflet.toolbar.css'
+import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
 
 import { Map as LMap, MapOptions, control, LeafletKeyboardEvent, LatLng as LLatLng } from 'leaflet'
+import '@geoman-io/leaflet-geoman-free'
 import 'leaflet-contextmenu'
 import 'leaflet-dialog'
-import 'leaflet-draw'
+//import 'leaflet-draw'
 
 import options from '../options'
 
@@ -131,5 +133,5 @@ map.on('keydown', (e: LeafletKeyboardEvent) => {
 })
 
 
-import { initDraw } from './drawsetup'
-initDraw(map)
+import { initGeoman } from './drawsetup'
+initGeoman(map)

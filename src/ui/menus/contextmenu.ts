@@ -1,4 +1,4 @@
-import { Map as LMap, LeafletMouseEvent, Polygon, Circle, Polyline, geoJson } from 'leaflet'
+import { Map as LMap, LeafletMouseEvent } from 'leaflet'
 import { ContextMenuItem } from '../../interfaces'
 import { deserialize, serialize } from '../../struct'
 import { requestFileUpload, startDownload } from '../../util'
@@ -7,7 +7,7 @@ import { openTopographyPopup } from '../../topoutil'
 import { addAction, redo, undo } from '../../actionhistory'
 import ImportAction from '../../actions/importaction'
 import RemoveAllAction from '../../actions/removeallaction'
-import { addDrawnLayers, getDrawnLayers } from '../../drawsetup'
+import { geoJsonToLayers, layersToGeoJson } from '../../drawsetup'
 
 
 export function initContextMenu(map: LMap) {
@@ -38,7 +38,7 @@ export function initContextMenu(map: LMap) {
                 ...structure,
                 center: map.getCenter(),
                 zoom: map.getZoom(),
-                drawings: (getDrawnLayers().getLayers() as Array<Polyline | Polygon | Circle>).map(polygon => polygon.toGeoJSON())
+                drawings: layersToGeoJson()
             }, undefined, 2)
             startDownload(new Date().toISOString() + '.json', 'application/json', str)
         }
@@ -48,8 +48,7 @@ export function initContextMenu(map: LMap) {
         callback: () => requestFileUpload('application/json', (content) => {
             const parsed = JSON.parse(content)
             const { units, links, center, zoom, drawings } = deserialize(parsed)
-            addDrawnLayers(drawings.map(json => geoJson(json)))
-            addAction(new ImportAction(units, links).forward())
+            addAction(new ImportAction(units, links, geoJsonToLayers(drawings)).forward())
             map.setView([center.lat, center.lng], zoom)
         })
     }, {

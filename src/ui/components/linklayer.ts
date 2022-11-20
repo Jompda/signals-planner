@@ -16,6 +16,7 @@ export default class LinkLayer extends Polyline {
     constructor(link: Link, unit0: UnitLayer, unit1: UnitLayer) {
         const endPoints = getEndPoints(unit0, unit1)
         super(endPoints, {
+            pmIgnore: true,
             color: 'black',
             opacity: 0.75,
             draggable: true,

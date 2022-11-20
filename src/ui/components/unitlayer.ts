@@ -21,6 +21,7 @@ export default class UnitLayer extends Marker {
         (svg as any).unitid = unit.id
 
         super(unit.latlng, {
+            pmIgnore: true,
             icon,
             draggable: true,
             contextmenu: true,

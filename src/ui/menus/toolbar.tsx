@@ -1,5 +1,5 @@
 import Tool, { ToolAction } from '../tool'
-import { setActiveTool } from '../toolcontroller';
+import { setActiveTool } from '../toolcontroller'
 
 import 'leaflet-toolbar'
 import * as L from 'leaflet'
@@ -15,9 +15,9 @@ export function createSpToolbar(map: L.Map, tools: Array<Tool>, options: any) {
         actions: toolsToActions(map, tools)
     })
 
-    map.on(L.Draw.Event.TOOLBAROPENED, () =>
+    /*map.on(L.Draw.Event.TOOLBAROPENED, () =>
         tb._ul.firstChild.firstChild.click()
-    )
+    )*/
 
     return tb
 }

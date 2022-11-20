@@ -28,20 +28,18 @@ export class AddDrawLayerAction extends DrawAction {
 }
 
 
-export class RemoveDrawLayersAction extends DrawAction {
-    private layers: Array<Layer>
-    constructor(lg: LayerGroup, layers: Array<Layer>) {
+export class RemoveDrawLayerAction extends DrawAction {
+    private layer: Layer
+    constructor(lg: LayerGroup, layer: Layer) {
         super(lg)
-        this.layers = layers
+        this.layer = layer
     }
     forward() {
-        for (const layer of this.layers)
-            this.lg.removeLayer(layer)
+        this.lg.removeLayer(this.layer)
         return this
     }
     reverse() {
-        for (const layer of this.layers)
-            this.lg.addLayer(layer)
+        this.lg.addLayer(this.layer)
         return this
     }
 }

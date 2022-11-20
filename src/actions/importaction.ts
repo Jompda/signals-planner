@@ -1,3 +1,5 @@
+import { Layer } from 'leaflet'
+import { getDrawnLayers } from '../drawsetup'
 import Link from '../struct/link'
 import Unit from '../struct/unit'
 import LinkLayer from '../ui/components/linklayer'
@@ -10,9 +12,10 @@ import { AddUnitAction } from './unitactions'
 export default class ImportAction extends Action {
     private units: Array<AddUnitAction>
     private links: Array<AddLinkAction>
-    constructor(units: Array<Unit>, links: Array<Link>) {
+    private drawings: Array<Layer>
+    constructor(units: Array<Unit>, links: Array<Link>, drawings: Array<Layer>) {
         super()
-
+        this.drawings = drawings
         const unitLayers = new Array<UnitLayer>()
         function linkUnitResolver(unitId: string) {
             return unitLayers.find(unitLayer => unitLayer.unit.id == unitId)
@@ -31,11 +34,15 @@ export default class ImportAction extends Action {
     forward() {
         for (const unit of this.units) unit.forward()
         for (const link of this.links) link.forward()
+        const drawnlayers = getDrawnLayers()
+        for (const layer of this.drawings) drawnlayers.addLayer(layer)
         return this
     }
     reverse() {
         for (const link of this.links) link.reverse()
         for (const unit of this.units) unit.reverse()
+        const drawnlayers = getDrawnLayers()
+        for (const layer of this.drawings) drawnlayers.removeLayer(layer)
         return this
     }
 }
