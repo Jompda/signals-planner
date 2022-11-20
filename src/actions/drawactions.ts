@@ -48,17 +48,20 @@ export class RemoveDrawLayerAction extends DrawAction {
 // NOTE Instead of saving everything whenever edit starts, save only targeted layers.
 let drawLayerEditId = 0
 export class EditDrawLayersAction extends DrawAction {
+    public change: boolean
     private layers: Array<Layer>
     private editId: number
     constructor(lg: LayerGroup) {
         super(lg)
         this.layers = lg.getLayers()
-        this.editId = drawLayerEditId++
+        this.editId = drawLayerEditId
     }
     saveOld() {
         return this.saveState(`editOld:${this.editId}`)
     }
     saveNew() {
+        this.change = true
+        drawLayerEditId++
         return this.saveState(`editNew:${this.editId}`)
     }
     saveState(fieldName: string) {

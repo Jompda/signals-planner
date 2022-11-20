@@ -32,6 +32,9 @@ drawnLayers.on('pm:textchange', (e) => {
         return (e.layer as any).skipTextChange = false
     if (editAction) addAction(editAction.saveNew())
 })
+drawnLayers.on('pm:edit', () =>
+    editAction.change = true
+)
 
 export function getDrawnLayers() {
     return drawnLayers
@@ -103,9 +106,11 @@ export function initGeoman(map: LMap) {
     map.on('pm:globaleditmodetoggled', () =>
         map.pm.globalEditModeEnabled()
             ? editAction = new EditDrawLayersAction(drawnLayers).saveOld()
-            : addAction(editAction.saveNew())
+            : editAction.change
+                ? addAction(editAction.saveNew())
+                : editAction = undefined
     )
-    // TODO: Support for cut
+    // NOTE: Maybe add support for cut
     /*map.on('pm:globalcutmodetoggled', () =>
         map.pm.globalCutModeEnabled()
             ? editAction = new EditDrawLayersAction(drawnLayers).saveOld()
