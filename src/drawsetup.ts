@@ -1,15 +1,22 @@
-import { Circle, FeatureGroup, geoJSON, Layer, Map as LMap, Marker, PathOptions, Polygon, Polyline } from 'leaflet'
+import { CircleMarkerOptions, FeatureGroup, Map as LMap, PathOptions } from 'leaflet'
 import { addAction } from './actionhistory'
 import { AddDrawLayerAction, EditDrawLayersAction, RemoveDrawLayerAction } from './actions/drawactions'
 import { setLinkInteraction, setUnitInteraction } from './ui/structurecontroller'
 
 
-const styleOptions: PathOptions = {
+let styleOptions: PathOptions | CircleMarkerOptions = {
     color: 'black',
     opacity: 0.8,
     interactive: false,
     fillColor: 'black',
     fillOpacity: 0.1,
+}
+export function getDrawStyleOptions() {
+    return styleOptions
+}
+export function setDrawStyleOptions(options: PathOptions | CircleMarkerOptions) {
+    styleOptions = options
+    drawnLayers.setStyle(options)
 }
 
 
@@ -38,34 +45,6 @@ drawnLayers.on('pm:edit', () =>
 
 export function getDrawnLayers() {
     return drawnLayers
-}
-export function layersToGeoJson() {
-    return (drawnLayers.getLayers() as Array<Polyline | Polygon | Circle | Marker>).map(layer => {
-        const json = layer.toGeoJSON()
-        if (layer instanceof Circle)
-            json.properties.radius = layer.getRadius()
-        else if ((layer.options as any).textMarker)
-            json.properties.text = (layer.options as any).text
-        return json
-    })
-}
-export function geoJsonToLayers(geojson: Array<any>) {
-    const layers = new Array<Layer>()
-    geoJSON(geojson, {
-        style: styleOptions,
-        pointToLayer: (feature, latlng) => {
-            if (feature.properties.radius)
-                return new Circle(latlng, feature.properties.radius)
-            else if (feature.properties.text)
-                return new Marker(latlng, {
-                    textMarker: true,
-                    text: feature.properties.text
-                })
-            return new Marker(latlng)
-        },
-        onEachFeature: (feature, layer) => layers.push(layer)
-    })
-    return layers
 }
 
 

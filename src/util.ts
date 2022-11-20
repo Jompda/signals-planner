@@ -1,4 +1,4 @@
-import { Map as LMap, Layer, DomUtil, control } from 'leaflet'
+import { Map as LMap, Layer, DomUtil, control, Polyline, Polygon, Circle, Marker, geoJSON } from 'leaflet'
 import { Symbol as MilSymbol } from 'milsymbol'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -9,6 +9,36 @@ export function getMaxWorkers() {
 }
 export function setMaxWorkers(amount: number) {
     maxWorkers = amount
+}
+
+
+export function layersToGeoJson(layers: Array<Layer>) {
+    return (layers as Array<Polyline | Polygon | Circle | Marker>).map(layer => {
+        const json = layer.toGeoJSON()
+        if (layer instanceof Circle)
+            json.properties.radius = layer.getRadius()
+        else if ((layer.options as any).textMarker)
+            json.properties.text = (layer.options as any).text
+        return json
+    })
+}
+export function geoJsonToLayers(geojson: Array<any>, styleOptions: any) {
+    const layers = new Array<Layer>()
+    geoJSON(geojson, {
+        style: styleOptions,
+        pointToLayer: (feature, latlng) => {
+            if (feature.properties.radius)
+                return new Circle(latlng, feature.properties.radius)
+            else if (feature.properties.text)
+                return new Marker(latlng, {
+                    textMarker: true,
+                    text: feature.properties.text
+                })
+            return new Marker(latlng)
+        },
+        onEachFeature: (feature, layer) => layers.push(layer)
+    })
+    return layers
 }
 
 
