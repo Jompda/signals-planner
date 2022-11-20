@@ -23,7 +23,8 @@ import { getImage } from 'tiledata'
                     headers: {
                         'Authorization': this._auth
                     }
-                })
+                }
+            )
             ctx.drawImage(img, 0, 0)
             setTimeout(() => callback(null, canvas), 0)
         }

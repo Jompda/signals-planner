@@ -5,7 +5,9 @@
  * To limit the covered area, the layer must take a bounds option.
  *   Use OSM:s slippy tiles function to get the covered tiles' coordinates at certain zoom level.
  * By default the layer draws an outline on the selected tiles.
+ *   If emission data exists in the data structure then draw it.
  * Emission calculaton for the current zoom level is triggered with a function.
+ *   After the calculation is finished, redraw the layer.
  * 
  * Emission calculation:
  * Create a huge raster from all covered tiles.
