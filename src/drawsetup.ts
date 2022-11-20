@@ -99,6 +99,7 @@ export function initGeoman(map: LMap) {
     map.on('pm:remove', (e) =>
         addAction(new RemoveDrawLayerAction(drawnLayers, e.layer))
     )
+    // TODO: Add support for vertice changes.
     map.on('pm:globaleditmodetoggled', () =>
         map.pm.globalEditModeEnabled()
             ? editAction = new EditDrawLayersAction(drawnLayers).saveOld()
