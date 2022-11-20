@@ -26,10 +26,12 @@ export function getDrawnLayers() {
     return drawnLayers
 }
 export function layersToGeoJson() {
-    return (drawnLayers.getLayers() as Array<Polyline | Polygon | Circle>).map(layer => {
+    return (drawnLayers.getLayers() as Array<Polyline | Polygon | Circle | Marker>).map(layer => {
         const json = layer.toGeoJSON()
         if (layer instanceof Circle)
             json.properties.radius = layer.getRadius()
+        else if ((layer.options as any).textMarker)
+            json.properties.text = (layer.options as any).text
         return json
     })
 }
@@ -40,6 +42,11 @@ export function geoJsonToLayers(geojson: Array<any>) {
         pointToLayer: (feature, latlng) => {
             if (feature.properties.radius)
                 return new Circle(latlng, feature.properties.radius)
+            else if (feature.properties.text)
+                return new Marker(latlng, {
+                    textMarker: true,
+                    text: feature.properties.text
+                })
             return new Marker(latlng)
         },
         onEachFeature: (feature, layer) => layers.push(layer)
