@@ -1,4 +1,4 @@
-import { Circle, Control, FeatureGroup, geoJSON, Layer, Map as LMap, Marker, MarkerOptions, PathOptions, Polygon, Polyline } from 'leaflet'
+import { Circle, FeatureGroup, geoJSON, Layer, Map as LMap, Marker, PathOptions, Polygon, Polyline } from 'leaflet'
 import { addAction } from './actionhistory'
 import { AddDrawLayerAction, EditDrawLayersAction, RemoveDrawLayerAction } from './actions/drawactions'
 import { setLinkInteraction, setUnitInteraction } from './ui/structurecontroller'
@@ -14,6 +14,14 @@ const styleOptions: PathOptions = {
 
 
 const drawnLayers = new FeatureGroup()
+let editAction: EditDrawLayersAction
+drawnLayers.on('pm:enable', () =>
+    editAction = new EditDrawLayersAction(drawnLayers).saveOld()
+)
+drawnLayers.on('pm:edit', () =>
+    addAction(editAction.saveNew())
+)
+
 export function getDrawnLayers() {
     return drawnLayers
 }
@@ -70,13 +78,6 @@ export function initGeoman(map: LMap) {
     map.on('pm:create', (e) =>
         addAction(new AddDrawLayerAction(drawnLayers, e.layer))
     )
-    /*let editAction: EditDrawLayersAction
-    map.on(Draw.Event.EDITSTART, () =>
-        editAction = new EditDrawLayersAction(drawnLayers).saveOld()
-    )
-    map.on(Draw.Event.EDITED, () =>
-        addAction(editAction.saveNew())
-    )*/
     map.on('pm:remove', (e) =>
         addAction(new RemoveDrawLayerAction(drawnLayers, e.layer))
     )
