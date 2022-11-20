@@ -61,6 +61,7 @@ export class RadioMedium extends Medium {
         const receiverElevation = values[values.length - 1].elevation + link.emitterHeight
 
         let itmLoss = 0, Pr = -108
+        // https://www.doria.fi/handle/10024/118719 Page 4
         const radioHorizon = 4.12 * (Math.sqrt(transmitterElevation) + Math.sqrt(receiverElevation)) * 1000
 
         if (distance <= radioHorizon) {
@@ -69,6 +70,7 @@ export class RadioMedium extends Medium {
 
             // https://en.wikipedia.org/wiki/ITU_terrain_model
 
+            // https://www.doria.fi/handle/10024/118719 Page 4
             const R1Fmax = 274 * Math.sqrt((distance / 1000) / this.frequency)
             for (let i = 1; i < values.length - 1; i++) {
                 const obstructionElevation = values[i].elevation + values[i].treeHeight
@@ -76,7 +78,7 @@ export class RadioMedium extends Medium {
                 const h = losElevation - obstructionElevation
                 const d1 = iToDist(i), d2 = iToDist(values.length - 1 - i)
                 if (h > R1Fmax) {
-                    // https://www.doria.fi/handle/10024/118719
+                    // https://www.doria.fi/handle/10024/118719 Page 5
                     const R1F = 548 * Math.sqrt((d1 * d2) / (this.frequency * (d1 + d2)))
                     if (h > R1F) continue // Outside 1. Fresnel zone
                 }
