@@ -6,7 +6,6 @@ import * as L from 'leaflet'
 const Toolbar2 = (L as any).Toolbar2;
 
 
-// TODO: Add a text writing tool
 export function createSpToolbar(map: L.Map, tools: Array<Tool>, options: any) {
     setActiveTool(tools[0], map)
 
