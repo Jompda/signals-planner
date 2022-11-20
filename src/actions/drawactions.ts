@@ -1,4 +1,4 @@
-import { Circle, LatLng, latLng, Layer, LayerGroup, Polygon, Polyline, Rectangle } from "leaflet"
+import { Circle, LatLng, latLng, Layer, LayerGroup, Marker, Polygon, Polyline, Rectangle } from "leaflet"
 import Action from "./action"
 
 
@@ -45,6 +45,7 @@ export class RemoveDrawLayerAction extends DrawAction {
 }
 
 
+// NOTE Instead of saving everything whenever edit starts, save only targeted layers.
 let drawLayerEditId = 0
 export class EditDrawLayersAction extends DrawAction {
     private layers: Array<Layer>
@@ -55,61 +56,50 @@ export class EditDrawLayersAction extends DrawAction {
         this.editId = drawLayerEditId++
     }
     saveOld() {
+        return this.saveState(`editOld:${this.editId}`)
+    }
+    saveNew() {
+        return this.saveState(`editNew:${this.editId}`)
+    }
+    saveState(fieldName: string) {
         for (const layer of this.layers) {
             if (layer instanceof Polygon) {
-                console.log('Polygon', layer);
-                (layer as any)[`editOld:${this.editId}`] = (layer.getLatLngs()[0] as Array<LatLng>).map(latlng => latLng(latlng.lat, latlng.lng))
+                (layer as any)[fieldName] = (layer.getLatLngs()[0] as Array<LatLng>).map(latlng => latLng(latlng.lat, latlng.lng))
             } else if (layer instanceof Polyline) {
-                console.log('Polyline', layer);
-                (layer as any)[`editOld:${this.editId}`] = layer.getLatLngs().map(latlng => latLng((latlng as LatLng).lat, (latlng as LatLng).lng))
+                (layer as any)[fieldName] = layer.getLatLngs().map(latlng => latLng((latlng as LatLng).lat, (latlng as LatLng).lng))
             } else if (layer instanceof Circle) {
-                console.log('Circle', layer);
-                (layer as any)[`editOld:${this.editId}`] = {
+                (layer as any)[fieldName] = {
                     latlng: layer.getLatLng(),
                     radius: layer.getRadius()
                 }
-            }
-        }
-        return this
-    }
-    saveNew() {
-        for (const layer of this.layers) {
-            if (layer instanceof Polygon) {
-                console.log('Polygon', layer);
-                (layer as any)[`editNew:${this.editId}`] = (layer.getLatLngs()[0] as Array<LatLng>).map(latlng => latLng(latlng.lat, latlng.lng))
-            } else if (layer instanceof Polyline) {
-                console.log('Polyline', layer);
-                (layer as any)[`editNew:${this.editId}`] = layer.getLatLngs().map(latlng => latLng((latlng as LatLng).lat, (latlng as LatLng).lng))
-            } else if (layer instanceof Circle) {
-                console.log('Circle', layer);
-                (layer as any)[`editNew:${this.editId}`] = {
+            } else if (layer instanceof Marker && layer.options.text) {
+                (layer as any)[fieldName] = {
                     latlng: layer.getLatLng(),
-                    radius: layer.getRadius()
+                    text: layer.options.text
                 }
             }
         }
         return this
     }
     forward() {
-        for (const layer of this.layers) {
-            if (layer instanceof Polyline) {
-                layer.setLatLngs((layer as any)[`editNew:${this.editId}`])
-            } else if (layer instanceof Circle) {
-                const old = (layer as any)[`editNew:${this.editId}`]
-                layer.setLatLng(old.latlng)
-                layer.setRadius(old.radius)
-            }
-        }
-        return this
+        return this.apply(`editNew:${this.editId}`)
     }
     reverse() {
+        return this.apply(`editOld:${this.editId}`)
+    }
+    apply(fieldName: string) {
         for (const layer of this.layers) {
             if (layer instanceof Polyline) {
-                layer.setLatLngs((layer as any)[`editOld:${this.editId}`])
+                layer.setLatLngs((layer as any)[fieldName])
             } else if (layer instanceof Circle) {
-                const old = (layer as any)[`editOld:${this.editId}`]
+                const old = (layer as any)[fieldName]
                 layer.setLatLng(old.latlng)
                 layer.setRadius(old.radius)
+            } else if (layer instanceof Marker && layer.options.text) {
+                (layer as any).skipTextChange = true
+                const options = (layer as any)[fieldName]
+                layer.setLatLng(options.latlng)
+                layer.pm.setText(options.text)
             }
         }
         return this

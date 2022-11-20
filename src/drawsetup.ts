@@ -15,12 +15,23 @@ const styleOptions: PathOptions = {
 
 const drawnLayers = new FeatureGroup()
 let editAction: EditDrawLayersAction
-drawnLayers.on('pm:enable', () =>
+drawnLayers.on('pm:dragstart', () =>
     editAction = new EditDrawLayersAction(drawnLayers).saveOld()
 )
-drawnLayers.on('pm:edit', () =>
+drawnLayers.on('pm:rotatestart', () =>
+    editAction = new EditDrawLayersAction(drawnLayers).saveOld()
+)
+drawnLayers.on('pm:dragend', () =>
     addAction(editAction.saveNew())
 )
+drawnLayers.on('pm:rotateend', () =>
+    addAction(editAction.saveNew())
+)
+drawnLayers.on('pm:textchange', (e) => {
+    if ((e.layer as any).skipTextChange)
+        return (e.layer as any).skipTextChange = false
+    if (editAction) addAction(editAction.saveNew())
+})
 
 export function getDrawnLayers() {
     return drawnLayers
@@ -88,85 +99,16 @@ export function initGeoman(map: LMap) {
     map.on('pm:remove', (e) =>
         addAction(new RemoveDrawLayerAction(drawnLayers, e.layer))
     )
+    map.on('pm:globaleditmodetoggled', () =>
+        map.pm.globalEditModeEnabled()
+            ? editAction = new EditDrawLayersAction(drawnLayers).saveOld()
+            : addAction(editAction.saveNew())
+    )
+
+    map.on('pm:globaldragmodetoggled', () =>
+        (drawnLayers as any).setInteractive(map.pm.globalDragModeEnabled())
+    )
+    map.on('pm:globalremovalmodetoggled', () =>
+        (drawnLayers as any).setInteractive(map.pm.globalRemovalModeEnabled())
+    )
 }
-
-
-
-
-/*
-// TODO: Create the control toolbar with leaflet.toolbar (Toolbar2) from scratch for better compatability.
-export function initDraw(map: LMap) {
-    // TODO: Ability to save and load leaflet-draw:ings
-    drawnLayers.addTo(map)
-
-    const drawOptions: DrawOptions.PolygonOptions = {
-        shapeOptions: {
-            color: 'black',
-            opacity: 0.8,
-            interactive: false,
-            fill: true,
-            fillColor: 'black',
-            fillOpacity: 0.1
-        },
-    }
-
-    const options = {
-        edit: {
-            featureGroup: drawnLayers,
-            remove: true
-        },
-        draw: {
-            polyline: {
-                metric: true,
-                shapeOptions: {
-                    interactive: false,
-                    color: 'black',
-                    opacity: 0.8
-                }
-            },
-            polygon: drawOptions,
-            rectangle: drawOptions,
-            circle: drawOptions,
-            circlemarker: false,
-            marker: false
-        }
-    }
-    const drawControl = new Control.Draw(options as any).addTo(map)
-
-    map.on(Draw.Event.DRAWSTART, disableStructureControls)
-    map.on(Draw.Event.EDITSTART, disableStructureControls)
-    map.on(Draw.Event.DELETESTART, disableStructureControls)
-    map.on(Draw.Event.DRAWSTOP, enableStructureControls)
-    map.on(Draw.Event.EDITSTOP, enableStructureControls)
-    map.on(Draw.Event.DELETESTOP, enableStructureControls)
-    function enableStructureControls() {
-        setUnitInteraction(true)
-        setLinkInteraction(true)
-    }
-    function disableStructureControls() {
-        setUnitInteraction(false)
-        setLinkInteraction(false)
-    }
-
-
-    map.on(Draw.Event.CREATED, (e: DrawEvents.Created) =>
-        addAction(new AddDrawLayerAction(drawnLayers, e.layer).forward())
-    )
-    let editAction: EditDrawLayersAction
-    map.on(Draw.Event.EDITSTART, () =>
-        editAction = new EditDrawLayersAction(drawnLayers).saveOld()
-    )
-    map.on(Draw.Event.EDITED, () =>
-        addAction(editAction.saveNew())
-    )
-    map.on(Draw.Event.DELETED, (e: DrawEvents.Deleted) =>
-        addAction(new RemoveDrawLayersAction(drawnLayers, e.layers.getLayers()).forward())
-    )
-
-    map.on(Draw.Event.DELETESTART, () =>
-        (drawnLayers as any).setInteractive(true)
-    )
-    map.on(Draw.Event.DELETESTOP, () =>
-        (drawnLayers as any).setInteractive(false)
-    )
-}*/
