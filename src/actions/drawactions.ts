@@ -1,4 +1,4 @@
-import { Circle, LatLng, latLng, Layer, LayerGroup, Marker, Polygon, Polyline, Rectangle } from "leaflet"
+import { Circle, LatLng, latLng, Layer, LayerGroup, Marker, Polygon, Polyline } from "leaflet"
 import Action from "./action"
 
 
