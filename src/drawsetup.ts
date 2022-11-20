@@ -77,7 +77,8 @@ export function initGeoman(map: LMap) {
     map.pm.addControls({
         position: 'topleft',
         drawMarker: false,
-        drawCircleMarker: false
+        drawCircleMarker: false,
+        cutPolygon: false // NOTE: Cut disabled until cut action is implemented.
     })
 
 
@@ -99,17 +100,25 @@ export function initGeoman(map: LMap) {
     map.on('pm:remove', (e) =>
         addAction(new RemoveDrawLayerAction(drawnLayers, e.layer))
     )
-    // TODO: Add support for vertice changes.
     map.on('pm:globaleditmodetoggled', () =>
         map.pm.globalEditModeEnabled()
             ? editAction = new EditDrawLayersAction(drawnLayers).saveOld()
             : addAction(editAction.saveNew())
     )
+    // TODO: Support for cut
+    /*map.on('pm:globalcutmodetoggled', () =>
+        map.pm.globalCutModeEnabled()
+            ? editAction = new EditDrawLayersAction(drawnLayers).saveOld()
+            : addAction(editAction.saveNew())
+    )*/
 
     map.on('pm:globaldragmodetoggled', () =>
         (drawnLayers as any).setInteractive(map.pm.globalDragModeEnabled())
     )
     map.on('pm:globalremovalmodetoggled', () =>
         (drawnLayers as any).setInteractive(map.pm.globalRemovalModeEnabled())
+    )
+    map.on('pm:globalcutmodetoggled', () =>
+        (drawnLayers as any).setInteractive(map.pm.globalCutModeEnabled())
     )
 }
