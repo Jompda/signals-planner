@@ -57,33 +57,38 @@ export class RadioMedium extends Medium {
         const distance = link.lineStats.distance
         const values = link.values
 
-        const srcElevation = values[0].elevation + link.emitterHeight
-        const trgtElevation = values[values.length - 1].elevation + link.emitterHeight
+        const transmitterElevation = values[0].elevation + link.emitterHeight
+        const receiverElevation = values[values.length - 1].elevation + link.emitterHeight
 
-        const iToDist = (i: number) => distance * (i / (values.length - 1)) / 1000
-        const losElevationAtIndex = createLosGetter(srcElevation, trgtElevation, values.length - 1)
+        let itmLoss = 0, Pr = -108
+        const radioHorizon = 4.12 * (Math.sqrt(transmitterElevation) + Math.sqrt(receiverElevation)) * 1000
 
-        // https://en.wikipedia.org/wiki/ITU_terrain_model
-        let itmLoss = 0
-        const R1Fmax = 274 * Math.sqrt((distance / 1000) / this.frequency)
-        for (let i = 1; i < values.length - 1; i++) {
-            const obstructionElevation = values[i].elevation + values[i].treeHeight
-            const losElevation = losElevationAtIndex(i)
-            const h = losElevation - obstructionElevation
-            const d1 = iToDist(i), d2 = iToDist(values.length - 1 - i)
-            if (h > R1Fmax) {
-                // https://www.doria.fi/handle/10024/118719
-                const R1F = 548 * Math.sqrt((d1 * d2) / (this.frequency * (d1 + d2)))
-                if (h > R1F) continue // Outside 1. Fresnel zone
+        if (distance <= radioHorizon) {
+            const iToDist = (i: number) => distance * (i / (values.length - 1)) / 1000
+            const losElevationAtIndex = createLosGetter(transmitterElevation, receiverElevation, values.length - 1)
+
+            // https://en.wikipedia.org/wiki/ITU_terrain_model
+
+            const R1Fmax = 274 * Math.sqrt((distance / 1000) / this.frequency)
+            for (let i = 1; i < values.length - 1; i++) {
+                const obstructionElevation = values[i].elevation + values[i].treeHeight
+                const losElevation = losElevationAtIndex(i)
+                const h = losElevation - obstructionElevation
+                const d1 = iToDist(i), d2 = iToDist(values.length - 1 - i)
+                if (h > R1Fmax) {
+                    // https://www.doria.fi/handle/10024/118719
+                    const R1F = 548 * Math.sqrt((d1 * d2) / (this.frequency * (d1 + d2)))
+                    if (h > R1F) continue // Outside 1. Fresnel zone
+                }
+                const F1 = 17.3 * Math.sqrt((d1 * d2) / ((this.frequency / 1000) * (distance / 1000)))
+                const Cn = h / F1
+                const A = 10 - 20 * Cn
+                if (A > 6) itmLoss += A
             }
-            const F1 = 17.3 * Math.sqrt((d1 * d2) / ((this.frequency / 1000) * (distance / 1000)))
-            const Cn = h / F1
-            const A = 10 - 20 * Cn
-            if (A > 6) itmLoss += A
-        }
 
-        // https://en.wikipedia.org/wiki/Friis_transmission_equation
-        const Pr = this.Pt + this.Gt + this.Gr + 20 * Math.log10(waveLength / (4 * Math.PI * distance)) - itmLoss
+            // https://en.wikipedia.org/wiki/Friis_transmission_equation
+            Pr = this.Pt + this.Gt + this.Gr + 20 * Math.log10(waveLength / (4 * Math.PI * distance)) - itmLoss
+        }
 
         return {
             itmLoss,

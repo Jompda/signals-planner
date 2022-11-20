@@ -50,9 +50,9 @@ export default class Link {
         const values = await getValues(latlngs, sourceNames, 10)
         const lineStats = getLineStats(values, sourceNames)
 
-        const unit0Elevation = values[0].elevation + this.emitterHeight
-        const unit1Elevation = values[values.length - 1].elevation + this.emitterHeight
-        const losElevationAtIndex = createLosGetter(unit0Elevation, unit1Elevation, values.length - 1)
+        const transmitterElevation = values[0].elevation + this.emitterHeight
+        const receiverElevation = values[values.length - 1].elevation + this.emitterHeight
+        const losElevationAtIndex = createLosGetter(transmitterElevation, receiverElevation, values.length - 1)
 
         let highestObstacle = lineStats.peaks.values[0] - losElevationAtIndex(1)
         let highestObstacleI = 0
