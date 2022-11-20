@@ -43,9 +43,7 @@ function LayerControl(props: any) {
     const bodyRef = useRef<HTMLDivElement>()
 
     const layers = new Array<JSX.Element>()
-    let firstLayer = true
     for (const layerName in props.layers) {
-        //if (firstLayer) props.layers[layerName].addTo(props.map)
         layers.push(
             <LayerModel
                 enabled={props.layers[layerName]._map}
@@ -55,7 +53,6 @@ function LayerControl(props: any) {
                 layer={props.layers[layerName]}
             />
         )
-        firstLayer = false
     }
 
     return (
@@ -112,7 +109,7 @@ function LayerModel(props: any) {
                         className='toggler-wrapper'
                         onClick={(e) => {
                             e.stopPropagation()
-                            // Checked get changed to the new value before this function is called.
+                            // Checked gets changed to the new value before this function is called.
                             !checkboxRef.current.checked
                                 ? props.layer.remove()
                                 : props.layer.addTo(props.map)
@@ -129,14 +126,15 @@ function LayerModel(props: any) {
                     </label>
                     <span>{props.layerName}</span>
                 </div>
-                <i
+                <div
                     title='Bring to Front'
-                    className='lc-bringtofront fa-solid fa-ellipsis'
+                    className='lc-bringtofront'
                     onClick={(e) => {
                         e.stopPropagation()
                         props.layer.bringToFront()
                     }}
-                ></i>
+                ><i className='fa-solid fa-ellipsis'></i>
+                </div>
             </div>
             <div
                 ref={optionsRef}
