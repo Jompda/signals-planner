@@ -2,8 +2,7 @@ import Tool, { ToolAction } from '../tool'
 import { setActiveTool } from '../toolcontroller'
 
 import 'leaflet-toolbar'
-import * as L from 'leaflet'
-const Toolbar2 = (L as any).Toolbar2;
+import { Toolbar2 } from 'leaflet'
 
 
 export function createSpToolbar(map: L.Map, tools: Array<Tool>, options: any) {

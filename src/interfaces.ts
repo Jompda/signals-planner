@@ -4,6 +4,22 @@ import { CableMedium, Medium, RadioMedium } from './struct/medium'
 import Unit from './struct/unit'
 
 
+declare module 'leaflet' {
+    export class Toolbar2 {
+        constructor(options: any)
+    }
+    export namespace Toolbar2 {
+        export class Control {
+            constructor(options: any)
+        }
+        export class Action {
+            static extend(options: any): any
+            initialize(): any
+        }
+    }
+}
+
+
 export interface ExtendedMapOptions extends MapOptions {
     contextmenu: boolean
     contextmenuWidth: number
