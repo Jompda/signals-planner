@@ -17,7 +17,11 @@ module.exports = {
             {
                 test: /\.css$/,
                 use: ['style-loader', 'css-loader']
-            }
+            },
+            {
+                test: /\.(png|svg|jpg|jpeg|gif)$/i,
+                type: 'asset/resource',
+            },
         ],
     },
     resolve: {
@@ -38,8 +42,7 @@ module.exports = {
         new CopyPlugin({
             patterns: [
                 { from: path.resolve(srcDir, 'index.html'), to: path.resolve(destDir, 'index.html') },
-                { from: path.resolve(srcDir, 'styles.css'), to: path.resolve(destDir, 'styles.css') },
-                { from: path.resolve(srcDir, 'assets'), to: path.resolve(destDir, 'assets') }
+                { from: path.resolve(srcDir, 'styles.css'), to: path.resolve(destDir, 'styles.css') }
             ]
         })
     ]

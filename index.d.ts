@@ -11,3 +11,8 @@ declare interface LatLng {
 }
 
 declare module 'leaflet-toolbar'
+
+declare module '*.png' {
+    const value: any;
+    export default value;
+}
