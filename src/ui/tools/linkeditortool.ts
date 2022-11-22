@@ -21,7 +21,7 @@ class LinkEditorTool extends Tool {
                 className: 'fa fa-mouse-pointer'
             },
             actions: [{
-                html: 'Change medium'
+                html: 'Change medium' // TODO: Ability to change the drawn medium.
             }],
             unitDragging: false,
             mmbTopography: true
