@@ -17,8 +17,8 @@ class LinkEditorTool extends Tool {
     constructor() {
         super({
             icon: {
-                tooltip: 'Default',
-                className: 'fa fa-mouse-pointer'
+                tooltip: 'Link Editor',
+                html: `<div class="center-content"><img src="./assets/linkeditor.png"/></div>`
             },
             actions: [{
                 html: 'Change medium' // TODO: Ability to change the drawn medium.
