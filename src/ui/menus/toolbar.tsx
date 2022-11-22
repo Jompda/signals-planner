@@ -43,9 +43,7 @@ function createSubToolbar(actions: Array<ToolAction>) {
         actions: actions.map(action => {
             return Toolbar2.Action.extend({
                 options: {
-                    toolbarIcon: {
-                        html: action.html
-                    }
+                    toolbarIcon: action.icon
                 },
                 initialize: function (map: L.Map, action: any) {
                     this.map = map

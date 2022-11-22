@@ -21,7 +21,9 @@ class AddNodeTool extends Tool {
             },
             actions: [
                 {
-                    html: 'Edit',
+                    icon: {
+                        html: 'Edit'
+                    },
                     enable: function () {
                         // TODO: Get new MilSymbol with MilSymbolEditor and switch the toolbar icon.
                         this.action.disable()

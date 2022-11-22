@@ -22,7 +22,9 @@ declare module 'leaflet' {
 
 
 export interface ToolAction {
-    html: string
+    icon: {
+        html: string
+    }
     /** To close call "this.action.disable()" */
     enable?: Function
     /** To close call "this.action.disable()" */

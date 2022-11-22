@@ -21,7 +21,9 @@ class LinkEditorTool extends Tool {
                 html: `<div class="center-content"><img src="./assets/linkeditor.png"/></div>`
             },
             actions: [{
-                html: 'Change medium' // TODO: Ability to change the drawn medium.
+                icon: {
+                    html: 'Change medium' // TODO: Ability to change the drawn medium.
+                }
             }],
             unitDragging: false,
             mmbTopography: true
