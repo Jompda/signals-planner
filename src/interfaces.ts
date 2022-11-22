@@ -21,6 +21,28 @@ declare module 'leaflet' {
 }
 
 
+export interface ToolAction {
+    html: string
+    /** To close call "this.action.disable()" */
+    enable?: Function
+    /** To close call "this.action.disable()" */
+    disable?: Function
+}
+
+
+export interface ToolOptions {
+    icon: any
+    /** true by default */
+    enableOnClick?: boolean
+    actions?: Array<ToolAction>
+    /** true by default */
+    unitSelecting?: boolean
+    /** true by default */
+    unitDragging?: boolean
+    mmbTopography?: boolean
+}
+
+
 export interface ExtendedMapOptions extends MapOptions {
     contextmenu: boolean
     contextmenuWidth: number

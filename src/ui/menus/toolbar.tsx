@@ -1,8 +1,9 @@
-import Tool, { ToolAction } from '../tool'
+import Tool from '../tool'
 import { setActiveTool } from '../toolcontroller'
 
 import 'leaflet-toolbar'
 import { Toolbar2 } from 'leaflet'
+import { ToolAction } from '../../interfaces'
 
 
 export function createSpToolbar(map: L.Map, tools: Array<Tool>, options: any) {

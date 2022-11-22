@@ -5,7 +5,8 @@ import { ExtendedLayerOptions } from '../../interfaces'
 import Link from '../../struct/link'
 import { showEditLinkMenu } from '../menus/linkmenus'
 import { showLinkStatistics } from '../menus/linkstatistics'
-import { getActiveTool } from '../toolcontroller'
+import { isLinkInteractionEnabled } from '../structurecontroller'
+import { getActiveTool, linkLayerClick } from '../toolcontroller'
 import UnitLayer from './unitlayer'
 
 
@@ -19,6 +20,7 @@ export default class LinkLayer extends Polyline {
             pmIgnore: true,
             color: 'black',
             opacity: 0.75,
+            interactive: isLinkInteractionEnabled(),
             draggable: true,
             contextmenu: true,
             contextmenuItems: [{
@@ -115,9 +117,8 @@ export default class LinkLayer extends Polyline {
     }
 
 
-    click() {
-        if (!getActiveTool().unitSelecting) return
-        console.log('clicked link')
+    click(e: LeafletMouseEvent) {
+        linkLayerClick(e, this)
     }
     middleMouseClick() {
         if (!getActiveTool().mmbTopography) return

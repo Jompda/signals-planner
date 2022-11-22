@@ -114,6 +114,26 @@ export function createMapboxTerrainAttribution() {
     } else {
         DomUtil.removeClass(el, 'leaflet-interactive')
     }
+};
+
+
+(Layer as any).prototype.setDraggable = function (state: boolean) {
+    if (this.getLayers) {
+        this.getLayers().forEach((layer: any) => {
+            layer.setDraggable(state)
+        })
+        return
+    }
+
+    this.options.draggable = state
+
+    if (state) {
+        this.dragging.addHooks()
+        DomUtil.addClass(this._icon, 'leaflet-marker-draggable')
+    } else {
+        this.dragging.removeHooks()
+        DomUtil.removeClass(this._icon, 'leaflet-marker-draggable')
+    }
 }
 
 

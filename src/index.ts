@@ -95,8 +95,9 @@ import './ui/menus/toolbar'
 import { initContextMenu } from './ui/menus/contextmenu'
 import { addTo as lgAddTo } from './ui/structurecontroller'
 import { baseLayers, overlays } from './ui/tilelayers'
-import addNodeTool from './ui/tools/addnodetool'
 import defaultTool from './ui/tools/defaultool'
+import addNodeTool from './ui/tools/addnodetool'
+import linkEditorTool from './ui/tools/linkeditortool'
 import { redo, undo } from './actionhistory'
 import { createSpToolbar } from './ui/menus/toolbar'
 
@@ -117,7 +118,7 @@ baseLayers.OSM.addTo(map);
 
 (control as any).optionsMenu({ position: 'topright' }).addTo(map);
 (control as any).layerControl({ ...baseLayers, ...overlays }, { position: 'topright' }).addTo(map)
-createSpToolbar(map, [defaultTool, addNodeTool], { position: 'topleft' }).addTo(map)
+createSpToolbar(map, [defaultTool, addNodeTool, linkEditorTool], { position: 'topleft' }).addTo(map)
 
 
 map.on('keydown', (e: LeafletKeyboardEvent) => {

@@ -4,10 +4,11 @@ import { ExtendedMarkerOptions } from '../../interfaces'
 import Unit from '../../struct/unit'
 import { showEditUnitMenu } from '../menus/unitmenus'
 import { showAddLinkMenu } from '../menus/linkmenus'
-import { getActiveTool } from '../toolcontroller'
+import { getActiveTool, unitLayerClick, unitLayerMouseDown, unitLayerMouseUp } from '../toolcontroller'
 import { getTopographyStr } from '../../topoutil'
 import { addAction } from '../../actionhistory'
 import { MoveUnitAction, RemoveUnitAction } from '../../actions/unitactions'
+import { isUnitInteractionEnabled } from '../structurecontroller'
 
 
 const iconSize = 40
@@ -15,7 +16,7 @@ const iconSize = 40
 
 export default class UnitLayer extends Marker {
     public unit: Unit
-    private svg: HTMLElement
+    public svg: HTMLElement
     constructor(unit: Unit) {
         const { icon, svg } = createIcon(unit.symbol, iconSize);
         (svg as any).unitid = unit.id
@@ -23,6 +24,7 @@ export default class UnitLayer extends Marker {
         super(unit.latlng, {
             pmIgnore: true,
             icon,
+            interactive: isUnitInteractionEnabled(),
             draggable: true,
             contextmenu: true,
             contextmenuItems: [{
@@ -65,6 +67,7 @@ export default class UnitLayer extends Marker {
         this.on('dragend', this.dragEnd, this)
         this.on('click', this.click, this)
         this.on('middlemouseclick', this.openInfoPopup, this)
+        this.on('mousedown', this.mouseDown, this)
         this.on('mouseup', this.mouseUp, this)
     }
 
@@ -72,6 +75,7 @@ export default class UnitLayer extends Marker {
         this.off('dragend', this.dragEnd)
         this.off('click', this.click)
         this.off('middlemouseclick', this.openInfoPopup)
+        this.off('mousedown', this.mouseDown)
         this.off('mouseup', this.mouseUp)
     }
 
@@ -109,15 +113,16 @@ export default class UnitLayer extends Marker {
         addAction(new MoveUnitAction(this, this.unit.latlng, this.getLatLng()))
         this.unit.latlng = this.getLatLng()
     }
-    click() {
-        if (!getActiveTool().unitSelecting) return
-        if (this.svg.classList.contains('unit-selected'))
-            this.svg.classList.remove('unit-selected')
-        else this.svg.classList.add('unit-selected')
+    click(e: LeafletMouseEvent) {
+        unitLayerClick(e, this)
+    }
+    mouseDown(e: LeafletMouseEvent) {
+        unitLayerMouseDown(e, this)
     }
     mouseUp(e: LeafletMouseEvent) {
         if (e.originalEvent.button === 1)
             this.fire('middlemouseclick', e)
+        unitLayerMouseUp(e, this)
     }
 }
 

@@ -55,10 +55,18 @@ export function isUnitInteractionEnabled() {
     return unitInteraction
 }
 export function setUnitInteraction(state: boolean) {
-    unitInteraction = state
-    for (const unitLayer of unitLayers.getLayers()) {
-        (unitLayer as any).setInteractive(state)
-    }
+    unitInteraction = state;
+    (unitLayers as any).setInteractive(state)
+}
+
+
+let unitDragging = true
+export function isUnitDraggingEnabled() {
+    return unitDragging
+}
+export function setUnitDragging(state: boolean) {
+    unitDragging = state;
+    (unitLayers as any).setDraggable(state)
 }
 
 
@@ -67,10 +75,8 @@ export function isLinkInteractionEnabled() {
     return linkInteraction
 }
 export function setLinkInteraction(state: boolean) {
-    linkInteraction = state
-    for (const linkLayer of linkLayers.getLayers()) {
-        (linkLayer as any).setInteractive(state)
-    }
+    linkInteraction = state;
+    (linkLayers as any).setInteractive(state)
 }
 
 

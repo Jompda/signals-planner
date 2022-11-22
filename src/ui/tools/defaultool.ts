@@ -15,7 +15,6 @@ class DefaultTool extends Tool {
                 tooltip: 'Default',
                 className: 'fa fa-mouse-pointer'
             },
-            unitSelecting: true,
             mmbTopography: true
         })
     }
