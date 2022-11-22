@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 import Link from '../../struct/link'
 import Unit from '../../struct/unit'
 import { getUnits, linkIdExists } from '../../struct'
-import { getUnitById, structureEvents } from '../structurecontroller'
+import { getUnitLayerById, structureEvents } from '../structurecontroller'
 import { useRef, useState } from 'react'
 import { createDialog } from '../../util'
 import { v4 as uuidv4 } from 'uuid'
@@ -61,7 +61,7 @@ export function showAddLinkMenu(map: LMap, unitLayer0: UnitLayer) {
                 <h1>Add Link:</h1>
                 <LinkContructor
                     unit={unitLayer0.unit}
-                    updateTargetUnit={(unit1Id: string) => unit1 = getUnitById(unit1Id)}
+                    updateTargetUnit={(unit1Id: string) => unit1 = getUnitLayerById(unit1Id)}
                 />
                 <hr />
                 <span>Type:</span>
@@ -74,7 +74,7 @@ export function showAddLinkMenu(map: LMap, unitLayer0: UnitLayer) {
                         if (!unit1) return // Tell user to select link.
                         if (linkIdExists(Link.createId(unitLayer0.unit, unit1.unit))) throw new Error('Link id already exists!')
                         const link = new Link({ unit0: unitLayer0.unit, unit1: unit1.unit, medium })
-                        const linkLayer = new LinkLayer(link, getUnitById(link.unit0.id), getUnitById(link.unit1.id))
+                        const linkLayer = new LinkLayer(link, getUnitLayerById(link.unit0.id), getUnitLayerById(link.unit1.id))
                         addAction(new AddLinkAction(linkLayer).forward())
                         dialog.close()
                     }}>Add</button>

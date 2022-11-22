@@ -1,7 +1,8 @@
 import { Map as LMap, LayerGroup } from 'leaflet'
-import { getLinksByUnitId, removeLink as structRemoveLink } from '../struct'
+import { getLinksByUnitId, getUnitById } from '../struct'
 import UnitLayer from './components/unitlayer'
 import LinkLayer from './components/linklayer'
+import Unit from '../struct/unit'
 
 
 const unitLayers = new LayerGroup<UnitLayer>()
@@ -16,17 +17,17 @@ export function getLinkLayers() {
 }
 
 
-export function getUnitById(unitId: string) {
+export function getUnitLayerById(unitId: string) {
     return (unitLayers.getLayers() as Array<UnitLayer>).find(u => u.unit.id == unitId)
 }
-export function getLinkById(linkId: string) {
+export function getLinkLayerById(linkId: string) {
     return (linkLayers.getLayers() as Array<LinkLayer>).find(l => l.link.id == linkId)
 }
 
 export function getLinkLayersByUnitId(unitId: string) {
     const linkLayers = new Array<LinkLayer>()
     for (const link of getLinksByUnitId(unitId))
-        linkLayers.push(getLinkById(link.id))
+        linkLayers.push(getLinkLayerById(link.id))
     return linkLayers
 }
 
@@ -86,10 +87,6 @@ export function removeUnit(unitLayer: UnitLayer) {
     unitLayers.removeLayer(unitLayer)
     structureEvents.dispatchEvent(new Event('removeunit'))
 }
-/*export function setUnitDragging(state: boolean) {
-    if (state) for (const unit of units) unit.layer.dragging.enable()
-    else for (const unit of units) unit.layer.dragging.disable()
-}*/
 
 
 export function addLink(linkLayer: LinkLayer) {
@@ -99,3 +96,21 @@ export function removeLink(linkLayer: LinkLayer) {
     linkLayer.remove()
 }
 
+
+export function getSelectedUnits() {
+    const elements = document.querySelectorAll('.unit-selected')
+    const units = new Array<Unit>
+    for (const element of elements) {
+        units.push(getUnitById(element.id))
+    }
+    return units
+}
+
+export function getSelectedUnitLayers() {
+    const elements = document.querySelectorAll('.unit-selected')
+    const units = new Array<UnitLayer>
+    for (const element of elements) {
+        units.push(getUnitLayerById(element.id))
+    }
+    return units
+}
