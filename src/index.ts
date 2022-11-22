@@ -116,7 +116,7 @@ baseLayers.OSM.addTo(map);
 
 
 (control as any).optionsMenu({ position: 'topright' }).addTo(map);
-(control as any).layerControl({ ...baseLayers, ...overlays }, { position: 'topright' }).addTo(map);
+(control as any).layerControl({ ...baseLayers, ...overlays }, { position: 'topright' }).addTo(map)
 createSpToolbar(map, [defaultTool, addNodeTool], { position: 'topleft' }).addTo(map)
 
 
@@ -133,5 +133,5 @@ map.on('keydown', (e: LeafletKeyboardEvent) => {
 })
 
 
-import { initGeoman } from './drawsetup'
+import { initGeoman } from './ui/geomancontroller'
 initGeoman(map)

@@ -1,4 +1,4 @@
-import { LatLng as LLatLng, MapOptions, LayerOptions, MarkerOptions, LeafletMouseEvent } from 'leaflet'
+import { LatLng as LLatLng, MapOptions, LayerOptions, MarkerOptions, LeafletMouseEvent, Map as LMap } from 'leaflet'
 import { Symbol as MilSymbol } from 'milsymbol'
 import { CableMedium, Medium, RadioMedium } from './struct/medium'
 import Unit from './struct/unit'
@@ -11,6 +11,7 @@ declare module 'leaflet' {
     export namespace Toolbar2 {
         export class Control {
             constructor(options: any)
+            addTo(map: LMap): this
         }
         export class Action {
             static extend(options: any): any

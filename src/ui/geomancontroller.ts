@@ -1,7 +1,7 @@
 import { CircleMarkerOptions, FeatureGroup, Map as LMap, PathOptions } from 'leaflet'
-import { addAction } from './actionhistory'
-import { AddDrawLayerAction, EditDrawLayersAction, RemoveDrawLayerAction } from './actions/drawactions'
-import { setLinkInteraction, setUnitInteraction } from './ui/structurecontroller'
+import { addAction } from '../actionhistory'
+import { AddDrawLayerAction, EditDrawLayersAction, RemoveDrawLayerAction } from '../actions/drawactions'
+import { setLinkInteraction, setUnitInteraction } from './structurecontroller'
 
 
 let styleOptions: PathOptions | CircleMarkerOptions = {

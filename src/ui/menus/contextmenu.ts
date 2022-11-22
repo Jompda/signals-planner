@@ -7,7 +7,7 @@ import { openTopographyPopup } from '../../topoutil'
 import { addAction, redo, undo } from '../../actionhistory'
 import ImportAction from '../../actions/importaction'
 import RemoveAllAction from '../../actions/removeallaction'
-import { getDrawnLayers, getDrawStyleOptions } from '../../drawsetup'
+import { getDrawnLayers, getDrawStyleOptions } from '../geomancontroller'
 
 
 export function initContextMenu(map: LMap) {

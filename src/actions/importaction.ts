@@ -1,5 +1,5 @@
 import { Layer } from 'leaflet'
-import { getDrawnLayers } from '../drawsetup'
+import { getDrawnLayers } from '../ui/geomancontroller'
 import Link from '../struct/link'
 import Unit from '../struct/unit'
 import LinkLayer from '../ui/components/linklayer'
