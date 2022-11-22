@@ -147,4 +147,15 @@ export interface SaveCableMedium extends SaveMedium {
     sliceArea: number
 }
 
+export interface RadioLinkEstimate {
+    itmLoss: number
+    dB: number
+}
+
+export interface CableMediumEstimate {
+    length: number
+    cables: number
+    resistance: number
+}
+
 export type MediumResolvable = RadioMedium | SaveRadioMedium | CableMedium | SaveCableMedium | Medium | string

@@ -1,4 +1,4 @@
-import { CableMediumOptions, MediumResolvable, RadioMediumOptions, SaveCableMedium, SaveMedium, SaveRadioMedium } from '../interfaces'
+import { CableMediumEstimate, CableMediumOptions, MediumResolvable, RadioLinkEstimate, RadioMediumOptions, SaveCableMedium, SaveMedium, SaveRadioMedium } from '../interfaces'
 import { createLosGetter } from '../topoutil'
 import Link from './link'
 
@@ -52,7 +52,7 @@ export class RadioMedium extends Medium {
     }
 
 
-    estimateLinkStats(link: Link) {
+    estimateLinkStats(link: Link): RadioLinkEstimate {
         const waveLength = (299_792_458) / (this.frequency * 1_000_000)
         const distance = link.lineStats.distance
         const values = link.values
@@ -128,7 +128,7 @@ export class CableMedium extends Medium {
         this.resistivity = options.resistivity
         this.sliceArea = options.sliceArea
     }
-    estimateLinkStats(link: Link) {
+    estimateLinkStats(link: Link): CableMediumEstimate {
         // R = (Rho) * l / A
         const cables = Math.ceil(link.lineStats.distance / this.cableLength)
         const length = cables * this.cableLength
