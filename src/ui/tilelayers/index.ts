@@ -3,6 +3,8 @@ import WMS from 'leaflet.wms'
 import customElevationLayer from './customelevationlayer'
 import './basicauthlayer'
 import options from '../../../options'
+import { TopoLayer } from 'leaflet-topography'
+import { createMapboxTerrainAttribution } from '../../util'
 
 
 export const baseLayers = {
@@ -27,6 +29,16 @@ export const baseLayers = {
 
 export const overlays = {
     'Topography: Elevation': customElevationLayer,
+    'Topography: Slope': new TopoLayer({
+        attribution: 'Topography by Seth "slutske22" Lutske, ' + createMapboxTerrainAttribution(),
+        topotype: 'slope',
+        customization: {
+            colors: ['#000000', '#00ff00', '#0000ff', '#ff0000'],
+            breakpoints: [0, 20, 60, 90], // There's sum f*ckeroonies going on.
+            continuous: true,
+            fallback: '#00ff00'
+        }
+    }),
     'Luke: Avg. tree height': WMS.tileLayer('https://kartta.luke.fi/geoserver/MVMI/ows', {
         attribution: '<a href="https://www.luke.fi/en">Natural Resources Institute Finland</a> under <a href="https://creativecommons.org/licenses/by/4.0/legalcode">CC-4.0</a>',
         tileSize: 256,
