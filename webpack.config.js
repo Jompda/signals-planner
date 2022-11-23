@@ -1,5 +1,7 @@
 const path = require('path')
 const CopyPlugin = require("copy-webpack-plugin")
+/*const CompressionPlugin = require("compression-webpack-plugin")
+const WebpackBundleAnalyzer = require('webpack-bundle-analyzer')*/
 
 const srcDir = path.join(__dirname, 'src')
 const destDir = path.join(__dirname, 'dist')
@@ -44,6 +46,10 @@ module.exports = {
                 { from: path.resolve(srcDir, 'index.html'), to: path.resolve(destDir, 'index.html') },
                 { from: path.resolve(srcDir, 'styles.css'), to: path.resolve(destDir, 'styles.css') }
             ]
-        })
+        }),
+        /*new CompressionPlugin({
+            test: 'bundle.js'
+        }),
+        new WebpackBundleAnalyzer.BundleAnalyzerPlugin()*/
     ]
 }

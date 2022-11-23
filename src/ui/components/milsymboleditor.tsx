@@ -1,10 +1,10 @@
-import * as ms from 'milsymbol'
+import { SymbolOptions, Symbol } from 'milsymbol'
 import { useRef, useState } from 'react'
 
 
 interface Field {
     title: string
-    option: keyof ms.SymbolOptions
+    option: keyof SymbolOptions
 }
 
 // SIDC layuot:
@@ -74,8 +74,8 @@ const unitSize = {
 // TODO: Create a SIDC editor. Or just rely on third party editors and take the SIDC? Embed somehow?
 export function MilSymbolEditor(props: any) {
     const symbol = props.milSymbol
-        ? props.milSymbol as ms.Symbol
-        : new ms.Symbol('SFGPU-------')
+        ? props.milSymbol as Symbol
+        : new Symbol('SFGPU-------')
     const soptions = symbol.getOptions()
 
 

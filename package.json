@@ -30,6 +30,7 @@
         "@types/utm": "^1.1.1",
         "@types/uuid": "^8.3.4",
         "chart.js": "^3.9.1",
+        "compression-webpack-plugin": "^10.0.0",
         "copy-webpack-plugin": "^11.0.0",
         "css-loader": "^6.7.1",
         "deep-equal": "^2.1.0",
@@ -53,6 +54,7 @@
         "typescript": "^4.8.4",
         "utm": "^1.1.1",
         "uuid": "^9.0.0",
+        "webpack-bundle-analyzer": "^4.7.0",
         "webpack-cli": "^4.10.0",
         "webpack-dev-server": "^4.11.1"
     }

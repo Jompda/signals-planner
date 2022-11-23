@@ -15,7 +15,7 @@ import {
     Legend,
     ChartEvent,
 } from 'chart.js'
-import * as helpers from 'chart.js/helpers'
+import { getRelativePosition } from 'chart.js/helpers'
 import { Chart } from 'react-chartjs-2'
 import { useRef } from 'react'
 import { createLosGetter } from '../../topoutil'
@@ -145,7 +145,7 @@ function LinkStatistics(props: any) {
 
     function onHover(e: ChartEvent) {
         const chart = chartRef.current
-        const canvasPosition = helpers.getRelativePosition(e, chart)
+        const canvasPosition = getRelativePosition(e, chart)
 
         const dataX = chart.scales.x.getValueForPixel(canvasPosition.x)
         const dataY = chart.scales.y.getValueForPixel(canvasPosition.y)
