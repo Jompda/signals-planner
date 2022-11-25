@@ -6,7 +6,6 @@ import { getMap } from './structurecontroller'
 
 
 export class ToolCategory extends Tool {
-    public tools: Array<Tool>
     constructor(tools: Array<Tool>) {
         super({
             icon: {
@@ -14,7 +13,6 @@ export class ToolCategory extends Tool {
                 html: `<div class="center-content"><img src="${unitlinkicon}"/></div>`
             }
         })
-        this.tools = tools
 
         this.actions = new Array<ToolAction>()
         for (const tool of tools) {
