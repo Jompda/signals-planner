@@ -8,7 +8,6 @@ import { AddLinkAction } from '../../actions/linkactions'
 import LinkLayer from '../components/linklayer'
 import Link from '../../struct/link'
 import { getMap } from '../structurecontroller'
-import linkeditoricon from '../../assets/linkeditor.png'
 
 
 class LinkEditorTool extends Tool {
@@ -19,7 +18,7 @@ class LinkEditorTool extends Tool {
         super({
             icon: {
                 tooltip: 'Link Editor',
-                html: `<div class="center-content"><img src="${linkeditoricon}"/></div>`
+                html: `<i class="fa-solid fa-pen"></i>`
             },
             actions: [{
                 icon: {

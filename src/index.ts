@@ -100,6 +100,7 @@ import addNodeTool from './ui/tools/addnodetool'
 import linkEditorTool from './ui/tools/linkeditortool'
 import { redo, undo } from './actionhistory'
 import { createSpToolbar } from './ui/menus/toolbar'
+import { ToolCategory } from './ui/toolcategory'
 
 
 const map = new LMap('map', {
@@ -118,7 +119,7 @@ baseLayers.OSM.addTo(map);
 
 (control as any).optionsMenu({ position: 'topright' }).addTo(map);
 (control as any).layerControl({ ...baseLayers, ...overlays }, { position: 'topright' }).addTo(map)
-createSpToolbar(map, [defaultTool, addNodeTool, linkEditorTool], { position: 'topleft' }).addTo(map)
+createSpToolbar(map, [defaultTool, addNodeTool, new ToolCategory([linkEditorTool])], { position: 'topleft' }).addTo(map)
 
 
 map.on('keydown', (e: LeafletKeyboardEvent) => {
