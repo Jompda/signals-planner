@@ -136,4 +136,6 @@ map.on('keydown', (e: LeafletKeyboardEvent) => {
 
 
 import { initGeoman } from './ui/geomancontroller'
+import { initMapHooks } from './ui/toolcontroller'
 initGeoman(map)
+initMapHooks(map)

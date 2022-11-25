@@ -1,9 +1,9 @@
-import { LeafletKeyboardEvent, Map as LMap } from 'leaflet'
+import { LatLngBounds, LeafletKeyboardEvent, Map as LMap } from 'leaflet'
 import { LeafletMouseEvent } from 'leaflet'
 import { ToolAction, ToolOptions } from '../interfaces'
 import LinkLayer from './components/linklayer'
 import UnitLayer from './components/unitlayer'
-import { setUnitDragging } from './structurecontroller'
+import { getUnitLayers, setUnitDragging } from './structurecontroller'
 
 
 const interactionEvents = [
@@ -30,6 +30,7 @@ export default class Tool {
     public unitSelecting: boolean
     public unitDragging: boolean
     public mmbTopography: boolean
+    public areaSelect: boolean
     constructor(options?: ToolOptions) {
         Object.assign(this, options)
         if (!('unitSelecting' in options)) this.unitSelecting = true
@@ -70,11 +71,25 @@ export default class Tool {
     unitlayermouseup(e: LeafletMouseEvent, unitLayer: UnitLayer) { }
     unitlayerclick(e: LeafletMouseEvent, unitLayer: UnitLayer) {
         if (!this.unitSelecting) return
-        if (unitLayer.svg.classList.contains('unit-selected'))
-            unitLayer.svg.classList.remove('unit-selected')
-        else unitLayer.svg.classList.add('unit-selected')
+        if (e.originalEvent.ctrlKey) {
+            unitLayer.toggleSelect()
+        }
+        else {
+            let otherSelection = false
+            for (const unit of getUnitLayers()) {
+                if (unit.unit.id != unitLayer.unit.id) {
+                    if (unit.isSelected()) otherSelection = true
+                    unit.deselect()
+                }
+            }
+            unitLayer.toggleSelect()
+            if (otherSelection) unitLayer.select()
+        }
+
     }
     linklayerclick(e: LeafletMouseEvent, linkLayer: LinkLayer) {
         // TODO Linklayerclick
     }
+
+    bboxselect(e: LeafletMouseEvent, bounds: LatLngBounds) { }
 }

@@ -124,6 +124,24 @@ export default class UnitLayer extends Marker {
             this.fire('middlemouseclick', e)
         unitLayerMouseUp(e, this)
     }
+
+
+    select() {
+        if (!this.svg.classList.contains('unit-selected'))
+            this.svg.classList.add('unit-selected')
+    }
+    deselect() {
+        if (this.svg.classList.contains('unit-selected'))
+            this.svg.classList.remove('unit-selected')
+    }
+    toggleSelect() {
+        if (this.svg.classList.contains('unit-selected'))
+            this.svg.classList.remove('unit-selected')
+        else this.svg.classList.add('unit-selected')
+    }
+    isSelected() {
+        return this.svg.classList.contains('unit-selected')
+    }
 }
 
 

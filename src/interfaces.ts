@@ -42,6 +42,7 @@ export interface ToolOptions {
     /** true by default */
     unitDragging?: boolean
     mmbTopography?: boolean
+    areaSelect?: boolean
 }
 
 

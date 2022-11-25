@@ -56,7 +56,6 @@ class LinkEditorTool extends Tool {
     unitlayermouseup(e: LeafletMouseEvent, unitLayer: unitlayer) {
         if (!this.startUnit) return
         if (this.startUnit.unit.id == unitLayer.unit.id) return
-        console.log('unitlayermouseup')
         this.highlight.remove()
         this.highlight = undefined
         const link = new Link({
