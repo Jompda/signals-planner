@@ -4,6 +4,7 @@ import { setActiveTool } from '../toolcontroller'
 import 'leaflet-toolbar'
 import { Toolbar2 } from 'leaflet'
 import { ToolAction } from '../../interfaces'
+import { ToolCategory } from '../toolcategory'
 
 
 export function createSpToolbar(map: L.Map, tools: Array<Tool>, options: any) {
@@ -31,7 +32,11 @@ function toolsToActions(map: L.Map, tools: Array<Tool>) {
         if (tool.actions) options.subToolbar = createSubToolbar(tool.actions)
         actions.push(Toolbar2.Action.extend({
             options,
-            addHooks: tool.enableOnClick ? () => setActiveTool(tool, map) : undefined
+            addHooks: tool.enableOnClick
+                ? !(tool instanceof ToolCategory)
+                    ? () => setActiveTool(tool, map)
+                    : undefined
+                : undefined
         }))
     }
     return actions
