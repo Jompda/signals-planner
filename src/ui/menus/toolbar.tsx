@@ -7,6 +7,7 @@ import { ToolAction } from '../../interfaces'
 import { ToolCategory } from '../toolcategory'
 
 
+// TODO: Create a TS API of this https://codepen.io/naveenbhaskar/pen/nBOeBy
 export function createSpToolbar(map: L.Map, tools: Array<Tool>, options: any) {
     setActiveTool(tools[0], map)
 
