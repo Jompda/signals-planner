@@ -120,6 +120,7 @@ baseLayers.OSM.addTo(map);
 createCustomToolbar([
     defaultTool,
     {
+        tooltip: 'Link Tools',
         icon: <img src={unitlinkicon} />,
         radio: false,
         items: [

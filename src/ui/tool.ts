@@ -25,6 +25,7 @@ const interactionEvents = [
 
 
 export default class Tool implements IToolbarItem {
+    public tooltip: string
     public icon: string | JSX.Element
     public items: Array<IToolbarItem>
     public radio: boolean
@@ -32,7 +33,8 @@ export default class Tool implements IToolbarItem {
     public unitDragging: boolean
     public mmbTopography: boolean
     public areaSelect: boolean
-    constructor(options?: ToolOptions) {
+    constructor(options: ToolOptions) {
+        this.tooltip = options.tooltip
         this.icon = options.icon
         this.items = options.items
         this.radio = options.radio

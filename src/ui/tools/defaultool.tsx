@@ -11,7 +11,8 @@ import { getMap, getUnitLayers } from '../structurecontroller'
 class DefaultTool extends Tool {
     constructor() {
         super({
-            icon: <i title='Default' className='fa fa-mouse-pointer' />,
+            tooltip: 'Default',
+            icon: <i className='fa fa-mouse-pointer' />,
             mmbTopography: true,
             areaSelect: true
         })

@@ -16,7 +16,8 @@ class LinkEditorTool extends Tool {
     private highlight: Polyline
     constructor() {
         super({
-            icon: <i title='Link Editor' className='fa-solid fa-pen' />,
+            tooltip: 'Link Editor',
+            icon: <i className='fa-solid fa-pen' />,
             items: [{
                 // TODO: Ability to change the drawn medium.
                 icon: 'Edit',

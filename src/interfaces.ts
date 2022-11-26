@@ -22,6 +22,7 @@ declare module 'leaflet' {
 
 
 export interface IToolbarItem {
+    tooltip?: string
     icon: string | JSX.Element
     /** Defaults to true */
     radio?: boolean
@@ -32,6 +33,7 @@ export interface IToolbarItem {
 
 
 export interface ToolOptions {
+    tooltip?: string
     icon: string | JSX.Element
     items?: Array<IToolbarItem>
     /** true by default */

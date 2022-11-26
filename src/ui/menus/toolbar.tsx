@@ -9,10 +9,11 @@ export function createCustomToolbar(items: Array<IToolbarItem>, options?: Contro
 
 
 export class ToolbarItem {
+    public tooltip?: string
     public icon: JSX.Element
     public radio: boolean
     constructor(options: IToolbarItem) {
-        console.log(options)
+        this.tooltip = options.tooltip
         this.icon = typeof options.icon == 'string'
             ? <span>{options.icon}</span>
             : options.icon
@@ -134,7 +135,7 @@ function toolbarItemsToJSX(items: Array<IToolbarItem>, setSelection: (item: Tool
 
 function ToolbarRadioButton(props: any) {
     return (
-        <div className={props.className} onClick={(e) => {
+        <div title={props.item.tooltip} className={props.className} onClick={(e) => {
             if ((e.target as HTMLElement).tagName == 'INPUT') return
             props.setSelection(props.item)
         }}>
