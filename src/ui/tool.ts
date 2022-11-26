@@ -8,7 +8,7 @@ import { setActiveTool } from './toolcontroller'
 
 
 const interactionEvents = [
-    //'click',
+    'click',
     'middlemouseclick',
     'dblclick',
     'mousedown',

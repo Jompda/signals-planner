@@ -36,12 +36,11 @@ export function initMapHooks(map: LMap) {
         highlightBbox.setBounds(latLngBounds(startLatLng, e.latlng))
     })
     map.on('mouseup', (e) => {
-
-        if (!highlightBbox || getMap().dragging.enabled()) return activeTool.click(e)
+        if (!highlightBbox || getMap().dragging.enabled()) return
         if ((highlightBbox as any)._map) {
             activeTool.bboxselect(e, latLngBounds(startLatLng, e.latlng))
             highlightBbox.remove()
-        } else activeTool.click(e)
+        }
         highlightBbox = undefined
         startLatLng = undefined
     })

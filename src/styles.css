@@ -351,27 +351,6 @@ body {
     border-radius: inherit;
 }
 
-.ctoolbar-root>li:first-child {
-    border-top-left-radius: 0.4em;
-}
-
-.ctoolbar-root>li:last-child {
-    border-bottom-left-radius: 0.4em;
-}
-
-.ctoolbar-category>li:first-child {
-    border-top-right-radius: 0.4em;
-}
-
-.ctoolbar-category>li:last-child {
-    border-bottom-right-radius: 0.4em;
-}
-
-.ctoolbar-category>li>*,
-.ctoolbar-category>li>*>* {
-    border-radius: inherit;
-}
-
 .fitter>*:last-child {
     position: absolute;
 }
