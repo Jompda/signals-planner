@@ -22,6 +22,7 @@ class DefaultTool extends Tool {
         openTopographyPopup(getMap(), e.latlng)
     }
     bboxselect(e: LeafletMouseEvent, bounds: LatLngBounds) {
+        console.log('bbox select')
         const unitLayers = getUnitLayers()
         const containedUnitLayers = unitLayers.filter(unitLayer => bounds.contains(unitLayer.getLatLng()))
         if (!e.originalEvent.shiftKey) {

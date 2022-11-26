@@ -8,7 +8,7 @@ import { setActiveTool } from './toolcontroller'
 
 
 const interactionEvents = [
-    'click',
+    //'click',
     'middlemouseclick',
     'dblclick',
     'mousedown',
@@ -62,7 +62,11 @@ export default class Tool implements IToolbarItem {
         if (e.originalEvent.button === 1)
             if ('middlemouseclick' in this) (this as any).middlemouseclick(e)
     }
-    click(e: LeafletMouseEvent) { }
+    click(e: LeafletMouseEvent) {
+        if (e.originalEvent.ctrlKey) return
+        for (const unitLayer of getUnitLayers())
+            unitLayer.deselect()
+    }
     middlemouseclick(e: LeafletMouseEvent) { }
     dblclick(e: LeafletMouseEvent) { }
     mousedown(e: LeafletMouseEvent) { }
@@ -80,6 +84,7 @@ export default class Tool implements IToolbarItem {
     unitlayerclick(e: LeafletMouseEvent, unitLayer: UnitLayer) {
         if (!this.unitSelecting) return
         if (e.originalEvent.ctrlKey) {
+            console.log('toggle')
             unitLayer.toggleSelect()
         }
         else {
