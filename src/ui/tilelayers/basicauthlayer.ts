@@ -10,9 +10,7 @@ import { getImage } from 'tiledata'
     },
 
     createTile: function (coords: TileCoords, callback: Function) {
-        const canvas = DomUtil.create('canvas', 'leaflet-tile')
-        canvas.width = canvas.height = 256
-        const ctx = canvas.getContext('2d')
+        const div = DomUtil.create('div', 'leaflet-tile')
         const gd = async () => {
             const img = await getImage(
                 this._url
@@ -25,10 +23,10 @@ import { getImage } from 'tiledata'
                     }
                 }
             )
-            ctx.drawImage(img, 0, 0)
-            setTimeout(() => callback(null, canvas), 0)
+            div.appendChild(img)
+            setTimeout(() => callback(null, div), 0)
         }
         gd()
-        return canvas
+        return div
     }
 })
