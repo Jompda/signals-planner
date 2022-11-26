@@ -106,7 +106,8 @@ const map = new LMap('map', {
     contextmenu: true,
     contextmenuWidth: 140,
     wheelPxPerZoomLevel: 60 / 0.5,
-    doubleClickZoom: false
+    doubleClickZoom: false,
+    boxZoom: false
 } as MapOptions).setView([60, 24], 4)
 
 initContextMenu(map)
