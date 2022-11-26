@@ -295,44 +295,48 @@ body {
 /*
  * Toolbar
  */
-.toolbar {
-    border-radius: 0.5em;
-    border: 2px solid #e8e8e8;
-    display: flex;
-    flex-direction: column;
-    background-color: #fff;
-    user-select: none;
-    cursor: pointer;
-    overflow: hidden;
+.ctoolbar {
+    width: 150px;
 }
 
-.toolbutton>input {
+.ctoolbar-category {
+    margin: 0;
+    padding: 0;
     display: none;
 }
 
-.toolbutton>input:checked+.toolbutton-icon {
-    background-color: #44cc66;
+.ctoolbar-category-icon:hover+.ctoolbar-category,
+.ctoolbar-category:hover {
+    display: block;
 }
 
-.toolbutton>input:checked+.toolbutton-icon:hover {
-    background-color: #4ada6e;
+.ctoolbar-category>li {
+    margin-left: 3em;
+    background-color: #adadad;
+    width: 3em;
+    height: 3em;
+    display: block;
+    margin-top: -1px;
+    border: 1px solid #888888;
 }
 
-.toolbutton-icon {
-    width: 2.5em;
-    height: 2.5em;
+.ctoolbar-root {
+    position: relative;
+    margin-left: -3em;
+    display: block;
+}
+
+.ctoolbar-category-icon {
+    position: absolute;
+}
+
+.fitter {
+    width: 3em;
+    height: 3em;
     display: flex;
+    text-align: center;
     justify-content: center;
     align-items: center;
-    text-align: center;
-}
-
-.toolbutton:not(:first-child)>.toolbutton-icon {
-    border-top: 1px solid #e8e8e8;
-}
-
-.toolbutton-icon:hover {
-    background-color: #e8e8e8;
 }
 
 
