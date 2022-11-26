@@ -13,7 +13,7 @@ class DefaultTool extends Tool {
         super({
             tooltip: 'Default',
             icon: <i className='fa fa-mouse-pointer' />,
-            mmbTopography: true,
+            mmbInfo: true,
             areaSelect: true
         })
     }
@@ -22,7 +22,6 @@ class DefaultTool extends Tool {
         openTopographyPopup(getMap(), e.latlng)
     }
     bboxselect(e: LeafletMouseEvent, bounds: LatLngBounds) {
-        console.log('bbox select')
         const unitLayers = getUnitLayers()
         const containedUnitLayers = unitLayers.filter(unitLayer => bounds.contains(unitLayer.getLatLng()))
         if (!e.originalEvent.shiftKey) {

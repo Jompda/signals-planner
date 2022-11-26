@@ -3,7 +3,8 @@ import { LeafletMouseEvent } from 'leaflet'
 import { ToolOptions, IToolbarItem } from '../interfaces'
 import LinkLayer from './components/linklayer'
 import UnitLayer from './components/unitlayer'
-import { getUnitLayers, setUnitDragging } from './structurecontroller'
+import { showLinkStatistics } from './menus/linkstatistics'
+import { getMap, getUnitLayers, setUnitDragging } from './structurecontroller'
 import { setActiveTool } from './toolcontroller'
 
 
@@ -31,14 +32,14 @@ export default class Tool implements IToolbarItem {
     public radio: boolean
     public unitSelecting: boolean
     public unitDragging: boolean
-    public mmbTopography: boolean
+    public mmbInfo: boolean
     public areaSelect: boolean
     constructor(options: ToolOptions) {
         this.tooltip = options.tooltip
         this.icon = options.icon
         this.items = options.items
         this.radio = options.radio
-        this.mmbTopography = options.mmbTopography
+        this.mmbInfo = options.mmbInfo
         this.areaSelect = options.areaSelect
         if (!('unitSelecting' in options)) this.unitSelecting = true
         if (!('radio' in options)) this.radio = true
@@ -80,13 +81,14 @@ export default class Tool implements IToolbarItem {
     preclick(e: LeafletMouseEvent) { }
 
     unitlayermousedown(e: LeafletMouseEvent, unitLayer: UnitLayer) { }
-    unitlayermouseup(e: LeafletMouseEvent, unitLayer: UnitLayer) { }
+    unitlayermouseup(e: LeafletMouseEvent, unitLayer: UnitLayer) {
+        if (e.originalEvent.button == 1) {
+            if (this.mmbInfo) unitLayer.openInfoPopup()
+        }
+    }
     unitlayerclick(e: LeafletMouseEvent, unitLayer: UnitLayer) {
         if (!this.unitSelecting) return
-        if (e.originalEvent.ctrlKey) {
-            console.log('toggle')
-            unitLayer.toggleSelect()
-        }
+        if (e.originalEvent.ctrlKey) unitLayer.toggleSelect()
         else {
             let otherSelection = false
             for (const unit of getUnitLayers()) {
@@ -98,10 +100,15 @@ export default class Tool implements IToolbarItem {
             unitLayer.toggleSelect()
             if (otherSelection) unitLayer.select()
         }
-
     }
     linklayerclick(e: LeafletMouseEvent, linkLayer: LinkLayer) {
         // TODO Linklayerclick
+    }
+    linklayermousedown(e: LeafletMouseEvent, linkLayer: LinkLayer) { }
+    linklayermouseup(e: LeafletMouseEvent, linkLayer: LinkLayer) {
+        if (e.originalEvent.button === 1) {
+            if (this.mmbInfo) showLinkStatistics(getMap(), linkLayer)
+        }
     }
 
     bboxselect(e: LeafletMouseEvent, bounds: LatLngBounds) { }

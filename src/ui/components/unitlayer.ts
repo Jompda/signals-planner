@@ -66,7 +66,6 @@ export default class UnitLayer extends Marker {
     addHandlers() {
         this.on('dragend', this.dragEnd, this)
         this.on('click', this.click, this)
-        this.on('middlemouseclick', this.openInfoPopup, this)
         this.on('mousedown', this.mouseDown, this)
         this.on('mouseup', this.mouseUp, this)
     }
@@ -74,7 +73,6 @@ export default class UnitLayer extends Marker {
     removeHandlers() {
         this.off('dragend', this.dragEnd)
         this.off('click', this.click)
-        this.off('middlemouseclick', this.openInfoPopup)
         this.off('mousedown', this.mouseDown)
         this.off('mouseup', this.mouseUp)
     }
@@ -95,7 +93,6 @@ export default class UnitLayer extends Marker {
     }
 
     async openInfoPopup() {
-        if (!getActiveTool().mmbTopography) return
         const topographyStr = await getTopographyStr(this.unit.latlng)
         const str = (
             `${this.unit.toHierarchyString()}<br>` +
@@ -120,8 +117,6 @@ export default class UnitLayer extends Marker {
         unitLayerMouseDown(e, this)
     }
     mouseUp(e: LeafletMouseEvent) {
-        if (e.originalEvent.button === 1)
-            this.fire('middlemouseclick', e)
         unitLayerMouseUp(e, this)
     }
 

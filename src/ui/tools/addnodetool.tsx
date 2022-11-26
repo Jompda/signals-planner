@@ -27,7 +27,7 @@ class AddNodeTool extends Tool {
                     },
                 }
             ],
-            mmbTopography: true
+            mmbInfo: true
         })
         this.symbol = symbol
     }

@@ -25,7 +25,7 @@ class LinkEditorTool extends Tool {
                 addHooks: () => console.log('Edit'),
             }],
             unitDragging: false,
-            mmbTopography: true
+            mmbInfo: true
         })
         this.medium = resolveMedium('SHF1')
     }

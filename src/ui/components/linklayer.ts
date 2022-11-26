@@ -6,7 +6,7 @@ import Link from '../../struct/link'
 import { showEditLinkMenu } from '../menus/linkmenus'
 import { showLinkStatistics } from '../menus/linkstatistics'
 import { isLinkInteractionEnabled } from '../structurecontroller'
-import { getActiveTool, linkLayerClick } from '../toolcontroller'
+import { linkLayerClick, linkLayerMouseDown, linkLayerMouseUp } from '../toolcontroller'
 import UnitLayer from './unitlayer'
 
 
@@ -55,8 +55,8 @@ export default class LinkLayer extends Polyline {
 
     addHandlers() {
         this.on('click', this.click, this)
-        this.on('middlemouseclick', this.middleMouseClick, this)
-        this.on('mouseup', this.mouseUp, this)
+        this.on('mousedown', this.mousedown)
+        this.on('mouseup', this.mouseup)
 
         this.unit0.on('dragend', this.update, this)
         this.unit1.on('dragend', this.update, this)
@@ -67,8 +67,8 @@ export default class LinkLayer extends Polyline {
 
     removeHandlers() {
         this.off('click', this.click)
-        this.off('middlemouseclick', this.middleMouseClick)
-        this.off('mouseup', this.mouseUp)
+        this.off('mousedown', this.mousedown)
+        this.off('mouseup', this.mouseup)
 
         this.unit0.off('dragend', this.update)
         this.unit1.off('dragend', this.update)
@@ -120,13 +120,11 @@ export default class LinkLayer extends Polyline {
     click(e: LeafletMouseEvent) {
         linkLayerClick(e, this)
     }
-    middleMouseClick() {
-        if (!getActiveTool().mmbTopography) return
-        showLinkStatistics(this._map, this)
+    mousedown(e: LeafletMouseEvent) {
+        linkLayerMouseDown(e, this)
     }
-    mouseUp(e: LeafletMouseEvent) {
-        if (e.originalEvent.button === 1)
-            this.fire('middlemouseclick', e)
+    mouseup(e: LeafletMouseEvent) {
+        linkLayerMouseUp(e, this)
     }
 }
 

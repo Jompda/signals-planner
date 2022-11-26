@@ -26,16 +26,19 @@ export function initMapHooks(map: LMap) {
     let startLatLng: LatLng
     let highlightBbox: Rectangle
     map.on('mousedown', (e) => {
+        if (!activeTool) return
         if (!activeTool.areaSelect || getMap().dragging.enabled()) return
         startLatLng = e.latlng
         highlightBbox = rectangle(latLngBounds(startLatLng, startLatLng))
     })
     map.on('mousemove', (e) => {
+        if (!activeTool) return
         if (!highlightBbox || getMap().dragging.enabled()) return
         if (!(highlightBbox as any)._map) highlightBbox.addTo(getMap())
         highlightBbox.setBounds(latLngBounds(startLatLng, e.latlng))
     })
     map.on('mouseup', (e) => {
+        if (!activeTool) return
         if (!highlightBbox || getMap().dragging.enabled()) return
         if ((highlightBbox as any)._map) {
             activeTool.bboxselect(e, latLngBounds(startLatLng, e.latlng))
@@ -45,29 +48,47 @@ export function initMapHooks(map: LMap) {
         startLatLng = undefined
     })
     map.on('keydown', (e: LeafletKeyboardEvent) => {
-        if (e.originalEvent.key == 'Control') {
-            getMap().dragging.disable()
-            setUnitDragging(false)
+        if (!activeTool) return
+        if (activeTool.areaSelect) {
+            if (e.originalEvent.key == 'Control') {
+                getMap().dragging.disable()
+                setUnitDragging(false)
+            }
         }
     })
     map.on('keyup', (e: LeafletKeyboardEvent) => {
-        if (e.originalEvent.key == 'Control') {
-            getMap().dragging.enable()
-            setUnitDragging(true)
+        if (!activeTool) return
+        if (activeTool.areaSelect) {
+            if (e.originalEvent.key == 'Control') {
+                getMap().dragging.enable()
+                setUnitDragging(true)
+            }
         }
     })
 }
 
 
 export function unitLayerMouseDown(e: LeafletMouseEvent, unitLayer: UnitLayer) {
+    if (!activeTool) return
     activeTool.unitlayermousedown(e, unitLayer)
 }
 export function unitLayerMouseUp(e: LeafletMouseEvent, unitLayer: UnitLayer) {
+    if (!activeTool) return
     activeTool.unitlayermouseup(e, unitLayer)
 }
 export function unitLayerClick(e: LeafletMouseEvent, unitLayer: UnitLayer) {
+    if (!activeTool) return
     activeTool.unitlayerclick(e, unitLayer)
 }
 export function linkLayerClick(e: LeafletMouseEvent, linkLayer: LinkLayer) {
+    if (!activeTool) return
     activeTool.linklayerclick(e, linkLayer)
+}
+export function linkLayerMouseDown(e: LeafletMouseEvent, linkLayer: LinkLayer) {
+    if (!activeTool) return
+    activeTool.linklayermousedown(e, linkLayer)
+}
+export function linkLayerMouseUp(e: LeafletMouseEvent, linkLayer: LinkLayer) {
+    if (!activeTool) return
+    activeTool.linklayermouseup(e, linkLayer)
 }
