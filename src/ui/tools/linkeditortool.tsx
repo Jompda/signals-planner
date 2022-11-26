@@ -20,7 +20,7 @@ class LinkEditorTool extends Tool {
             items: [{
                 // TODO: Ability to change the drawn medium.
                 icon: 'Change medium',
-                toggle: false,
+                radio: false,
                 addHooks: () => console.log('Change medium'),
             }],
             unitDragging: false,

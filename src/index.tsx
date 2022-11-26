@@ -122,7 +122,7 @@ createCustomToolbar([
     defaultTool,
     {
         icon: <img src={unitlinkicon} />,
-        toggle: false,
+        radio: false,
         items: [
             linkEditorTool
         ]

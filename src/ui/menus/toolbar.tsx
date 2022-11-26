@@ -10,13 +10,13 @@ export function createCustomToolbar(items: Array<IToolbarItem>, options?: Contro
 
 export class ToolbarItem {
     public icon: JSX.Element
-    public toggle: boolean
+    public radio: boolean
     constructor(options: IToolbarItem) {
         console.log(options)
         this.icon = typeof options.icon == 'string'
             ? <span>{options.icon}</span>
             : options.icon
-        this.toggle = 'toggle' in options ? options.toggle : true
+        this.radio = 'radio' in options ? options.radio : true
         if (options.addHooks) this.addHooks = (map) => options.addHooks(map)
         if (options.removeHooks) this.removeHooks = (map) => options.removeHooks(map)
     }
@@ -52,7 +52,7 @@ class ToolbarCategory extends ToolbarItem {
 
         let currentItem: ToolbarItem
         function setSelection(item: ToolbarItem) {
-            if (!item.toggle) return item.addHooks(map)
+            if (!item.radio) return item.addHooks(map)
             if (currentItem) currentItem.removeHooks(map)
             currentItem = item
             currentItem.addHooks(map)

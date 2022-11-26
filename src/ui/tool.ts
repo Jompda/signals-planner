@@ -27,7 +27,7 @@ const interactionEvents = [
 export default class Tool implements IToolbarItem {
     public icon: string | JSX.Element
     public items: Array<IToolbarItem>
-    public enableOnClick: boolean
+    public radio: boolean
     public unitSelecting: boolean
     public unitDragging: boolean
     public mmbTopography: boolean
@@ -35,15 +35,14 @@ export default class Tool implements IToolbarItem {
     constructor(options?: ToolOptions) {
         this.icon = options.icon
         this.items = options.items
-        this.enableOnClick = options.enableOnClick
         this.mmbTopography = options.mmbTopography
         this.areaSelect = options.areaSelect
         if (!('unitSelecting' in options)) this.unitSelecting = true
-        if (!('enableOnClick' in options)) this.enableOnClick = true
+        if (!('radio' in options)) this.radio = true
         if (!('unitDragging' in options)) this.unitDragging = true
     }
     addHooks(map: LMap) {
-        setActiveTool(this, map)
+        if (this.radio) setActiveTool(this, map)
         for (const event of interactionEvents)
             map.on(event, (this as any)[event], this)
         setUnitDragging(this.unitDragging)

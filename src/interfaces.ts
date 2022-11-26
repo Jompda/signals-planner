@@ -25,7 +25,7 @@ declare module 'leaflet' {
 export interface IToolbarItem {
     icon: string | JSX.Element
     /** Defaults to true */
-    toggle?: boolean
+    radio?: boolean
     items?: Array<IToolbarItem>
     addHooks?: (map: LMap) => void
     removeHooks?: (map: LMap) => void
@@ -36,7 +36,7 @@ export interface ToolOptions {
     icon: string | JSX.Element
     items?: Array<IToolbarItem>
     /** true by default */
-    enableOnClick?: boolean
+    radio?: boolean
     /** true by default */
     unitSelecting?: boolean
     /** true by default */
