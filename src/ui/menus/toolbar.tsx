@@ -140,7 +140,7 @@ function ToolbarRadioButton(props: any) {
         }}>
             <label className='fitter'>
                 {
-                    !props.item.toggle ||
+                    !props.item.radio ||
                     <>
                         <input type="radio" name="ctoolbar-radio" />
                         <div></div>

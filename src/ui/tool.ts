@@ -35,6 +35,7 @@ export default class Tool implements IToolbarItem {
     constructor(options?: ToolOptions) {
         this.icon = options.icon
         this.items = options.items
+        this.radio = options.radio
         this.mmbTopography = options.mmbTopography
         this.areaSelect = options.areaSelect
         if (!('unitSelecting' in options)) this.unitSelecting = true

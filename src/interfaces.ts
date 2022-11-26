@@ -2,7 +2,6 @@ import { LatLng as LLatLng, MapOptions, LayerOptions, MarkerOptions, LeafletMous
 import { Symbol as MilSymbol } from 'milsymbol'
 import { CableMedium, Medium, RadioMedium } from './struct/medium'
 import Unit from './struct/unit'
-import { ToolbarItem } from './ui/menus/toolbar'
 
 
 declare module 'leaflet' {
