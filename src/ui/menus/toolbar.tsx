@@ -180,11 +180,9 @@ function CustomToolbar(props: any) {
     const items = toolbarItemsToJSX(props.items)
 
     return (
-        <aside className='ctoolbar'>
-            <ul className='ctoolbar-category ctoolbar-root'>
-                {items}
-            </ul>
-        </aside>
+        <ul className='ctoolbar-category ctoolbar-root'>
+            {items}
+        </ul>
     )
 }
 
