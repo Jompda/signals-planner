@@ -134,7 +134,7 @@ function toolbarItemsToJSX(items: Array<IToolbarItem>, setSelection: (item: Tool
 
 function ToolbarRadioButton(props: any) {
     return (
-        <a href="#" className={props.className} onClick={(e) => {
+        <div className={props.className} onClick={(e) => {
             if ((e.target as HTMLElement).tagName == 'INPUT') return
             props.setSelection(props.item)
         }}>
@@ -148,6 +148,6 @@ function ToolbarRadioButton(props: any) {
                 }
                 {props.item.icon}
             </label>
-        </a>
+        </div>
     )
 }

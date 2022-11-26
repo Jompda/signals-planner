@@ -19,9 +19,9 @@ class LinkEditorTool extends Tool {
             icon: <i title='Link Editor' className='fa-solid fa-pen' />,
             items: [{
                 // TODO: Ability to change the drawn medium.
-                icon: 'Change medium',
+                icon: 'Edit',
                 radio: false,
-                addHooks: () => console.log('Change medium'),
+                addHooks: () => console.log('Edit'),
             }],
             unitDragging: false,
             mmbTopography: true
