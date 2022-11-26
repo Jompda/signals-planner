@@ -73,7 +73,7 @@ function createSubToolbar(actions: Array<ToolAction>) {
 function createCustomToolbar(map: LMap) {
     const customToolbar = new (Control as any).CustomToolbar([
         new ToolbarItem({
-            icon: 'a1',
+            icon: <i className='fa fa-mouse-pointer' />,
             addHooks: () => console.log('click a1')
         }),
         new ToolbarCategory({
@@ -103,6 +103,7 @@ function createCustomToolbar(map: LMap) {
         }),
         new ToolbarItem({
             icon: 'a3',
+            toggle: false,
             addHooks: () => console.log('click a3')
         })
     ] as Array<ToolbarItem>) as Control
@@ -117,6 +118,8 @@ function createCustomToolbar(map: LMap) {
 
 interface ToolbarItemOptions {
     icon: string | JSX.Element
+    /** Defaults to true */
+    toggle?: boolean
     addHooks?: () => void
     removeHooks?: () => void
 }
@@ -129,8 +132,11 @@ interface ToolbarCategoryOptions extends ToolbarItemOptions {
 
 class ToolbarItem {
     public icon: string | JSX.Element
+    public toggle: boolean
     constructor(options: ToolbarItemOptions) {
         this.icon = options.icon
+        if (typeof this.icon == 'string') this.icon = <span>{this.icon}</span>
+        this.toggle = 'toggle' in options ? options.toggle : true
         if (options.addHooks) this.addHooks = options.addHooks
         if (options.removeHooks) this.removeHooks = options.removeHooks
     }
@@ -194,9 +200,9 @@ function ToolbarCategoryComponent(props: any) {
     return (
         <>
             <a href="#" className='ctoolbar-category-icon'>
-                <div className='fitter'>
+                <label className='fitter'>
                     {props.category.icon}
-                </div>
+                </label>
             </a>
             <ul className='ctoolbar-category'>
                 {items}
@@ -222,9 +228,15 @@ function toolbarItemsToJSX(items: Array<ToolbarItem>) {
             elements.push(
                 <li key={i++}>
                     <a href="#" onClick={item.addHooks}>
-                        <div className='fitter'>
+                        <label className='fitter'>
+                            {
+                                item.toggle
+                                    ? <input type="radio" name="ctoolbar-radio" />
+                                    : undefined
+                            }
+                            <div></div>
                             {item.icon}
-                        </div>
+                        </label>
                     </a>
                 </li>
             )

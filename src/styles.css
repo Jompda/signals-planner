@@ -317,6 +317,10 @@ body {
     border: 1px solid #888888;
 }
 
+.ctoolbar-category>li:hover {
+    background-color: #c0c0c0;
+}
+
 .ctoolbar-root {
     position: relative;
     margin-left: -3em;
@@ -334,6 +338,20 @@ body {
     text-align: center;
     justify-content: center;
     align-items: center;
+}
+
+.fitter>input {
+    display: none;
+}
+
+.fitter>input:checked+div {
+    background-color: #4ada6e;
+    width: 3em;
+    height: 3em;
+}
+
+.fitter>*:last-child {
+    position: absolute;
 }
 
 
