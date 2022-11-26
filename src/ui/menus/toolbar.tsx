@@ -69,51 +69,46 @@ function createSubToolbar(actions: Array<ToolAction>) {
 }
 
 
+
+/*
+ * Toolbar from scratch
+ */
+
+
 // temp driver code
 function createCustomToolbar(map: LMap) {
     const customToolbar = new (Control as any).CustomToolbar([
         new ToolbarItem({
             icon: <i className='fa fa-mouse-pointer' />,
-            addHooks: () => console.log('click a1')
         }),
         new ToolbarCategory({
             icon: 'a2',
             items: [
                 new ToolbarItem({
                     icon: 'a4',
-                    addHooks: () => console.log('click a4')
                 }),
                 new ToolbarCategory({
                     icon: <img src={unitlinkicon} />,
                     items: [
                         new ToolbarItem({
                             icon: 'a7',
-                            addHooks: () => console.log('click a7')
                         }), new ToolbarItem({
                             icon: 'a8',
-                            addHooks: () => console.log('click a8')
                         })
                     ]
                 }),
                 new ToolbarItem({
                     icon: <img src={unitlinkicon} />,
-                    addHooks: () => console.log('click a6')
                 })
             ]
         }),
         new ToolbarItem({
             icon: 'a3',
             toggle: false,
-            addHooks: () => console.log('click a3')
         })
     ] as Array<ToolbarItem>) as Control
     customToolbar.addTo(map)
 }
-
-
-/*
- * Toolbar from scratch
- */
 
 
 interface ToolbarItemOptions {
@@ -140,8 +135,12 @@ class ToolbarItem {
         if (options.addHooks) this.addHooks = options.addHooks
         if (options.removeHooks) this.removeHooks = options.removeHooks
     }
-    addHooks() { }
-    removeHooks() { }
+    addHooks() {
+        console.log('addHooks', this.icon)
+    }
+    removeHooks() {
+        console.log('removeHooks', this.icon)
+    }
 }
 
 
@@ -151,6 +150,8 @@ class ToolbarCategory extends ToolbarItem {
         super(options)
         this.items = options.items
     }
+    addHooks() { }
+    removeHooks() { }
 }
 
 
@@ -170,9 +171,18 @@ class ToolbarCategory extends ToolbarItem {
         DomEvent.disableClickPropagation(container)
         DomEvent.disableScrollPropagation(container)
 
+        let currentItem: ToolbarItem
+        function setSelection(item: ToolbarItem) {
+            if (!item.toggle) return item.addHooks()
+            if (currentItem) currentItem.removeHooks()
+            currentItem = item
+            currentItem.addHooks()
+        }
+
         const root = createRoot(container)
         root.render(
             <CustomToolbar
+                setSelection={setSelection}
                 items={this.items}
             />
         )
@@ -183,7 +193,7 @@ class ToolbarCategory extends ToolbarItem {
 
 
 function CustomToolbar(props: any) {
-    const items = toolbarItemsToJSX(props.items)
+    const items = toolbarItemsToJSX(props.items, props.setSelection)
 
     return (
         <ul className='ctoolbar-category ctoolbar-root'>
@@ -195,7 +205,7 @@ function CustomToolbar(props: any) {
 
 function ToolbarCategoryComponent(props: any) {
     const category: ToolbarCategory = props.category
-    const items = toolbarItemsToJSX(category.items)
+    const items = toolbarItemsToJSX(category.items, props.setSelection)
 
     return (
         <>
@@ -212,7 +222,7 @@ function ToolbarCategoryComponent(props: any) {
 }
 
 
-function toolbarItemsToJSX(items: Array<ToolbarItem>) {
+function toolbarItemsToJSX(items: Array<ToolbarItem>, setSelection: (item: ToolbarItem) => any) {
     const elements = new Array<JSX.Element>()
     let i = 0
     for (const item of items as Array<ToolbarItem>) {
@@ -220,6 +230,7 @@ function toolbarItemsToJSX(items: Array<ToolbarItem>) {
             elements.push(
                 <li key={i++}>
                     <ToolbarCategoryComponent
+                        setSelection={setSelection}
                         category={item}
                     />
                 </li>
@@ -227,14 +238,18 @@ function toolbarItemsToJSX(items: Array<ToolbarItem>) {
         } else {
             elements.push(
                 <li key={i++}>
-                    <a href="#" onClick={item.addHooks}>
+                    <a href="#" onClick={(e) => {
+                        if ((e.target as HTMLElement).tagName == 'INPUT') return
+                        setSelection(item)
+                    }}>
                         <label className='fitter'>
                             {
-                                item.toggle
-                                    ? <input type="radio" name="ctoolbar-radio" />
-                                    : undefined
+                                !item.toggle ||
+                                <>
+                                    <input type="radio" name="ctoolbar-radio" />
+                                    <div></div>
+                                </>
                             }
-                            <div></div>
                             {item.icon}
                         </label>
                     </a>
