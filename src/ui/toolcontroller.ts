@@ -12,8 +12,8 @@ export function getActiveTool() {
     return activeTool
 }
 export function setActiveTool(tool: Tool, map: LMap) {
-    if (activeTool) activeTool.disable(map)
-    tool.enable(map)
+    //if (activeTool) activeTool.removeHooks(map)
+    //tool.addHooks(map)
     activeTool = tool
 }
 

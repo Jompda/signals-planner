@@ -1,9 +1,10 @@
 import { LatLngBounds, LeafletKeyboardEvent, Map as LMap } from 'leaflet'
 import { LeafletMouseEvent } from 'leaflet'
-import { ToolAction, ToolOptions } from '../interfaces'
+import { ToolOptions, IToolbarItem } from '../interfaces'
 import LinkLayer from './components/linklayer'
 import UnitLayer from './components/unitlayer'
 import { getUnitLayers, setUnitDragging } from './structurecontroller'
+import { setActiveTool } from './toolcontroller'
 
 
 const interactionEvents = [
@@ -23,27 +24,32 @@ const interactionEvents = [
 ]
 
 
-export default class Tool {
-    public icon: any
+export default class Tool implements IToolbarItem {
+    public icon: string | JSX.Element
+    public items: Array<IToolbarItem>
     public enableOnClick: boolean
-    public actions: Array<ToolAction>
     public unitSelecting: boolean
     public unitDragging: boolean
     public mmbTopography: boolean
     public areaSelect: boolean
     constructor(options?: ToolOptions) {
-        Object.assign(this, options)
+        this.icon = options.icon
+        this.items = options.items
+        this.enableOnClick = options.enableOnClick
+        this.mmbTopography = options.mmbTopography
+        this.areaSelect = options.areaSelect
         if (!('unitSelecting' in options)) this.unitSelecting = true
         if (!('enableOnClick' in options)) this.enableOnClick = true
         if (!('unitDragging' in options)) this.unitDragging = true
     }
-    enable(map: LMap) {
+    addHooks(map: LMap) {
+        setActiveTool(this, map)
         for (const event of interactionEvents)
             map.on(event, (this as any)[event], this)
         setUnitDragging(this.unitDragging)
         this.onEnabled()
     }
-    disable(map: LMap) {
+    removeHooks(map: LMap) {
         for (const event of interactionEvents)
             map.off(event, (this as any)[event], this)
         this.onDisabled()

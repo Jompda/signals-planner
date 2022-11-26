@@ -1,157 +1,36 @@
-import Tool from '../tool'
-import { setActiveTool } from '../toolcontroller'
-
-import 'leaflet-toolbar'
-import { Control, DomUtil, Toolbar2, Util, Map as LMap, DomEvent } from 'leaflet'
-import { ToolAction } from '../../interfaces'
-import { ToolCategory } from '../toolcategory'
+import { Control, DomUtil, Util, Map as LMap, DomEvent, ControlOptions } from 'leaflet'
+import { IToolbarItem } from '../../interfaces'
 import { createRoot } from 'react-dom/client'
 
-import unitlinkicon from '../../assets/unitlink.png'
 
-
-// TODO: Create a TS API of this https://codepen.io/naveenbhaskar/pen/nBOeBy
-export function createSpToolbar(map: L.Map, tools: Array<Tool>, options: any) {
-    setActiveTool(tools[0], map)
-
-    const tb = new Toolbar2.Control({
-        position: 'topleft',
-        actions: toolsToActions(map, tools)
-    });
-
-    /*map.on(L.Draw.Event.TOOLBAROPENED, () =>
-        tb._ul.firstChild.firstChild.click()
-    )*/
-
-    createCustomToolbar(map)
-
-    return tb
+export function createCustomToolbar(items: Array<IToolbarItem>, options?: ControlOptions) {
+    return new (Control as any).CustomToolbar(items, options) as Control
 }
 
 
-function toolsToActions(map: L.Map, tools: Array<Tool>) {
-    const actions = new Array()
-    for (const tool of tools) {
-        const options: any = {
-            toolbarIcon: tool.icon,
-        }
-        if (tool.actions) options.subToolbar = createSubToolbar(tool.actions)
-        actions.push(Toolbar2.Action.extend({
-            options,
-            addHooks: tool.enableOnClick
-                ? !(tool instanceof ToolCategory)
-                    ? () => setActiveTool(tool, map)
-                    : undefined
-                : undefined
-        }))
-    }
-    return actions
-}
-
-
-function createSubToolbar(actions: Array<ToolAction>) {
-    return new Toolbar2({
-        actions: actions.map(action => {
-            return Toolbar2.Action.extend({
-                options: {
-                    toolbarIcon: action.icon
-                },
-                initialize: function (map: L.Map, action: any) {
-                    this.map = map
-                    this.action = action
-                    Toolbar2.Action.prototype.initialize.call(this)
-                },
-                addHooks: action.enable,
-                removeHooks: action.disable
-            })
-        })
-    })
-}
-
-
-
-/*
- * Toolbar from scratch
- */
-
-
-// temp driver code
-function createCustomToolbar(map: LMap) {
-    const customToolbar = new (Control as any).CustomToolbar([
-        new ToolbarItem({
-            icon: <i className='fa fa-mouse-pointer' />,
-        }),
-        new ToolbarCategory({
-            icon: 'a2',
-            items: [
-                new ToolbarItem({
-                    icon: 'a4',
-                }),
-                new ToolbarCategory({
-                    icon: <img src={unitlinkicon} />,
-                    items: [
-                        new ToolbarItem({
-                            icon: 'a7',
-                        }), new ToolbarItem({
-                            icon: 'a8',
-                        })
-                    ]
-                }),
-                new ToolbarItem({
-                    icon: <img src={unitlinkicon} />,
-                })
-            ]
-        }),
-        new ToolbarItem({
-            icon: 'a3',
-            toggle: false,
-        })
-    ] as Array<ToolbarItem>) as Control
-    customToolbar.addTo(map)
-}
-
-
-interface ToolbarItemOptions {
-    icon: string | JSX.Element
-    /** Defaults to true */
-    toggle?: boolean
-    addHooks?: () => void
-    removeHooks?: () => void
-}
-
-
-interface ToolbarCategoryOptions extends ToolbarItemOptions {
-    items: Array<ToolbarItem>
-}
-
-
-class ToolbarItem {
-    public icon: string | JSX.Element
+export class ToolbarItem {
+    public icon: JSX.Element
     public toggle: boolean
-    constructor(options: ToolbarItemOptions) {
-        this.icon = options.icon
-        if (typeof this.icon == 'string') this.icon = <span>{this.icon}</span>
+    constructor(options: IToolbarItem) {
+        console.log(options)
+        this.icon = typeof options.icon == 'string'
+            ? <span>{options.icon}</span>
+            : options.icon
         this.toggle = 'toggle' in options ? options.toggle : true
-        if (options.addHooks) this.addHooks = options.addHooks
-        if (options.removeHooks) this.removeHooks = options.removeHooks
+        if (options.addHooks) this.addHooks = (map) => options.addHooks(map)
+        if (options.removeHooks) this.removeHooks = (map) => options.removeHooks(map)
     }
-    addHooks() {
-        console.log('addHooks', this.icon)
-    }
-    removeHooks() {
-        console.log('removeHooks', this.icon)
-    }
+    addHooks(map: LMap) { }
+    removeHooks(map: LMap) { }
 }
 
 
 class ToolbarCategory extends ToolbarItem {
-    public items: Array<ToolbarItem>
-    constructor(options: ToolbarCategoryOptions) {
+    public items: Array<IToolbarItem>
+    constructor(options: IToolbarItem) {
         super(options)
         this.items = options.items
     }
-    addHooks() { }
-    removeHooks() { }
 }
 
 
@@ -160,7 +39,7 @@ class ToolbarCategory extends ToolbarItem {
         position: 'topleft'
     },
 
-    initialize: function (items: Array<ToolbarItem>, options: any) {
+    initialize: function (items: Array<IToolbarItem>, options: ControlOptions) {
         this.items = items
         Util.setOptions(this, options)
     },
@@ -173,10 +52,10 @@ class ToolbarCategory extends ToolbarItem {
 
         let currentItem: ToolbarItem
         function setSelection(item: ToolbarItem) {
-            if (!item.toggle) return item.addHooks()
-            if (currentItem) currentItem.removeHooks()
+            if (!item.toggle) return item.addHooks(map)
+            if (currentItem) currentItem.removeHooks(map)
             currentItem = item
-            currentItem.addHooks()
+            currentItem.addHooks(map)
         }
 
         const root = createRoot(container)
@@ -209,11 +88,11 @@ function ToolbarCategoryComponent(props: any) {
 
     return (
         <>
-            <a href="#" className='ctoolbar-category-icon'>
-                <label className='fitter'>
-                    {props.category.icon}
-                </label>
-            </a>
+            <ToolbarRadioButton
+                className='ctoolbar-category-icon'
+                setSelection={props.setSelection}
+                item={props.category}
+            />
             <ul className='ctoolbar-category'>
                 {items}
             </ul>
@@ -222,10 +101,13 @@ function ToolbarCategoryComponent(props: any) {
 }
 
 
-function toolbarItemsToJSX(items: Array<ToolbarItem>, setSelection: (item: ToolbarItem) => any) {
+function toolbarItemsToJSX(items: Array<IToolbarItem>, setSelection: (item: ToolbarItem) => any) {
     const elements = new Array<JSX.Element>()
     let i = 0
-    for (const item of items as Array<ToolbarItem>) {
+    for (const itemOptions of items as Array<IToolbarItem>) {
+        const item = itemOptions.items !== undefined
+            ? new ToolbarCategory(itemOptions)
+            : new ToolbarItem(itemOptions)
         if (item instanceof ToolbarCategory) {
             elements.push(
                 <li key={i++}>
@@ -238,24 +120,34 @@ function toolbarItemsToJSX(items: Array<ToolbarItem>, setSelection: (item: Toolb
         } else {
             elements.push(
                 <li key={i++}>
-                    <a href="#" onClick={(e) => {
-                        if ((e.target as HTMLElement).tagName == 'INPUT') return
-                        setSelection(item)
-                    }}>
-                        <label className='fitter'>
-                            {
-                                !item.toggle ||
-                                <>
-                                    <input type="radio" name="ctoolbar-radio" />
-                                    <div></div>
-                                </>
-                            }
-                            {item.icon}
-                        </label>
-                    </a>
+                    <ToolbarRadioButton
+                        setSelection={setSelection}
+                        item={item}
+                    />
                 </li>
             )
         }
     }
     return elements
+}
+
+
+function ToolbarRadioButton(props: any) {
+    return (
+        <a href="#" className={props.className} onClick={(e) => {
+            if ((e.target as HTMLElement).tagName == 'INPUT') return
+            props.setSelection(props.item)
+        }}>
+            <label className='fitter'>
+                {
+                    !props.item.toggle ||
+                    <>
+                        <input type="radio" name="ctoolbar-radio" />
+                        <div></div>
+                    </>
+                }
+                {props.item.icon}
+            </label>
+        </a>
+    )
 }

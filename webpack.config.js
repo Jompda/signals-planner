@@ -8,7 +8,7 @@ const destDir = path.join(__dirname, 'dist')
 
 module.exports = {
     mode: 'development',
-    entry: './src/index.ts',
+    entry: './src/index.tsx',
     module: {
         rules: [
             {

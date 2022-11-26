@@ -15,18 +15,14 @@ class AddNodeTool extends Tool {
     constructor() {
         const symbol = new MilSymbol({ sidc: 'SFGPUUS----B', size: 15 })
         super({
-            icon: {
-                tooltip: 'Add Nodes',
-                html: `<div class="center-content"><img src="${symbol.toDataURL()}"/></div>`
-            },
-            actions: [
+            icon: <img title='Add Node' src={symbol.toDataURL()}></img>,
+            items: [
                 {
-                    icon: {
-                        html: 'Edit'
-                    },
-                    enable: function () {
+                    icon: 'Edit',
+                    toggle: false,
+                    addHooks: () => {
                         // TODO: Get new MilSymbol with MilSymbolEditor and switch the toolbar icon.
-                        this.action.disable()
+                        console.log('Edit')
                     },
                 }
             ],

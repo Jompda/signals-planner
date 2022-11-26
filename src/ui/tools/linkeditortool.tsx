@@ -16,14 +16,12 @@ class LinkEditorTool extends Tool {
     private highlight: Polyline
     constructor() {
         super({
-            icon: {
-                tooltip: 'Link Editor',
-                html: `<i class="fa-solid fa-pen"></i>`
-            },
-            actions: [{
-                icon: {
-                    html: 'Change medium' // TODO: Ability to change the drawn medium.
-                }
+            icon: <i title='Link Editor' className='fa-solid fa-pen' />,
+            items: [{
+                // TODO: Ability to change the drawn medium.
+                icon: 'Change medium',
+                toggle: false,
+                addHooks: () => console.log('Change medium'),
             }],
             unitDragging: false,
             mmbTopography: true

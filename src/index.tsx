@@ -3,7 +3,6 @@ import './styles.css'
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.css'
 import 'leaflet-dialog/Leaflet.Dialog.css'
 //import 'leaflet-draw/dist/leaflet.draw.css'
-import 'leaflet-toolbar/dist/leaflet.toolbar.css'
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
 
 import { Map as LMap, MapOptions, control, LeafletKeyboardEvent, LatLng as LLatLng } from 'leaflet'
@@ -99,8 +98,8 @@ import defaultTool from './ui/tools/defaultool'
 import addNodeTool from './ui/tools/addnodetool'
 import linkEditorTool from './ui/tools/linkeditortool'
 import { redo, undo } from './actionhistory'
-import { createSpToolbar } from './ui/menus/toolbar'
-import { ToolCategory } from './ui/toolcategory'
+import { createCustomToolbar } from './ui/menus/toolbar'
+import unitlinkicon from './assets/unitlink.png'
 
 
 const map = new LMap('map', {
@@ -119,7 +118,17 @@ baseLayers.OSM.addTo(map);
 
 (control as any).optionsMenu({ position: 'topright' }).addTo(map);
 (control as any).layerControl({ ...baseLayers, ...overlays }, { position: 'topright' }).addTo(map)
-createSpToolbar(map, [defaultTool, addNodeTool, new ToolCategory([linkEditorTool])], { position: 'topleft' }).addTo(map)
+createCustomToolbar([
+    defaultTool,
+    {
+        icon: <img src={unitlinkicon} />,
+        toggle: false,
+        items: [
+            linkEditorTool
+        ]
+    },
+    addNodeTool
+], { position: 'topleft' }).addTo(map)
 
 
 map.on('keydown', (e: LeafletKeyboardEvent) => {

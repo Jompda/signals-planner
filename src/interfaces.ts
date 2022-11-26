@@ -2,6 +2,7 @@ import { LatLng as LLatLng, MapOptions, LayerOptions, MarkerOptions, LeafletMous
 import { Symbol as MilSymbol } from 'milsymbol'
 import { CableMedium, Medium, RadioMedium } from './struct/medium'
 import Unit from './struct/unit'
+import { ToolbarItem } from './ui/menus/toolbar'
 
 
 declare module 'leaflet' {
@@ -21,22 +22,21 @@ declare module 'leaflet' {
 }
 
 
-export interface ToolAction {
-    icon: {
-        html: string
-    }
-    /** To close call "this.action.disable()" */
-    enable?: Function
-    /** To close call "this.action.disable()" */
-    disable?: Function
+export interface IToolbarItem {
+    icon: string | JSX.Element
+    /** Defaults to true */
+    toggle?: boolean
+    items?: Array<IToolbarItem>
+    addHooks?: (map: LMap) => void
+    removeHooks?: (map: LMap) => void
 }
 
 
 export interface ToolOptions {
-    icon: any
+    icon: string | JSX.Element
+    items?: Array<IToolbarItem>
     /** true by default */
     enableOnClick?: boolean
-    actions?: Array<ToolAction>
     /** true by default */
     unitSelecting?: boolean
     /** true by default */
