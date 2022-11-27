@@ -8,8 +8,10 @@ import { Medium, resolveMedium } from "../../struct/medium"
 import { getLinkLayerById, getSelectedUnitLayers, removeLink as lgRemoveLink, addLink as lgAddLink } from "../structurecontroller"
 import Link from "../../struct/link"
 import LinkLayer from "../components/linklayer"
-import { linkIdExists, removeLink as structRemoveLink, addLink as structAddLink, getLinkById } from "../../struct"
+import { linkIdExists, removeLink as structRemoveLink, addLink as structAddLink } from "../../struct"
 import UnitLayer from "../components/unitlayer"
+import { addAction } from "../../actionhistory"
+import { AddLinksAction, RemoveLinksAction } from "../../actions/linkactions"
 
 
 export function showLinkGraphToolMenu(map: LMap) {
@@ -38,11 +40,11 @@ export function showLinkGraphToolMenu(map: LMap) {
             <>
                 <Tabs>
                     <TabList>
-                        <Tab>Mass Actions</Tab>
+                        <Tab>Group Actions</Tab>
                         <Tab>Tab 2 Placeholder</Tab>
                     </TabList>
                     <TabPanel>
-                        <LinkMassActions />
+                        <LinkGroupActions />
                     </TabPanel>
                     <TabPanel>
                         <h2>Placeholder</h2>
@@ -63,7 +65,7 @@ export function showLinkGraphToolMenu(map: LMap) {
 }
 
 
-function LinkMassActions(props: any) {
+function LinkGroupActions(props: any) {
     const minDistRef = useRef<HTMLInputElement>()
     const maxDistRef = useRef<HTMLInputElement>()
     const mindbRef = useRef<HTMLInputElement>()
@@ -92,8 +94,11 @@ function LinkMassActions(props: any) {
         const minDB = parseFloat(mindbRef.current.value)
 
         generateLinks(unitLayers, minDist, maxDist, minDB, medium, overrideRef.current.checked,
-            (i) => generateBtnRef.current.textContent = `Progress: ${Math.round(i * 100)}%.`,
-            () => {
+            function progress(i) {
+                generateBtnRef.current.textContent = `Progress: ${Math.round(i * 100)}%.`
+            },
+            function done(linkLayers) {
+                addAction(new AddLinksAction(linkLayers))
                 generateBtnRef.current.textContent = 'Generate links between selected units'
                 generateBtnRef.current.disabled = false
                 removeBtnRef.current.disabled = false
@@ -104,25 +109,20 @@ function LinkMassActions(props: any) {
     function removeLinks() {
         let unitLayers = getSelectedUnitLayers()
 
-        console.log(unitLayers.length)
-
+        const linkLayers = new Array<LinkLayer>()
         for (let i = 0; i < unitLayers.length; i++) {
             for (let j = i + 1; j < unitLayers.length; j++) {
                 const linkId = Link.createId(unitLayers[i].unit, unitLayers[j].unit)
                 const linkLayer = getLinkLayerById(linkId)
-                console.log('linkLayer', linkLayer?.link.id)
-                if (linkLayer) {
-                    console.log('remove')
-                    lgRemoveLink(linkLayer)
-                    structRemoveLink(linkLayer.link)
-                }
+                if (linkLayer) linkLayers.push(linkLayer)
             }
         }
+        addAction(new RemoveLinksAction(linkLayers).forward())
     }
 
     return (
         <>
-            <h2>Mass Actions</h2>
+            <h2>Group Actions</h2>
             <span>Link Medium:</span>
             <MediumSelector
                 defaultValue={mediumName}
@@ -174,7 +174,7 @@ function generateLinks(
     medium: Medium,
     override: boolean,
     progressFunction: (i: number) => any,
-    done: () => any
+    done: (linkLayers: Array<LinkLayer>) => any
 ) {
     const linkLayers = new Array<LinkLayer>()
     for (let i = 0; i < unitLayers.length; i++) {
@@ -205,7 +205,7 @@ function generateLinks(
     const check = asyncOperation(
         linkLayers.length,
         () => progressFunction(++current / linkLayers.length),
-        done
+        () => done(linkLayers)
     )
 
     workers(linkLayers, async (linkLayer: LinkLayer) => {

@@ -2,7 +2,6 @@ import LinkLayer from '../ui/components/linklayer'
 import Action from './action'
 import { addLink as structAddLink, removeLink as structRemoveLink } from '../struct'
 import { addLink as lgAddLink, removeLink as lgRemoveLink } from '../ui/structurecontroller'
-import { Medium } from '../struct/medium'
 import { MediumResolvable } from '../interfaces'
 
 
@@ -63,6 +62,56 @@ export class EditLinkAction extends LinkAction {
     reverse() {
         this.linkLayer.link.setMedium(this.medium0)
         this.linkLayer.update()
+        return this
+    }
+}
+
+
+export class AddLinksAction extends Action {
+    private linkLayers: Array<LinkLayer>
+    constructor(linkLayers: Array<LinkLayer>) {
+        super()
+        this.linkLayers = linkLayers
+    }
+    forward() {
+        for (const linkLayer of this.linkLayers) {
+            structAddLink(linkLayer.link)
+            lgAddLink(linkLayer)
+            linkLayer.addHandlers()
+        }
+        return this
+    }
+    reverse() {
+        for (const linkLayer of this.linkLayers) {
+            linkLayer.removeHandlers()
+            lgRemoveLink(linkLayer)
+            structRemoveLink(linkLayer.link)
+        }
+        return this
+    }
+}
+
+
+export class RemoveLinksAction extends Action {
+    private linkLayers: Array<LinkLayer>
+    constructor(linkLayers: Array<LinkLayer>) {
+        super()
+        this.linkLayers = linkLayers
+    }
+    forward() {
+        for (const linkLayer of this.linkLayers) {
+            linkLayer.removeHandlers()
+            lgRemoveLink(linkLayer)
+            structRemoveLink(linkLayer.link)
+        }
+        return this
+    }
+    reverse() {
+        for (const linkLayer of this.linkLayers) {
+            structAddLink(linkLayer.link)
+            lgAddLink(linkLayer)
+            linkLayer.addHandlers()
+        }
         return this
     }
 }
