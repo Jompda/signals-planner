@@ -5,7 +5,7 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import { useRef } from "react"
 import { MediumSelector } from "../components/mediumselector"
 import { Medium, resolveMedium } from "../../struct/medium"
-import { getLinkLayerById, getSelectedUnitLayers, removeLink as lgRemoveLink, addLink as lgAddLink } from "../structurecontroller"
+import { getLinkLayerById, getSelectedUnitLayers, removeLink as lgRemoveLink, addLink as lgAddLink, getLinkLayersByUnitLayers } from "../structurecontroller"
 import Link from "../../struct/link"
 import LinkLayer from "../components/linklayer"
 import { linkIdExists, removeLink as structRemoveLink, addLink as structAddLink } from "../../struct"
@@ -107,16 +107,8 @@ function LinkGroupActions(props: any) {
     }
 
     function removeLinks() {
-        let unitLayers = getSelectedUnitLayers()
-
-        const linkLayers = new Array<LinkLayer>()
-        for (let i = 0; i < unitLayers.length; i++) {
-            for (let j = i + 1; j < unitLayers.length; j++) {
-                const linkId = Link.createId(unitLayers[i].unit, unitLayers[j].unit)
-                const linkLayer = getLinkLayerById(linkId)
-                if (linkLayer) linkLayers.push(linkLayer)
-            }
-        }
+        const unitLayers = getSelectedUnitLayers()
+        const linkLayers = getLinkLayersByUnitLayers(unitLayers)
         addAction(new RemoveLinksAction(linkLayers).forward())
     }
 

@@ -3,6 +3,7 @@ import { getLinksByUnitId, getUnitById } from '../struct'
 import UnitLayer from './components/unitlayer'
 import LinkLayer from './components/linklayer'
 import Unit from '../struct/unit'
+import Link from '../struct/link'
 
 
 const unitLayers = new LayerGroup<UnitLayer>()
@@ -28,6 +29,18 @@ export function getLinkLayersByUnitId(unitId: string) {
     const linkLayers = new Array<LinkLayer>()
     for (const link of getLinksByUnitId(unitId))
         linkLayers.push(getLinkLayerById(link.id))
+    return linkLayers
+}
+
+export function getLinkLayersByUnitLayers(unitLayers: Array<UnitLayer>) {
+    const linkLayers = new Array<LinkLayer>()
+    for (let i = 0; i < unitLayers.length; i++) {
+        for (let j = i + 1; j < unitLayers.length; j++) {
+            const linkId = Link.createId(unitLayers[i].unit, unitLayers[j].unit)
+            const linkLayer = getLinkLayerById(linkId)
+            if (linkLayer) linkLayers.push(linkLayer)
+        }
+    }
     return linkLayers
 }
 
