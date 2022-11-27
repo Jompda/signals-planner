@@ -14,7 +14,7 @@ export default class LinkLayer extends Polyline {
     public link: Link
     public unit0: UnitLayer
     public unit1: UnitLayer
-    constructor(link: Link, unit0: UnitLayer, unit1: UnitLayer) {
+    constructor(link: Link, unit0: UnitLayer, unit1: UnitLayer, initUpdate = true) {
         const endPoints = getEndPoints(unit0, unit1)
         super(endPoints, {
             pmIgnore: true,
@@ -49,7 +49,7 @@ export default class LinkLayer extends Polyline {
         this.unit1 = unit1
 
         this.addHandlers()
-        this.update()
+        if (initUpdate) this.update()
     }
 
 
@@ -74,6 +74,14 @@ export default class LinkLayer extends Polyline {
         this.unit1.off('dragend', this.update)
         this.unit0.off('update', this.update)
         this.unit1.off('update', this.update)
+    }
+
+
+    static orderUnitLayers(unitLayer0: UnitLayer, unitLayer1: UnitLayer) {
+        const [unit0] = Link.orderUnits(unitLayer0.unit, unitLayer1.unit)
+        if (unit0.id !== unitLayer0.unit.id)
+            return [unitLayer1, unitLayer0]
+        return [unitLayer0, unitLayer1]
     }
 
 

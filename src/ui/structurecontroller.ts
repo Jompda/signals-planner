@@ -99,7 +99,7 @@ export function addLink(linkLayer: LinkLayer) {
     linkLayers.addLayer(linkLayer)
 }
 export function removeLink(linkLayer: LinkLayer) {
-    linkLayer.remove()
+    linkLayers.removeLayer(linkLayer)
 }
 
 

@@ -1,7 +1,15 @@
-import { createDialog } from "../../util"
+import { asyncOperation, createDialog, getMaxWorkers, workers } from "../../util"
 import { DomEvent, DomUtil, Map as LMap } from 'leaflet'
 import { createRoot } from 'react-dom/client'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
+import { useRef } from "react"
+import { MediumSelector } from "../components/mediumselector"
+import { Medium, resolveMedium } from "../../struct/medium"
+import { getLinkLayerById, getSelectedUnitLayers, removeLink as lgRemoveLink, addLink as lgAddLink } from "../structurecontroller"
+import Link from "../../struct/link"
+import LinkLayer from "../components/linklayer"
+import { linkIdExists, removeLink as structRemoveLink, addLink as structAddLink, getLinkById } from "../../struct"
+import UnitLayer from "../components/unitlayer"
 
 
 export function showLinkGraphToolMenu(map: LMap) {
@@ -30,14 +38,14 @@ export function showLinkGraphToolMenu(map: LMap) {
             <>
                 <Tabs>
                     <TabList>
-                        <Tab>Tab 1</Tab>
-                        <Tab>Tab 2</Tab>
+                        <Tab>Mass Actions</Tab>
+                        <Tab>Tab 2 Placeholder</Tab>
                     </TabList>
                     <TabPanel>
-                        <h2>testp1</h2>
+                        <LinkMassActions />
                     </TabPanel>
                     <TabPanel>
-                        <h2>testp2</h2>
+                        <h2>Placeholder</h2>
                     </TabPanel>
                 </Tabs>
                 <div className='grower'></div>
@@ -52,4 +60,159 @@ export function showLinkGraphToolMenu(map: LMap) {
 
         return root
     }
+}
+
+
+function LinkMassActions(props: any) {
+    const minDistRef = useRef<HTMLInputElement>()
+    const maxDistRef = useRef<HTMLInputElement>()
+    const mindbRef = useRef<HTMLInputElement>()
+
+    const nodesOnlyRef = useRef<HTMLInputElement>()
+    const overrideRef = useRef<HTMLInputElement>()
+
+    const generateBtnRef = useRef<HTMLButtonElement>()
+    const removeBtnRef = useRef<HTMLButtonElement>()
+
+
+    let mediumName = 'SHF1'
+
+    function prepGenerateLinks() {
+        generateBtnRef.current.disabled = true
+        removeBtnRef.current.disabled = true
+
+        const medium = resolveMedium(mediumName)
+        let unitLayers = getSelectedUnitLayers()
+        if (nodesOnlyRef.current.checked) unitLayers = unitLayers.filter(
+            unitLayer => unitLayer.unit.symbol.getOptions().higherFormation == 'Node'
+        )
+
+        const minDist = parseFloat(minDistRef.current.value) * 1000
+        const maxDist = parseFloat(maxDistRef.current.value) * 1000
+        const minDB = parseFloat(mindbRef.current.value)
+
+        generateLinks(unitLayers, minDist, maxDist, minDB, medium, overrideRef.current.checked,
+            (i) => generateBtnRef.current.textContent = `Progress: ${Math.round(i * 100)}%.`,
+            () => {
+                generateBtnRef.current.textContent = 'Generate links between selected units'
+                generateBtnRef.current.disabled = false
+                removeBtnRef.current.disabled = false
+            }
+        )
+    }
+
+    function removeLinks() {
+        let unitLayers = getSelectedUnitLayers()
+
+        console.log(unitLayers.length)
+
+        for (let i = 0; i < unitLayers.length; i++) {
+            for (let j = i + 1; j < unitLayers.length; j++) {
+                const linkId = Link.createId(unitLayers[i].unit, unitLayers[j].unit)
+                const linkLayer = getLinkLayerById(linkId)
+                console.log('linkLayer', linkLayer?.link.id)
+                if (linkLayer) {
+                    console.log('remove')
+                    lgRemoveLink(linkLayer)
+                    structRemoveLink(linkLayer.link)
+                }
+            }
+        }
+    }
+
+    return (
+        <>
+            <h2>Mass Actions</h2>
+            <span>Link Medium:</span>
+            <MediumSelector
+                defaultValue={mediumName}
+                updateMedium={(value: string) => mediumName = value}
+            />
+            <div className='ma-2xgrid'>
+                <span>Min distance (km):</span>
+                <input ref={minDistRef} type='number' defaultValue='3' />
+                <span>Max distance (km):</span>
+                <input ref={maxDistRef} type='number' defaultValue='20' />
+                <span>Min dB:</span>
+                <input ref={mindbRef} type='number' defaultValue='-108' />
+            </div>
+            <label>
+                <input
+                    ref={nodesOnlyRef}
+                    type='checkbox'
+                />
+                Nodes only
+            </label>
+            <label>
+                <input
+                    ref={overrideRef}
+                    type='checkbox'
+                />
+                Override links
+            </label>
+
+            <br />
+            <button
+                ref={generateBtnRef}
+                onClick={prepGenerateLinks}
+            >Generate links between selected units</button>
+            <br />
+            <button
+                ref={removeBtnRef}
+                onClick={removeLinks}
+            >Remove selected links</button>
+        </>
+    )
+}
+
+
+function generateLinks(
+    unitLayers: Array<UnitLayer>,
+    minDist: number,
+    maxDist: number,
+    minDB: number,
+    medium: Medium,
+    override: boolean,
+    progressFunction: (i: number) => any,
+    done: () => any
+) {
+    const linkLayers = new Array<LinkLayer>()
+    for (let i = 0; i < unitLayers.length; i++) {
+        for (let j = i + 1; j < unitLayers.length; j++) {
+            const [unitLayer0, unitLayer1] = LinkLayer.orderUnitLayers(unitLayers[i], unitLayers[j])
+            const dist = unitLayer0.unit.latlng.distanceTo(unitLayer1.unit.latlng)
+            if (dist < minDist || dist > maxDist) continue
+            const link = new Link({
+                unit0: unitLayer0.unit,
+                unit1: unitLayer1.unit,
+                medium
+            })
+            if (linkIdExists(link.id)) {
+                if (override) {
+                    const oldLinkLayer = getLinkLayerById(link.id)
+                    structRemoveLink(oldLinkLayer.link)
+                    lgRemoveLink(oldLinkLayer)
+                } else {
+                    continue
+                }
+            }
+            const linkLayer = new LinkLayer(link, unitLayer0, unitLayer1)
+            linkLayers.push(linkLayer)
+        }
+    }
+
+    let current = 0
+    const check = asyncOperation(
+        linkLayers.length,
+        () => progressFunction(++current / linkLayers.length),
+        done
+    )
+
+    workers(linkLayers, async (linkLayer: LinkLayer) => {
+        await linkLayer.update()
+        if (linkLayer.link.stats.dB < minDB) return check()
+        structAddLink(linkLayer.link)
+        lgAddLink(linkLayer)
+        check()
+    }, getMaxWorkers())
 }

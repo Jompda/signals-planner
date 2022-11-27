@@ -145,6 +145,16 @@ body {
 }
 
 
+.ma-2xgrid {
+    display: grid;
+    grid-template-columns: 9em 5em;
+}
+
+.ma-2xgrid>input {
+    text-align: right;
+}
+
+
 /*
  * Options menu
  */

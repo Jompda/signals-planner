@@ -26,7 +26,7 @@ export default class Link {
         this.unit1 = unit1
         this.id = Link.createId(this.unit0, this.unit1)
     }
-    static createId(unit0: Unit, unit1: Unit /* Medium etc.. */) {
+    static createId(unit0: Unit, unit1: Unit /* Medium etc.. */) { // TODO: Add medium to link id generation
         [unit0, unit1] = this.orderUnits(unit0, unit1)
         return `${unit0.id}-${unit1.id}`
     }
