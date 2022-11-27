@@ -11,7 +11,6 @@ import UnitLayer from '../components/unitlayer'
 import LinkLayer from '../components/linklayer'
 import { addAction } from '../../actionhistory'
 import { AddLinkAction, EditLinkAction } from '../../actions/linkactions'
-import { cables, radios } from '../../struct/medium'
 import { MediumSelector } from '../components/mediumselector'
 
 

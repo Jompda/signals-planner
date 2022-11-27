@@ -4,7 +4,7 @@ import { ToolOptions, IToolbarItem } from '../interfaces'
 import { openTopographyPopup } from '../topoutil'
 import LinkLayer from './components/linklayer'
 import UnitLayer from './components/unitlayer'
-import { showLinkStatistics } from './menus/linkstatistics'
+import { showLinkStatistics } from './menus/linkstatisticsmenu'
 import { getMap, getUnitLayers, setUnitDragging } from './structurecontroller'
 import { setActiveTool } from './toolcontroller'
 
