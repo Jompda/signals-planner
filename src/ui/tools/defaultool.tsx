@@ -1,7 +1,6 @@
 import Tool from '../tool'
 import { LatLngBounds, LeafletMouseEvent } from 'leaflet'
-import { openTopographyPopup } from '../../topoutil'
-import { getMap, getUnitLayers } from '../structurecontroller'
+import { getUnitLayers } from '../structurecontroller'
 
 
 // <FontAwesomeIcon icon="fa-solid fa-draw-square" />
@@ -16,10 +15,6 @@ class DefaultTool extends Tool {
             mmbInfo: true,
             areaSelect: true
         })
-    }
-    middlemouseclick(e: LeafletMouseEvent) {
-        if ((e.originalEvent.target as HTMLElement).id != 'map') return
-        openTopographyPopup(getMap(), e.latlng)
     }
     bboxselect(e: LeafletMouseEvent, bounds: LatLngBounds) {
         const unitLayers = getUnitLayers()

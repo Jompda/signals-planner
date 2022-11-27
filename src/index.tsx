@@ -3,6 +3,7 @@ import './styles.css'
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.css'
 import 'leaflet-dialog/Leaflet.Dialog.css'
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
+import 'react-tabs/style/react-tabs.css'
 
 import { Map as LMap, MapOptions, control, LeafletKeyboardEvent, LatLng as LLatLng } from 'leaflet'
 import '@geoman-io/leaflet-geoman-free'
@@ -90,7 +91,7 @@ import './ui/menus/optionsmenu'
 import './ui/menus/layercontrolmenu'
 import './ui/menus/toolbar'
 import { initContextMenu } from './ui/menus/contextmenu'
-import { addTo as lgAddTo } from './ui/structurecontroller'
+import { addTo as lgAddTo, getMap } from './ui/structurecontroller'
 import { baseLayers, overlays } from './ui/tilelayers'
 import defaultTool from './ui/tools/defaultool'
 import addNodeTool from './ui/tools/addnodetool'
@@ -124,7 +125,13 @@ createCustomToolbar([
         icon: <img src={unitlinkicon} />,
         radio: false,
         items: [
-            linkEditorTool
+            linkEditorTool,
+            {
+                tooltip: 'Link Graphs',
+                icon: <i className='fa-solid fa-diagram-project' />,
+                radio: false,
+                addHooks: () => showLinkGraphToolMenu(getMap())
+            }
         ]
     },
     addNodeTool
@@ -146,5 +153,6 @@ map.on('keydown', (e: LeafletKeyboardEvent) => {
 
 import { initGeoman } from './ui/geomancontroller'
 import { initMapHooks } from './ui/toolcontroller'
+import { showLinkGraphToolMenu } from './ui/menus/linkgraphmenus'
 initGeoman(map)
 initMapHooks(map)
