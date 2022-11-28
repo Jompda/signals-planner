@@ -11,9 +11,7 @@ let activeTool: Tool
 export function getActiveTool() {
     return activeTool
 }
-export function setActiveTool(tool: Tool, map: LMap) {
-    //if (activeTool) activeTool.removeHooks(map)
-    //tool.addHooks(map)
+export function setActiveTool(tool: Tool) {
     activeTool = tool
 }
 
@@ -41,7 +39,7 @@ export function initMapHooks(map: LMap) {
         if (!activeTool) return
         if (!highlightBbox || getMap().dragging.enabled()) return
         if ((highlightBbox as any)._map) {
-            activeTool.bboxselect(e, latLngBounds(startLatLng, e.latlng))
+            activeTool._bboxselect(e, latLngBounds(startLatLng, e.latlng))
             highlightBbox.remove()
         }
         highlightBbox = undefined
@@ -70,25 +68,25 @@ export function initMapHooks(map: LMap) {
 
 export function unitLayerMouseDown(e: LeafletMouseEvent, unitLayer: UnitLayer) {
     if (!activeTool) return
-    activeTool.unitlayermousedown(e, unitLayer)
+    activeTool._unitlayermousedown(e, unitLayer)
 }
 export function unitLayerMouseUp(e: LeafletMouseEvent, unitLayer: UnitLayer) {
     if (!activeTool) return
-    activeTool.unitlayermouseup(e, unitLayer)
+    activeTool._unitlayermouseup(e, unitLayer)
 }
 export function unitLayerClick(e: LeafletMouseEvent, unitLayer: UnitLayer) {
     if (!activeTool) return
-    activeTool.unitlayerclick(e, unitLayer)
+    activeTool._unitlayerclick(e, unitLayer)
 }
 export function linkLayerClick(e: LeafletMouseEvent, linkLayer: LinkLayer) {
     if (!activeTool) return
-    activeTool.linklayerclick(e, linkLayer)
+    activeTool._linklayerclick(e, linkLayer)
 }
 export function linkLayerMouseDown(e: LeafletMouseEvent, linkLayer: LinkLayer) {
     if (!activeTool) return
-    activeTool.linklayermousedown(e, linkLayer)
+    activeTool._linklayermousedown(e, linkLayer)
 }
 export function linkLayerMouseUp(e: LeafletMouseEvent, linkLayer: LinkLayer) {
     if (!activeTool) return
-    activeTool.linklayermouseup(e, linkLayer)
+    activeTool._linklayermouseup(e, linkLayer)
 }
