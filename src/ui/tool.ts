@@ -53,8 +53,7 @@ export default class Tool implements IToolbarItem {
     addHooks(map: LMap) {
         if (this.radio) setActiveTool(this)
         for (const event of leafletMapEvents) {
-            const internalName = '_' + event
-            map.on(event, (this as any)[internalName], this)
+            map.on(event, (this as any)['_' + event], this)
             if (event in this) map.on(event, (this as any)[event], this)
         }
         setUnitDragging(this.unitDragging)
@@ -62,8 +61,7 @@ export default class Tool implements IToolbarItem {
     }
     removeHooks(map: LMap) {
         for (const event of leafletMapEvents) {
-            const internalName = '_' + event
-            map.off(event, (this as any)[internalName], this)
+            map.off(event, (this as any)['_' + event], this)
             if (event in this) map.off(event, (this as any)[event], this)
         }
         this.onDisabled()
