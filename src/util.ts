@@ -137,11 +137,11 @@ export function createMapboxTerrainAttribution() {
 }
 
 
-export function asyncOperation(calls: number, step = () => { }, done = () => { }) {
+export function asyncOperation(calls: number, step = (i: number) => { }, done = () => { }) {
     let called = 0
     return () => {
-        step()
-        if (++called === calls) done()
+        step(++called / calls)
+        if (called === calls) done()
         else if (called > calls) throw new Error('Received too many calls.')
     }
 }

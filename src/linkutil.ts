@@ -45,10 +45,9 @@ export function generateLinkLayers(
         }
     }
 
-    let current = 0
     const check = asyncOperation(
         linkLayers.length,
-        () => progressFunction(++current / linkLayers.length),
+        progressFunction,
         () => done(linkLayers)
     )
 
