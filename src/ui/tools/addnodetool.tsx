@@ -31,18 +31,20 @@ class AddNodeTool extends Tool {
         })
         this.symbol = symbol
     }
-    click(e: LeafletMouseEvent) {
+    _click(e: LeafletMouseEvent) {
         const symbol = new MilSymbol(this.symbol.getOptions(false))
         const unitId = getNewUnitId()
         symbol.setOptions({
             uniqueDesignation: unitId,
             higherFormation: 'Node'
         })
-        addAction(new AddUnitAction(new UnitLayer(new Unit({
+        const unitLayer = new UnitLayer(new Unit({
             id: unitId,
             latlng: e.latlng,
             symbol
-        }))).forward())
+        }))
+        addAction(new AddUnitAction(unitLayer).forward())
+        unitLayer.select()
     }
     middlemouseclick(e: LeafletMouseEvent) {
         openTopographyPopup(getMap(), e.latlng)
