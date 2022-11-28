@@ -10,12 +10,12 @@ declare module 'leaflet' {
     }
     export namespace Toolbar2 {
         export class Control {
-            constructor(options: any)
+            constructor(options: ControlOptions)
             addTo(map: LMap): this
         }
         export class Action {
-            static extend(options: any): any
-            initialize(): any
+            static extend(options: ControlOptions): Action
+            initialize(): void
         }
     }
     export interface MapOptions {
