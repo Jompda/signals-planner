@@ -1,8 +1,8 @@
-import { LineStats, LinkOptions, MediumResolvable, SaveLink } from '../interfaces'
+import { CableLinkEstimate, LineStats, LinkOptions, MediumResolvable, RadioLinkEstimate, SaveLink } from '../interfaces'
 import Unit from './unit'
 import { getValues } from '../topoutil'
-import { SourceName } from '..'
-import { Medium, resolveMedium } from './medium'
+import { SourceName, TiledataLatLng } from '..'
+import { CableMedium, RadioMedium, resolveMedium } from './medium'
 import { createLosGetter, getGeodesocLine_PDist100to200, getLineStats } from '../linkutil'
 
 
@@ -11,10 +11,10 @@ export default class Link {
     public unit0: Unit
     public unit1: Unit
     public emitterHeight: number
-    public medium: Medium
-    public values: Array<any>
+    public medium: RadioMedium | CableMedium
+    public values: Array<TiledataLatLng>
     public lineStats: LineStats
-    public stats: any
+    public stats: RadioLinkEstimate | CableLinkEstimate
     constructor(options: LinkOptions) {
         Object.assign(this, options)
         this.medium = resolveMedium(options.medium)

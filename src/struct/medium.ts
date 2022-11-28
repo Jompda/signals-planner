@@ -1,4 +1,4 @@
-import { CableMediumEstimate, CableMediumOptions, MediumResolvable, RadioLinkEstimate, RadioMediumOptions, SaveCableMedium, SaveMedium, SaveRadioMedium } from '../interfaces'
+import { CableLinkEstimate, CableMediumOptions, MediumResolvable, RadioLinkEstimate, RadioMediumOptions, SaveCableMedium, SaveMedium, SaveRadioMedium } from '../interfaces'
 import { createLosGetter } from '../linkutil'
 import Link from './link'
 
@@ -6,16 +6,16 @@ import Link from './link'
 export type MediumType = 'radio' | 'cable'
 
 
-export function resolveMedium(obj: MediumResolvable) {
+export function resolveMedium(obj: MediumResolvable): RadioMedium | CableMedium {
     if (typeof obj == 'string') {
         return radios.get(obj) || cables.get(obj)
     }
     if (obj.type == 'radio') {
-        if (obj instanceof Medium) return obj
+        if (obj instanceof Medium) return obj as RadioMedium
         return RadioMedium.deserialize(obj)
     }
     if (obj.type == 'cable') {
-        if (obj instanceof Medium) return obj
+        if (obj instanceof Medium) return obj as CableMedium
         return CableMedium.deserialize(obj)
     }
     throw new Error('Couldn\'t resolve medium!')
@@ -128,7 +128,7 @@ export class CableMedium extends Medium {
         this.resistivity = options.resistivity
         this.sliceArea = options.sliceArea
     }
-    estimateLinkStats(link: Link): CableMediumEstimate {
+    estimateLinkStats(link: Link): CableLinkEstimate {
         // R = (Rho) * l / A
         const cables = Math.ceil(link.lineStats.distance / this.cableLength)
         const length = cables * this.cableLength

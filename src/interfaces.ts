@@ -213,7 +213,7 @@ export interface RadioLinkEstimate {
     dB: number
 }
 
-export interface CableMediumEstimate {
+export interface CableLinkEstimate {
     length: number
     cables: number
     resistance: number

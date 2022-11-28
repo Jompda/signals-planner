@@ -8,6 +8,7 @@ import Link from './struct/link'
 import LatLon from 'geodesy/latlon-spherical'
 import { latLng } from 'leaflet'
 import { SourceName, TiledataLatLng } from '.'
+import { RadioLinkEstimate } from './interfaces'
 
 
 export function generateLinkLayers(
@@ -53,7 +54,7 @@ export function generateLinkLayers(
 
     workers(linkLayers, async (linkLayer: LinkLayer) => {
         await linkLayer.update()
-        if (linkLayer.link.stats.dB < minDB) return check()
+        if ((linkLayer.link.stats as RadioLinkEstimate).dB < minDB) return check()
         structAddLink(linkLayer.link)
         lgAddLink(linkLayer)
         check()

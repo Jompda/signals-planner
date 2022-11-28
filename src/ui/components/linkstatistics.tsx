@@ -175,7 +175,7 @@ export function LinkStatistics(props: any) {
                         <td>Distance:</td>
                         <td>{Math.round(lineStats.distance)}m</td>
                     </tr>
-                    {stats.dB
+                    {'dB' in stats
                         ? <>
                             <tr>
                                 <td>ITM Loss:</td>
@@ -188,7 +188,7 @@ export function LinkStatistics(props: any) {
                         </>
                         : undefined
                     }
-                    {stats.resistance
+                    {'resistance' in stats
                         ? <>
                             <tr>
                                 <td>Cables:</td>
