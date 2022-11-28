@@ -15,28 +15,25 @@ import { LeafletDialog } from '../../interfaces'
 
 class AddNodeTool extends Tool {
     public symbol: MilSymbol
-    public icon: JSX.Element
-    public dialog: LeafletDialog
+    public editDialog: LeafletDialog
     constructor() {
         const symbol = new MilSymbol({ sidc: 'SFGPUUS----B', size: 15 })
-        const icon = <img id='addnotetool-icon' src={symbol.toDataURL()} />
         super({
             tooltip: 'Add Node',
-            icon,
+            icon: <img id='addnotetool-icon' src={symbol.toDataURL()} />,
             items: [
                 {
                     icon: 'Edit',
                     radio: false,
                     addHooks: () => {
-                        if (!this.dialog) this.createEditMenu()
-                        this.dialog.open()
+                        if (!this.editDialog) this.createEditMenu()
+                        this.editDialog.open()
                     },
                 }
             ],
             mmbInfo: true
         })
         this.symbol = symbol
-        this.icon = icon
     }
     _click(e: LeafletMouseEvent) {
         const symbol = new MilSymbol(this.symbol.getOptions(false))
@@ -54,7 +51,7 @@ class AddNodeTool extends Tool {
         unitLayer.select()
     }
     createEditMenu() {
-        this.dialog = createDialog(getMap(), {
+        this.editDialog = createDialog(getMap(), {
             size: [600, 500],
             maxSize: [600, 700],
             minSize: [600, 400],
@@ -63,8 +60,8 @@ class AddNodeTool extends Tool {
             destroyOnClose: false
         })
 
-        const container = DomUtil.create('div', 'leaflet-dialog')
-        this.dialog.setContent(container)
+        const container = DomUtil.create('div', 'dialog-menu')
+        this.editDialog.setContent(container)
         createRoot(container).render(
             <MilSymbolEditor
                 milSymbol={this.symbol}

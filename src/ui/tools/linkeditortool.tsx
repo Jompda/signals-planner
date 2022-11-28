@@ -1,5 +1,5 @@
 import Tool from '../tool'
-import { LeafletKeyboardEvent, LeafletMouseEvent, polyline, Polyline } from 'leaflet'
+import { DomUtil, LeafletKeyboardEvent, LeafletMouseEvent, polyline, Polyline } from 'leaflet'
 import unitlayer from '../components/unitlayer'
 import UnitLayer from '../components/unitlayer'
 import { Medium, resolveMedium } from '../../struct/medium'
@@ -8,21 +8,28 @@ import { AddLinkAction } from '../../actions/linkactions'
 import LinkLayer from '../components/linklayer'
 import Link from '../../struct/link'
 import { getMap } from '../structurecontroller'
+import { LeafletDialog } from '../../interfaces'
+import { createDialog } from '../../util'
+import { createRoot } from 'react-dom/client'
+import { MediumSelector } from '../components/mediumselector'
 
 
 class LinkEditorTool extends Tool {
     private medium: Medium
     private startUnit: UnitLayer
     private highlight: Polyline
+    public editDialog: LeafletDialog
     constructor() {
         super({
             tooltip: 'Link Editor',
             icon: <i className='fa fa-pen' />,
             items: [{
-                // TODO: Ability to change the drawn medium.
                 icon: 'Edit',
                 radio: false,
-                addHooks: () => console.log('Edit'),
+                addHooks: () => {
+                    if (!this.editDialog) this.createEditMenu()
+                    this.editDialog.open()
+                },
             }],
             unitDragging: false,
             mmbInfo: true
@@ -75,6 +82,29 @@ class LinkEditorTool extends Tool {
     keyup(e: LeafletKeyboardEvent) {
         if (e.originalEvent.key == 'Control')
             getMap().dragging.enable()
+    }
+
+    createEditMenu() {
+        this.editDialog = createDialog(getMap(), {
+            size: [600, 500],
+            maxSize: [600, 700],
+            minSize: [600, 400],
+            anchor: [innerHeight / 2 - 300, innerWidth / 2 - 300],
+            position: 'topleft',
+            destroyOnClose: false
+        })
+
+        const container = DomUtil.create('div', 'dialog-menu')
+        this.editDialog.setContent(container)
+        createRoot(container).render(
+            <>
+                <h2>Link type:</h2>
+                <MediumSelector
+                    defaultValue={this.medium.name}
+                    updateMedium={(mediumName: string) => this.medium = resolveMedium(mediumName)}
+                />
+            </>
+        )
     }
 }
 export default new LinkEditorTool()

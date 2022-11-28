@@ -59,12 +59,13 @@ export function showLinkStatistics(map: LMap, linkLayer: LinkLayer) {
 
         root.render(
             <>
-                <h3>{
-                    'Link: ' +
-                    linkLayer.link.unit0.toHierarchyString() +
-                    ' --- ' +
-                    linkLayer.link.unit1.toHierarchyString()
-                }</h3>
+                <h3>
+                    Link: <span className='underline'>{linkLayer.link.unit0.toHierarchyString()}</span>
+                    <span> — </span>
+                    <span className='underline'>{linkLayer.link.medium.name}</span>
+                    <span> — </span>
+                    <span className='underline'>{linkLayer.link.unit1.toHierarchyString()}</span>
+                </h3>
                 <LinkStatistics
                     linkLayer={linkLayer}
                     setHighlightLatLng={(latlng: LatLng) =>
