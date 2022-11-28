@@ -69,7 +69,7 @@ export function isUnitInteractionEnabled() {
 }
 export function setUnitInteraction(state: boolean) {
     unitInteraction = state;
-    (unitLayers as any).setInteractive(state)
+    unitLayers.setInteractive(state)
 }
 
 
@@ -79,7 +79,7 @@ export function isUnitDraggingEnabled() {
 }
 export function setUnitDragging(state: boolean) {
     unitDragging = state;
-    (unitLayers as any).setDraggable(state)
+    unitLayers.setDraggable(state)
 }
 
 
@@ -89,7 +89,7 @@ export function isLinkInteractionEnabled() {
 }
 export function setLinkInteraction(state: boolean) {
     linkInteraction = state;
-    (linkLayers as any).setInteractive(state)
+    linkLayers.setInteractive(state)
 }
 
 

@@ -3,12 +3,12 @@ import { createRoot } from 'react-dom/client';
 import { createDialog } from '../../util';
 
 
-(control as any).optionsMenu = function (options: any) {
-    return new (Control as any).OptionsMenu(options)
+control.optionsMenu = function (options: any) {
+    return new Control.OptionsMenu(options) as Control
 };
 
 
-(Control as any).OptionsMenu = Control.extend({
+Control.OptionsMenu = Control.extend({
     options: {
         position: 'topright'
     },
@@ -70,7 +70,6 @@ import { createDialog } from '../../util';
 
 
 function OptionsMenu(props: any) {
-
     return (
         <>
             <h1>Options Menu</h1>

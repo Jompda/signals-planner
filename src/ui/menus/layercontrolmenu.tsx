@@ -1,19 +1,19 @@
-import { Map as LMap, Control, control, Util, DomUtil, DomEvent } from 'leaflet'
+import { Map as LMap, Control, control, Util, DomUtil, DomEvent, ControlOptions } from 'leaflet'
 import { createRoot } from 'react-dom/client'
 import { LayerControl } from '../components/layercontrol';
 
 
-(control as any).layerControl = function (layers: any, options: any) {
-    return new (Control as any).LayerControl(layers, options)
-};
+control.layerControl = function (layers: any, options: ControlOptions) {
+    return new Control.LayerControl(layers, options) as Control
+}
 
-(Control as any).LayerControl = Control.extend({
+Control.LayerControl = Control.extend({
     options: {
         position: 'topright',
         label: 'Layer Control'
     },
 
-    initialize: function (layers: any, options: any) {
+    initialize: function (layers: any, options: ControlOptions) {
         this.layers = layers
         Util.setOptions(this, options)
     },

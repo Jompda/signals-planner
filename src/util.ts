@@ -17,8 +17,8 @@ export function layersToGeoJson(layers: Array<Layer>) {
         const json = layer.toGeoJSON()
         if (layer instanceof Circle)
             json.properties.radius = layer.getRadius()
-        else if ((layer.options as any).textMarker)
-            json.properties.text = (layer.options as any).text
+        else if (layer instanceof Marker && layer.options.textMarker)
+            json.properties.text = layer.options.text
         return json
     })
 }
@@ -99,7 +99,7 @@ export function createMapboxTerrainAttribution() {
  */
 (Layer as any).prototype.setInteractive = function (state: boolean) {
     if (this.getLayers) {
-        this.getLayers().forEach((layer: any) => {
+        this.getLayers().forEach((layer: Layer) => {
             layer.setInteractive(state)
         })
         return
@@ -119,7 +119,7 @@ export function createMapboxTerrainAttribution() {
 
 (Layer as any).prototype.setDraggable = function (state: boolean) {
     if (this.getLayers) {
-        this.getLayers().forEach((layer: any) => {
+        this.getLayers().forEach((layer: Layer) => {
             layer.setDraggable(state)
         })
         return

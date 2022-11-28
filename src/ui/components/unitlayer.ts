@@ -1,6 +1,5 @@
 import { LatLng, Marker, DomUtil, divIcon, point, LeafletMouseEvent } from 'leaflet'
 import { Symbol as MilSymbol } from 'milsymbol'
-import { ExtendedMarkerOptions } from '../../interfaces'
 import Unit from '../../struct/unit'
 import { showEditUnitMenu } from '../menus/unitmenus'
 import { showAddLinkMenu } from '../menus/linkmenus'
@@ -53,7 +52,7 @@ export default class UnitLayer extends Marker {
                 separator: true,
                 index: 6
             }]
-        } as ExtendedMarkerOptions)
+        })
 
         this.unit = unit
         this.svg = svg

@@ -97,12 +97,12 @@ export function initGeoman(map: LMap) {
     )*/
 
     map.on('pm:globaldragmodetoggled', () =>
-        (drawnLayers as any).setInteractive(map.pm.globalDragModeEnabled())
+        drawnLayers.setInteractive(map.pm.globalDragModeEnabled())
     )
     map.on('pm:globalremovalmodetoggled', () =>
-        (drawnLayers as any).setInteractive(map.pm.globalRemovalModeEnabled())
+        drawnLayers.setInteractive(map.pm.globalRemovalModeEnabled())
     )
     map.on('pm:globalcutmodetoggled', () =>
-        (drawnLayers as any).setInteractive(map.pm.globalCutModeEnabled())
+        drawnLayers.setInteractive(map.pm.globalCutModeEnabled())
     )
 }

@@ -1,7 +1,6 @@
 import { LeafletMouseEvent, Polyline } from 'leaflet'
 import { addAction } from '../../actionhistory'
 import { RemoveLinkAction } from '../../actions/linkactions'
-import { ExtendedLayerOptions } from '../../interfaces'
 import Link from '../../struct/link'
 import { showEditLinkMenu } from '../menus/linkmenus'
 import { showLinkStatistics } from '../menus/linkstatisticsmenu'
@@ -21,7 +20,6 @@ export default class LinkLayer extends Polyline {
             color: 'black',
             opacity: 0.75,
             interactive: isLinkInteractionEnabled(),
-            draggable: true,
             contextmenu: true,
             contextmenuItems: [{
                 text: 'Info',
@@ -42,7 +40,7 @@ export default class LinkLayer extends Polyline {
                 separator: true,
                 index: 4
             }]
-        } as ExtendedLayerOptions)
+        })
 
         this.link = link
         this.unit0 = unit0

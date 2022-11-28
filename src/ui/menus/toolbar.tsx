@@ -1,10 +1,10 @@
-import { Control, DomUtil, Util, Map as LMap, DomEvent, ControlOptions } from 'leaflet'
+import { Control, DomUtil, Util, Map as LMap, DomEvent, ControlOptions, control } from 'leaflet'
 import { IToolbarItem } from '../../interfaces'
 import { createRoot } from 'react-dom/client'
 
 
-export function createCustomToolbar(items: Array<IToolbarItem>, options?: ControlOptions) {
-    return new (Control as any).CustomToolbar(items, options) as Control
+control.customToolbar = function (items: Array<IToolbarItem>, options?: ControlOptions) {
+    return new Control.CustomToolbar(items, options) as Control
 }
 
 

@@ -1,4 +1,4 @@
-import { LatLng as LLatLng, MapOptions, LayerOptions, MarkerOptions, LeafletMouseEvent, Map as LMap } from 'leaflet'
+import { LatLng as LLatLng, LayerOptions, MarkerOptions, LeafletMouseEvent, Map as LMap } from 'leaflet'
 import { Symbol as MilSymbol } from 'milsymbol'
 import { CableMedium, Medium, RadioMedium } from './struct/medium'
 import Unit from './struct/unit'
@@ -17,6 +17,36 @@ declare module 'leaflet' {
             static extend(options: any): any
             initialize(): any
         }
+    }
+    export interface MapOptions {
+        contextmenu?: boolean
+        contextmenuWidth?: number
+        contextmenuItems?: Array<ContextMenuItem>
+    }
+    export interface LayerOptions {
+        contextmenu?: boolean
+        contextmenuWidth?: number
+        contextmenuItems?: Array<ContextMenuItem>
+    }
+    export interface Layer {
+        setInteractive(state: boolean): any
+        setDraggable(state: boolean): any
+    }
+    export namespace Control {
+        export class LayerControl {
+            constructor(layers: any, options?: ControlOptions)
+        }
+        export class OptionsMenu {
+            constructor(options?: ControlOptions)
+        }
+        export class CustomToolbar {
+            constructor(items: Array<IToolbarItem>, options?: ControlOptions)
+        }
+    }
+    export namespace control {
+        export function layerControl(layers: any, options: ControlOptions): Control
+        export function optionsMenu(options?: ControlOptions): Control
+        export function customToolbar(items: Array<IToolbarItem>, options?: ControlOptions): Control
     }
 }
 
@@ -46,24 +76,6 @@ export interface ToolOptions {
     areaSelect?: boolean
 }
 
-
-export interface ExtendedMapOptions extends MapOptions {
-    contextmenu: boolean
-    contextmenuWidth: number
-    contextmenuItems: Array<ContextMenuItem>
-}
-
-export interface ExtendedMarkerOptions extends MarkerOptions {
-    contextmenu?: boolean
-    contextmenuWidth?: number
-    contextmenuItems?: Array<ContextMenuItem>
-}
-
-export interface ExtendedLayerOptions extends LayerOptions {
-    contextmenu?: boolean
-    contextmenuWidth?: number
-    contextmenuItems?: Array<ContextMenuItem>
-}
 
 export interface ContextMenuItem {
     text?: string

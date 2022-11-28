@@ -5,7 +5,7 @@ import 'leaflet-dialog/Leaflet.Dialog.css'
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
 import 'react-tabs/style/react-tabs.css'
 
-import { Map as LMap, MapOptions, control, LeafletKeyboardEvent, LatLng as LLatLng } from 'leaflet'
+import { Map as LMap, control, LeafletKeyboardEvent, LatLng as LLatLng } from 'leaflet'
 import '@geoman-io/leaflet-geoman-free'
 import 'leaflet-contextmenu'
 import 'leaflet-dialog'
@@ -97,7 +97,7 @@ import defaultTool from './ui/tools/defaultool'
 import addNodeTool from './ui/tools/addnodetool'
 import linkEditorTool from './ui/tools/linkeditortool'
 import { redo, undo } from './actionhistory'
-import { createCustomToolbar } from './ui/menus/toolbar'
+import './ui/menus/toolbar'
 import unitlinkicon from './assets/unitlink.png'
 
 
@@ -107,18 +107,18 @@ const map = new LMap('map', {
     wheelPxPerZoomLevel: 60 / 0.5,
     doubleClickZoom: false,
     boxZoom: false
-} as MapOptions).setView([60, 24], 4)
+}).setView([60, 24], 4)
 
 initContextMenu(map)
 lgAddTo(map)
 control.scale({ imperial: false }).addTo(map);
 
-baseLayers.OSM.addTo(map);
+baseLayers.OSM.addTo(map)
 
 
-(control as any).optionsMenu({ position: 'topright' }).addTo(map);
-(control as any).layerControl({ ...baseLayers, ...overlays }, { position: 'topright' }).addTo(map)
-createCustomToolbar([
+control.optionsMenu({ position: 'topright' }).addTo(map);
+control.layerControl({ ...baseLayers, ...overlays }, { position: 'topright' }).addTo(map)
+control.customToolbar([
     defaultTool,
     {
         tooltip: 'Link Tools',
