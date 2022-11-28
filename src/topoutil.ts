@@ -37,7 +37,7 @@ export async function getValues(latlngs: Array<LatLng>, sourceNames: Array<Sourc
 }
 
 export function getTiles(tilesNames: Array<string>, sourceNames: Array<SourceName>): Promise<Map<string, Record<SourceName, Int16Array>>> {
-    return new Promise<Map<string, any>>((resolve, reject) => {
+    return new Promise<Map<string, Record<SourceName, Int16Array>>>((resolve, reject) => {
         const tiles = new Map<string, Record<SourceName, Int16Array>>()
         const check = asyncOperation(tilesNames.length, undefined, () => {
             resolve(tiles)
