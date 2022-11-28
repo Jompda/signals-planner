@@ -44,12 +44,8 @@ export function getTiles(tilesNames: Array<string>, sourceNames: Array<SourceNam
         })
         workers(tilesNames, (tileName) => {
             return new Promise((res, rej) => {
-                const parts = tileName.split('|')
-                const tileCoords = {
-                    x: +parts[0],
-                    y: +parts[1],
-                    z: +parts[2]
-                }
+                const [x, y, z] = tileName.split('|').map(a => +a)
+                const tileCoords = { x, y, z }
                 getTiledata<SourceName>(tileCoords, sourceNames)
                     .then(data => {
                         tiles.set(tileName, data)
