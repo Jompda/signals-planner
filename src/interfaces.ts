@@ -1,5 +1,5 @@
-import { LatLng as LLatLng, LayerOptions, MarkerOptions, LeafletMouseEvent, Map as LMap } from 'leaflet'
-import { Symbol as MilSymbol } from 'milsymbol'
+import { LatLng as LLatLng, LeafletMouseEvent, Map as LMap } from 'leaflet'
+import { Symbol as MilSymbol, SymbolOptions } from 'milsymbol'
 import { CableMedium, Medium, RadioMedium } from './struct/medium'
 import Unit from './struct/unit'
 
@@ -29,12 +29,12 @@ declare module 'leaflet' {
         contextmenuItems?: Array<ContextMenuItem>
     }
     export interface Layer {
-        setInteractive(state: boolean): any
-        setDraggable(state: boolean): any
+        setInteractive(state: boolean): void
+        setDraggable(state: boolean): void
     }
     export namespace Control {
         export class LayerControl {
-            constructor(layers: any, options?: ControlOptions)
+            constructor(layers: Record<string, Layer>, options?: ControlOptions)
         }
         export class OptionsMenu {
             constructor(options?: ControlOptions)
@@ -44,7 +44,7 @@ declare module 'leaflet' {
         }
     }
     export namespace control {
-        export function layerControl(layers: any, options: ControlOptions): Control
+        export function layerControl(layers: Record<string, Layer>, options: ControlOptions): Control
         export function optionsMenu(options?: ControlOptions): Control
         export function customToolbar(items: Array<IToolbarItem>, options?: ControlOptions): Control
     }
@@ -156,7 +156,7 @@ export interface SaveStructure {
 export interface SaveUnit {
     id: string
     latlng: LatLng
-    symbolOptions: any
+    symbolOptions: SymbolOptions
 }
 
 export interface SaveLink {

@@ -1,9 +1,9 @@
-import { Map as LMap, Control, control, Util, DomUtil, DomEvent, ControlOptions } from 'leaflet'
+import { Map as LMap, Control, control, Util, DomUtil, DomEvent, ControlOptions, Layer } from 'leaflet'
 import { createRoot } from 'react-dom/client'
 import { LayerControl } from '../components/layercontrol';
 
 
-control.layerControl = function (layers: any, options: ControlOptions) {
+control.layerControl = function (layers: Record<string, Layer>, options: ControlOptions) {
     return new Control.LayerControl(layers, options) as Control
 }
 
@@ -13,7 +13,7 @@ Control.LayerControl = Control.extend({
         label: 'Layer Control'
     },
 
-    initialize: function (layers: any, options: ControlOptions) {
+    initialize: function (layers: Record<string, Layer>, options: ControlOptions) {
         this.layers = layers
         Util.setOptions(this, options)
     },
