@@ -1,33 +1,42 @@
 import Tool from '../tool'
 import { Symbol as MilSymbol } from 'milsymbol'
-import { LeafletMouseEvent } from 'leaflet'
+import { DomUtil, LeafletMouseEvent } from 'leaflet'
 import Unit from '../../struct/unit'
 import { getNewUnitId } from '../../struct'
 import UnitLayer from '../components/unitlayer'
 import { addAction } from '../../actionhistory'
 import { AddUnitAction } from '../../actions/unitactions'
+import { MilSymbolEditor } from '../components/milsymboleditor'
+import { createDialog } from '../../util'
+import { getMap } from '../structurecontroller'
+import { createRoot } from 'react-dom/client'
+import { LeafletDialog } from '../../interfaces'
 
 
 class AddNodeTool extends Tool {
     public symbol: MilSymbol
+    public icon: JSX.Element
+    public dialog: LeafletDialog
     constructor() {
         const symbol = new MilSymbol({ sidc: 'SFGPUUS----B', size: 15 })
+        const icon = <img id='addnotetool-icon' src={symbol.toDataURL()} />
         super({
             tooltip: 'Add Node',
-            icon: <img src={symbol.toDataURL()} />,
+            icon,
             items: [
                 {
                     icon: 'Edit',
                     radio: false,
                     addHooks: () => {
-                        // TODO: Get new MilSymbol with MilSymbolEditor and switch the toolbar icon.
-                        console.log('Edit')
+                        if (!this.dialog) this.createEditMenu()
+                        this.dialog.open()
                     },
                 }
             ],
             mmbInfo: true
         })
         this.symbol = symbol
+        this.icon = icon
     }
     _click(e: LeafletMouseEvent) {
         const symbol = new MilSymbol(this.symbol.getOptions(false))
@@ -43,6 +52,28 @@ class AddNodeTool extends Tool {
         }))
         addAction(new AddUnitAction(unitLayer).forward())
         unitLayer.select()
+    }
+    createEditMenu() {
+        this.dialog = createDialog(getMap(), {
+            size: [600, 500],
+            maxSize: [600, 700],
+            minSize: [600, 400],
+            anchor: [innerHeight / 2 - 300, innerWidth / 2 - 300],
+            position: 'topleft',
+            destroyOnClose: false
+        })
+
+        const container = DomUtil.create('div', 'leaflet-dialog')
+        this.dialog.setContent(container)
+        createRoot(container).render(
+            <MilSymbolEditor
+                milSymbol={this.symbol}
+                updateMilSymbol={(s: MilSymbol) => {
+                    this.symbol = s;
+                    (document.getElementById('addnotetool-icon') as HTMLImageElement).src = this.symbol.toDataURL()
+                }}
+            />
+        )
     }
 }
 

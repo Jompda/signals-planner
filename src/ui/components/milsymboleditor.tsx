@@ -109,7 +109,7 @@ export function MilSymbolEditor(props: any) {
     const [svg, setSvg] = useState(symbol.toDataURL())
     function updateSvg() {
         symbol.setOptions(soptions)
-        if (updateSvg) clearTimeout(updateSvgTimeout)
+        if (updateSvgTimeout) clearTimeout(updateSvgTimeout)
         updateSvgTimeout = setTimeout(() => {
             setSvg(symbol.toDataURL())
             props.updateMilSymbol(symbol)

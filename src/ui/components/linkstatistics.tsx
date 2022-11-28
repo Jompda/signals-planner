@@ -134,7 +134,7 @@ export function LinkStatistics(props: any) {
                             backgroundColor: '#00ff00',
                             barPercentage: 0.2,
                             stack: 'sum'
-                        }, {
+                        }, { // NOTE: Draw a line on ground if Medium type is cable.
                             type: 'line',
                             label: 'Line-of-Sight',
                             data: losElevations,

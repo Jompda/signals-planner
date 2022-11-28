@@ -68,8 +68,9 @@ export interface LeafletDialog extends Control {
     identifier: string
     _container: HTMLElement
     setContent: (el: HTMLElement) => void
-    destroy: Function
+    open: Function
     close: Function
+    destroy: Function
 }
 
 
