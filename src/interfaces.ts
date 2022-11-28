@@ -6,7 +6,7 @@ import Unit from './struct/unit'
 
 declare module 'leaflet' {
     export class Toolbar2 {
-        constructor(options: any)
+        constructor(options: ControlOptions)
     }
     export namespace Toolbar2 {
         export class Control {
