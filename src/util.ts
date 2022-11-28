@@ -1,6 +1,7 @@
-import { Map as LMap, Layer, DomUtil, control, Polyline, Polygon, Circle, Marker, geoJSON } from 'leaflet'
+import { Map as LMap, Layer, DomUtil, control, Polyline, Polygon, Circle, Marker, geoJSON, PolylineOptions } from 'leaflet'
 import { Symbol as MilSymbol } from 'milsymbol'
 import { v4 as uuidv4 } from 'uuid'
+import { LeafletDialogOptions } from './interfaces'
 
 
 let maxWorkers = 30
@@ -22,7 +23,7 @@ export function layersToGeoJson(layers: Array<Layer>) {
         return json
     })
 }
-export function geoJsonToLayers(geojson: Array<any>, styleOptions: any) {
+export function geoJsonToLayers(geojson: Array<any>, styleOptions: PolylineOptions) {
     const layers = new Array<Layer>()
     geoJSON(geojson, {
         style: styleOptions,
@@ -78,7 +79,7 @@ export function round(value: number, decimal = 2) {
 }
 
 
-export function filterEmpty(obj: any) {
+export function filterEmpty(obj: Record<any, any>) {
     for (const i in obj)
         if (!obj[i]) obj[i] = undefined
     return obj
@@ -204,8 +205,8 @@ export function symbolToHierarchyString(symbol: MilSymbol, undef?: string) {
 }
 
 
-export function createDialog(map: LMap, options: any) {
-    const dialog = (control as any).dialog(options).addTo(map)
+export function createDialog(map: LMap, options: LeafletDialogOptions) {
+    const dialog = control.dialog(options).addTo(map)
     dialog.identifier = uuidv4()
     map.on('dialog:closed', onDialogClose)
 

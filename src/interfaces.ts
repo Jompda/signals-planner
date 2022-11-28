@@ -1,4 +1,4 @@
-import { LatLng as LLatLng, LeafletMouseEvent, Map as LMap } from 'leaflet'
+import { Control, ControlPosition, LatLng as LLatLng, LeafletMouseEvent, Map as LMap } from 'leaflet'
 import { Symbol as MilSymbol, SymbolOptions } from 'milsymbol'
 import { CableMedium, Medium, RadioMedium } from './struct/medium'
 import Unit from './struct/unit'
@@ -47,7 +47,29 @@ declare module 'leaflet' {
         export function layerControl(layers: Record<string, Layer>, options: ControlOptions): Control
         export function optionsMenu(options?: ControlOptions): Control
         export function customToolbar(items: Array<IToolbarItem>, options?: ControlOptions): Control
+        export function dialog(options?: LeafletDialogOptions): LeafletDialog
     }
+}
+
+
+export interface LeafletDialogOptions {
+    size?: Array<number>
+    maxSize?: Array<number>
+    minSize?: Array<number>
+    anchor?: Array<number>
+    position?: ControlPosition
+    initOpen?: boolean
+    onClose?: Function
+    destroyOnClose?: boolean
+}
+
+
+export interface LeafletDialog extends Control {
+    identifier: string
+    _container: HTMLElement
+    setContent: (el: HTMLElement) => void
+    destroy: Function
+    close: Function
 }
 
 
