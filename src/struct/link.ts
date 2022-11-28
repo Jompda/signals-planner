@@ -1,8 +1,9 @@
 import { LineStats, LinkOptions, MediumResolvable, SaveLink } from '../interfaces'
 import Unit from './unit'
-import { createLosGetter, getGeodesocLine_PDist100to200, getLineStats, getValues } from '../topoutil'
+import { getValues } from '../topoutil'
 import { SourceName } from '..'
 import { Medium, resolveMedium } from './medium'
+import { createLosGetter, getGeodesocLine_PDist100to200, getLineStats } from '../linkutil'
 
 
 export default class Link {

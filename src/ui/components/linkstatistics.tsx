@@ -15,7 +15,7 @@ import {
 import { getRelativePosition } from 'chart.js/helpers'
 import { Chart } from 'react-chartjs-2'
 import { useRef } from 'react'
-import { createLosGetter } from '../../topoutil'
+import { createLosGetter } from '../../linkutil'
 
 
 ChartJS.register(

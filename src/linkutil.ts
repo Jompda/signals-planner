@@ -5,7 +5,9 @@ import { getLinkLayerById, removeLink as lgRemoveLink, addLink as lgAddLink } fr
 import UnitLayer from './ui/components/unitlayer'
 import { Medium } from './struct/medium'
 import Link from './struct/link'
-
+import LatLon from 'geodesy/latlon-spherical'
+import { latLng } from 'leaflet'
+import { SourceName, TiledataLatLng } from '.'
 
 
 export function generateLinkLayers(
@@ -57,4 +59,92 @@ export function generateLinkLayers(
         lgAddLink(linkLayer)
         check()
     }, getMaxWorkers())
+}
+
+
+export function createLosGetter(elevation0: number, elevation1: number, lastIndex: number) {
+    const elevationDelta = elevation1 - elevation0
+    return (i: number) => elevation0 + (elevationDelta * (i / lastIndex))
+}
+
+
+export function getLineStats(latlngs: Array<TiledataLatLng>, sourceNames: Array<SourceName>) {
+    function sumAt(i: number) {
+        let sum = 0
+        for (let j = 0; j < sourceNames.length; j++)
+            sum += latlngs[i][sourceNames[j]]
+        return sum
+    }
+
+    const distance = latlngs[0].latlng.distanceTo(latlngs[latlngs.length - 1].latlng)
+    const extremes = {
+        min: sumAt(0),
+        iMin: 0,
+        max: sumAt(0),
+        iMax: 0
+    }
+    for (let i = 1; i < latlngs.length; i++) {
+        const temp = sumAt(i)
+        if (temp < extremes.min) {
+            extremes.min = temp
+            extremes.iMin = i
+        }
+        if (temp > extremes.max) {
+            extremes.max = temp
+            extremes.iMax = i
+        }
+    }
+
+    const peaks = {
+        values: new Array<number>(),
+        indexes: new Array<number>()
+    }
+    for (let i = 1; i < latlngs.length - 1; i++) {
+        const temp = sumAt(i)
+        if (temp <= sumAt(i - 1)) continue
+        if (temp <= sumAt(i + 1)) continue
+        peaks.indexes.push(i)
+        peaks.values.push(temp)
+    }
+
+    return {
+        distance,
+        extremes,
+        peaks
+    }
+}
+
+
+export function getGeodesocLine_PDist100to200(latlng0: LatLng, latlng1: LatLng) {
+    const { steps, delta } = geodesicLineStats(latlng0, latlng1)
+    const latlngs = getGeodesicLine(latlng0, latlng1, steps)
+    return { latlngs, delta }
+}
+
+
+export function geodesicLineStats(latlng0: LatLng, latlng1: LatLng) {
+    const distance = new LatLon(latlng0.lat, latlng0.lng).distanceTo(new LatLon(latlng1.lat, latlng1.lng))
+    const steps = Math.floor(Math.log2(distance / 100)) // delta: min 100, max 2*100=200 meters
+    const delta = distance / (2 ** steps)
+    return { steps, delta }
+}
+
+
+export function getGeodesicLine(latlng0: LatLng, latlng1: LatLng, steps: number) {
+    const amount = 2 ** steps - 1
+    const p0 = new LatLon(latlng0.lat, latlng0.lng)
+    const p1 = new LatLon(latlng1.lat, latlng1.lng)
+    const points = Array(amount)
+
+    rmp(p0, p1, 0, amount, 0)
+    function rmp(p0: LatLon, p1: LatLon, i0: number, i1: number, d: number) {
+        if (d >= steps) return
+        const value = p0.midpointTo(p1)
+        const ci = Math.floor((i0 + i1) / 2)
+        points[ci] = value
+        rmp(p0, value, i0, ci, d + 1)
+        rmp(value, p1, ci, i1, d + 1)
+    }
+
+    return [p0, ...points, p1].map((latlon: LatLon) => latLng(latlon.lat, latlon.lon))
 }

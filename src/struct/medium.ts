@@ -1,5 +1,5 @@
 import { CableMediumEstimate, CableMediumOptions, MediumResolvable, RadioLinkEstimate, RadioMediumOptions, SaveCableMedium, SaveMedium, SaveRadioMedium } from '../interfaces'
-import { createLosGetter } from '../topoutil'
+import { createLosGetter } from '../linkutil'
 import Link from './link'
 
 
