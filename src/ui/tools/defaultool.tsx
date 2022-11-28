@@ -3,10 +3,10 @@ import { LatLngBounds, LeafletMouseEvent } from 'leaflet'
 import { getUnitLayers } from '../structurecontroller'
 
 
-// <FontAwesomeIcon icon="fa-solid fa-draw-square" />
-// <FontAwesomeIcon icon="fa-solid fa-object-union" />
-// <FontAwesomeIcon icon="fa-solid fa-object-subtract" />
-// <FontAwesomeIcon icon="fa-solid fa-object-group" />
+// <FontAwesomeIcon icon="fa fa-draw-square" />
+// <FontAwesomeIcon icon="fa fa-object-union" />
+// <FontAwesomeIcon icon="fa fa-object-subtract" />
+// <FontAwesomeIcon icon="fa fa-object-group" />
 class DefaultTool extends Tool {
     constructor() {
         super({

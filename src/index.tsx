@@ -128,7 +128,7 @@ createCustomToolbar([
             linkEditorTool,
             {
                 tooltip: 'Link Graphs',
-                icon: <i className='fa-solid fa-diagram-project' />,
+                icon: <i className='fa fa-diagram-project' />,
                 radio: false,
                 addHooks: () => showLinkGraphToolMenu(getMap())
             }

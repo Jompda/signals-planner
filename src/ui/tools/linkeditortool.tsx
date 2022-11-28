@@ -17,7 +17,7 @@ class LinkEditorTool extends Tool {
     constructor() {
         super({
             tooltip: 'Link Editor',
-            icon: <i className='fa-solid fa-pen' />,
+            icon: <i className='fa fa-pen' />,
             items: [{
                 // TODO: Ability to change the drawn medium.
                 icon: 'Edit',

@@ -34,7 +34,7 @@ export function LayerControl(props: any) {
             >
                 <i
                     ref={headerCaretRef}
-                    className='lc-header-caret fa-solid fa-caret-down'
+                    className='lc-header-caret fa fa-caret-down'
                 />
                 <div>{props.label}</div>
                 <br />
@@ -96,7 +96,7 @@ function LayerModel(props: any) {
                         e.stopPropagation()
                         props.layer.bringToFront()
                     }}
-                ><i className='fa-solid fa-ellipsis'></i>
+                ><i className='fa fa-ellipsis'></i>
                 </div>
             </div>
             <div
