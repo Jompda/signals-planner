@@ -5,11 +5,6 @@ declare module 'mgrs' {
 
 declare module 'leaflet.wms'
 
-declare interface LatLng {
-    lat: number
-    lng: number
-}
-
 declare module '*.png' {
     const value: any;
     export default value;
