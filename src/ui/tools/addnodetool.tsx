@@ -46,9 +46,6 @@ class AddNodeTool extends Tool {
         addAction(new AddUnitAction(unitLayer).forward())
         unitLayer.select()
     }
-    middlemouseclick(e: LeafletMouseEvent) {
-        openTopographyPopup(getMap(), e.latlng)
-    }
 }
 
 export default new AddNodeTool()

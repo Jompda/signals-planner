@@ -29,8 +29,6 @@ class LinkEditorTool extends Tool {
         })
         this.medium = resolveMedium('SHF1')
     }
-    middlemouseclick(e: LeafletMouseEvent) {
-    }
     unitlayermousedown(e: LeafletMouseEvent, unitLayer: unitlayer) {
         this.startUnit = unitLayer
         this.highlight = polyline([unitLayer.getLatLng()], {
