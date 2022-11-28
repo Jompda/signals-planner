@@ -68,11 +68,11 @@ class LinkEditorTool extends Tool {
         this.startUnit = undefined
     }
 
-    keydown(e: LeafletKeyboardEvent): void {
+    keydown(e: LeafletKeyboardEvent) {
         if (e.originalEvent.key == 'Control')
             getMap().dragging.disable()
     }
-    keyup(e: LeafletKeyboardEvent): void {
+    keyup(e: LeafletKeyboardEvent) {
         if (e.originalEvent.key == 'Control')
             getMap().dragging.enable()
     }
