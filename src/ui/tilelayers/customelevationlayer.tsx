@@ -61,7 +61,15 @@ const layer = new TopoLayer({
 
 
 // TODO: Ability to change the slider value range.
-function CustomLayerOptions(props: any) {
+function CustomLayerOptions({ breakpoints, min, max }: {
+    breakpoints: Array<{
+        name: string
+        value: number
+        update: (value: number) => any
+    }>
+    min: number
+    max: number
+}) {
     const sliders = new Array<React.MutableRefObject<HTMLInputElement>>()
     const values = new Array<React.MutableRefObject<HTMLInputElement>>()
     function updateElementValues() {
@@ -70,7 +78,7 @@ function CustomLayerOptions(props: any) {
     }
     const elements = new Array<JSX.Element>()
     let i = 0
-    for (const p of props.breakpoints) {
+    for (const p of breakpoints) {
         const sliderRef = useRef<HTMLInputElement>()
         const valueRef = useRef<HTMLInputElement>()
         sliders.push(sliderRef)
@@ -83,8 +91,8 @@ function CustomLayerOptions(props: any) {
                 ref={sliderRef}
                 type='range'
                 defaultValue={p.value}
-                min={props.min}
-                max={props.max}
+                min={min}
+                max={max}
                 onInput={() => valueRef.current.value = sliderRef.current.value}
                 onMouseUp={() => p.update(parseInt(sliderRef.current.value))}
             />
@@ -116,7 +124,9 @@ function CustomLayerOptions(props: any) {
 }
 
 
-function FitToViewButton(props: any) {
+function FitToViewButton({ callback }: {
+    callback: Function
+}) {
     const [btnDisabled, setBtnDisabled] = useState(false)
     const [progText, setProgText] = useState('Fit to View')
 
@@ -133,7 +143,7 @@ function FitToViewButton(props: any) {
             disabled={btnDisabled}
             onClick={() => {
                 setBtnDisabled(true)
-                fitToView(progressFunction, props.callback)
+                fitToView(progressFunction, callback)
             }}
         >{progText}</button>
     )

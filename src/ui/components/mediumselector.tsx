@@ -2,7 +2,10 @@ import { useRef } from "react"
 import { cables, radios } from "../../struct/medium"
 
 
-export function MediumSelector(props: any) {
+export function MediumSelector({ defaultValue, updateMedium }: {
+    defaultValue?: string
+    updateMedium: (str: string) => any
+}) {
     const selectRef = useRef<HTMLSelectElement>()
     let first: string
 
@@ -27,13 +30,13 @@ export function MediumSelector(props: any) {
         )
     }
 
-    props.updateMedium(props.defaultValue || first)
+    updateMedium(defaultValue || first)
 
     return (
         <select
             ref={selectRef}
-            defaultValue={props.defaultValue}
-            onChange={() => props.updateMedium(selectRef.current.value)}
+            defaultValue={defaultValue}
+            onChange={() => updateMedium(selectRef.current.value)}
         >
             <optgroup label='Radios'>{radioGroup}</optgroup>
             <optgroup label='Cables'>{cableGroup}</optgroup>

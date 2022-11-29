@@ -69,14 +69,16 @@ Control.OptionsMenu = Control.extend({
 })
 
 
-function OptionsMenu(props: any) {
+function OptionsMenu({ apply }: {
+    apply?: Function
+}) {
     return (
         <>
             <h1>Options Menu</h1>
             <hr />
             <div className='grower'></div>
             <div className='dialog-menu-submit'>
-                <button onClick={() => props.apply()}>Apply</button>
+                <button onClick={() => apply()}>Apply</button>
                 <button onClick={() => {
                     console.log('TODO: RESET')
                 }}>Restore defaults</button>

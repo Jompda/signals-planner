@@ -72,27 +72,32 @@ class ToolbarCategory extends ToolbarItem {
 })
 
 
-function CustomToolbar(props: any) {
-    const items = toolbarItemsToJSX(props.items, props.setSelection)
+function CustomToolbar({ items, setSelection }: {
+    items: Array<IToolbarItem>
+    setSelection: (item: ToolbarItem) => any
+}) {
+    const itemElements = toolbarItemsToJSX(items, setSelection)
 
     return (
         <ul className='ctoolbar-category ctoolbar-root'>
-            {items}
+            {itemElements}
         </ul>
     )
 }
 
 
-function ToolbarCategoryComponent(props: any) {
-    const category: ToolbarCategory = props.category
-    const items = toolbarItemsToJSX(category.items, props.setSelection)
+function ToolbarCategoryComponent({ category, setSelection }: {
+    category: ToolbarCategory
+    setSelection: (item: ToolbarItem) => any
+}) {
+    const items = toolbarItemsToJSX(category.items, setSelection)
 
     return (
         <>
             <ToolbarRadioButton
                 className='ctoolbar-category-icon'
-                setSelection={props.setSelection}
-                item={props.category}
+                setSelection={setSelection}
+                item={category}
             />
             <ul className='ctoolbar-category'>
                 {items}
@@ -133,21 +138,25 @@ function toolbarItemsToJSX(items: Array<IToolbarItem>, setSelection: (item: Tool
 }
 
 
-function ToolbarRadioButton(props: any) {
+function ToolbarRadioButton({ item, className, setSelection }: {
+    className?: string
+    item: ToolbarItem
+    setSelection: (item: ToolbarItem) => any
+}) {
     return (
-        <div title={props.item.tooltip} className={props.className} onClick={(e) => {
+        <div title={item.tooltip} className={className} onClick={(e) => {
             if ((e.target as HTMLElement).tagName == 'INPUT') return
-            props.setSelection(props.item)
+            setSelection(item)
         }}>
             <label className='fitter'>
                 {
-                    !props.item.radio ||
+                    !item.radio ||
                     <>
                         <input type="radio" name="ctoolbar-radio" />
                         <div></div>
                     </>
                 }
-                {props.item.icon}
+                {item.icon}
             </label>
         </div>
     )

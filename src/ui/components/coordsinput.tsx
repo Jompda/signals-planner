@@ -1,16 +1,21 @@
 import { useRef, useState } from 'react'
-import * as mgrs from 'mgrs'
+import { toPoint, forward } from 'mgrs'
 import { latLng } from 'leaflet'
 import { round } from '../../util'
 import { latlngToUtm, utmToLatLng } from '../../topoutil'
 
 
-export function CoordsInput(props: any) {
+export function CoordsInput({ latlng, mgrs, utm, updateLatLng }: {
+    latlng: LatLng
+    mgrs?: string
+    utm?: string
+    updateLatLng: (latlng: LatLng) => any
+}) {
     const defColor = 'lightgray'
     let sll
-    if (props.latlng) sll = fromLatLng(String(props.latlng.lat), String(props.latlng.lng))
-    else if (props.mgrs) sll = fromMGRS(props.mgrs)
-    else if (props.utm) sll = utmToLatLng(props.utm)
+    if (latlng) sll = fromLatLng(String(latlng.lat), String(latlng.lng))
+    else if (mgrs) sll = fromMGRS(mgrs)
+    else if (utm) sll = utmToLatLng(utm)
 
     const [latlngColor, setLatLngColor] = useState(defColor)
     const [mgrsColor, setMgrsColor] = useState(defColor)
@@ -34,7 +39,7 @@ export function CoordsInput(props: any) {
     }
 
     function fromMGRS(str: string) {
-        const lonlat = mgrs.toPoint(str)
+        const lonlat = toPoint(str)
         return latLng(lonlat[1], lonlat[0])
     }
 
@@ -42,19 +47,19 @@ export function CoordsInput(props: any) {
         let latlng, mgrsStr, utmStr
         if (type == 'latlng') {
             latlng = src
-            mgrsStr = mgrs.forward([latlng.lng, latlng.lat])
+            mgrsStr = forward([latlng.lng, latlng.lat])
             utmStr = latlngToUtm(latlng)
         } else if (type == 'mgrs') {
-            const lonlat = mgrs.toPoint(src)
+            const lonlat = toPoint(src)
             latlng = latLng(lonlat[1], lonlat[0])
             mgrsStr = src
             utmStr = latlngToUtm(latlng)
         } else if (type == 'utm') {
             latlng = utmToLatLng(src)
-            mgrsStr = mgrs.forward([latlng.lng, latlng.lat])
+            mgrsStr = forward([latlng.lng, latlng.lat])
             utmStr = src
         }
-        props.updateLatLng(latlng)
+        updateLatLng(latlng)
         setLatLngColor(defColor)
         setMgrsColor(defColor)
         setUtmColor(defColor)
@@ -106,7 +111,7 @@ export function CoordsInput(props: any) {
             <input
                 ref={mgrsRef}
                 type='text'
-                defaultValue={sll ? mgrs.forward([sll.lng, sll.lat]) : ''}
+                defaultValue={sll ? forward([sll.lng, sll.lat]) : ''}
                 style={{ backgroundColor: mgrsColor }}
                 onChange={() => {
                     try { resolve('mgrs', mgrsRef.current.value) }
@@ -148,7 +153,7 @@ export function CoordsInput(props: any) {
                         mgrsRef.current.value =
                         utmRef.current.value =
                         ''
-                    props.updateLatLng(null)
+                    updateLatLng(null)
                 }}
             >Clear</button>
         </div>

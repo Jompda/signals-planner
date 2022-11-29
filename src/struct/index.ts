@@ -79,6 +79,7 @@ export function serialize() {
     } as SaveStructure
 }
 
+// FIXME: Appears to be broken when importing same file the second time.
 export function deserialize(obj: SaveStructure) {
     const pUnits = new Array<Unit>, pLinks = new Array<Link>
     const remappedIds = new Map<string, string>()

@@ -1,4 +1,4 @@
-import { SymbolOptions, Symbol } from 'milsymbol'
+import { SymbolOptions, Symbol as MilSymbol } from 'milsymbol'
 import { useRef, useState } from 'react'
 
 
@@ -72,10 +72,13 @@ const unitSize = {
 // SIDC explained
 // https://help.perforce.com/visualization/jviews/8.9/jviews-maps-defense89/doc/html/en-US/Content/Visualization/Documentation/JViews/JViews_Defense/_pubskel/ps_usrprgdef811.html
 // TODO: Create a SIDC editor. Or just rely on third party editors and take the SIDC? Embed somehow?
-export function MilSymbolEditor(props: any) {
-    const symbol = props.milSymbol
-        ? props.milSymbol as Symbol
-        : new Symbol('SFGPU-------')
+export function MilSymbolEditor({ milSymbol, updateMilSymbol }: {
+    milSymbol: MilSymbol
+    updateMilSymbol: (s: MilSymbol) => any
+}) {
+    const symbol = milSymbol
+        ? milSymbol as MilSymbol
+        : new MilSymbol('SFGPU-------')
     const soptions = symbol.getOptions()
 
 
@@ -112,12 +115,12 @@ export function MilSymbolEditor(props: any) {
         if (updateSvgTimeout) clearTimeout(updateSvgTimeout)
         updateSvgTimeout = setTimeout(() => {
             setSvg(symbol.toDataURL())
-            props.updateMilSymbol(symbol)
+            updateMilSymbol(symbol)
             updateSvgTimeout = null
         }, 500)
     }
 
-    props.updateMilSymbol(symbol)
+    updateMilSymbol(symbol)
 
     return (
         <div className='milsymbol-editor'>

@@ -1,4 +1,4 @@
-import { DomUtil } from 'leaflet'
+import { DomUtil, LatLng } from 'leaflet'
 import Link from '../../struct/link'
 import {
     Chart as ChartJS,
@@ -16,6 +16,7 @@ import { getRelativePosition } from 'chart.js/helpers'
 import { Chart } from 'react-chartjs-2'
 import { useRef } from 'react'
 import { createLosGetter } from '../../linkutil'
+import LinkLayer from './linklayer'
 
 
 ChartJS.register(
@@ -30,8 +31,11 @@ ChartJS.register(
 )
 
 
-export function LinkStatistics(props: any) {
-    const { emitterHeight, values, lineStats, stats } = props.linkLayer.link as Link
+export function LinkStatistics({ linkLayer, setHighlightLatLng }: {
+    linkLayer: LinkLayer
+    setHighlightLatLng: (latlng: LatLng) => any
+}) {
+    const { emitterHeight, values, lineStats, stats } = linkLayer.link as Link
     const canvas = DomUtil.create('canvas')
     canvas.width = 600
     canvas.height = 260
@@ -90,7 +94,7 @@ export function LinkStatistics(props: any) {
         treeHeightRef.current.textContent = String(treeHeight) + 'm'
         sumRef.current.textContent = String(elevation + treeHeight) + 'm'
         losRef.current.textContent = String(Math.round(getLosElevationAtIndex(i))) + 'm'
-        props.setHighlightLatLng(values[i].latlng)
+        setHighlightLatLng(values[i].latlng)
     }
 
     const plugins = [{
@@ -140,7 +144,7 @@ export function LinkStatistics(props: any) {
                             data: losElevations,
                             pointRadius: 0,
                             pointHitRadius: 0,
-                            borderColor: props.linkLayer.options.color,
+                            borderColor: linkLayer.options.color,
                             spanGaps: true
                         }
                     ]

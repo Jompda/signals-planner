@@ -160,43 +160,39 @@ export function showEditLinkMenu(map: LMap, linkLayer: LinkLayer) {
 }
 
 
-function LinkContructor(props: any) {
-    const units = getUnits().filter(u => u.id != props.unit.id)
+function LinkContructor({ unit, updateTargetUnit }: {
+    unit: Unit
+    updateTargetUnit: (id: string) => any
+}) {
+    const units = getUnits().filter(u => u.id != unit.id)
     return (
         <>
             <span>Source:</span>
             <select disabled>
                 <option>
-                    {unitIdentifier(props.unit)}
+                    {unitIdentifier(unit)}
                 </option>
             </select>
             <span>Target:</span>
             <UnitSelector
                 units={units}
-                updateTargetUnit={props.updateTargetUnit}
+                updateTargetUnit={updateTargetUnit}
             />
         </>
     )
 }
 
 
-function unitIdentifier(unit: Unit) {
-    const hstring = unit.toHierarchyString()
-    const opt = unit.symbol.getOptions(false)
-
-    if (isNaN(parseInt(opt.uniqueDesignation))) return hstring
-    if (opt.higherFormation != 'Node') return hstring
-    return 'Node ' + opt.uniqueDesignation
-}
-
-
-function UnitSelector(props: any) {
+function UnitSelector({ units, updateTargetUnit }: {
+    units: Array<Unit>
+    updateTargetUnit: (id: string) => any
+}) {
     const searchRef = useRef<HTMLInputElement>()
     const [filter, setFilter] = useState('')
     const [selected, setSelected] = useState('')
     const id = uuidv4()
 
-    const units = props.units.map((u: Unit, i: number) => {
+    const unitElements = units.map((u: Unit, i: number) => {
         const str = unitIdentifier(u)
         if (str.toLowerCase().indexOf(filter) < 0) return undefined
         return (
@@ -206,14 +202,14 @@ function UnitSelector(props: any) {
                     type='radio'
                     defaultChecked={u.id == selected}
                     onClick={() => {
-                        props.updateTargetUnit(u.id)
+                        updateTargetUnit(u.id)
                         setSelected(u.id)
                     }}
                 />
                 <div><p>{str}</p></div>
             </label>
         )
-    }).filter((el: any) => el)
+    }).filter((el?: JSX.Element) => el)
 
     return (
         <>
@@ -225,18 +221,28 @@ function UnitSelector(props: any) {
                 }}
             />
             <div className='unit-selector-target-units-container'>
-                {units}
+                {unitElements}
             </div>
         </>
     )
 }
 
 
-function LinkEditor(props: any) {
+function LinkEditor({ }) {
 
 }
 
 
-function CableEditor(props: any) {
+function CableEditor({ }) {
 
+}
+
+
+function unitIdentifier(unit: Unit) {
+    const hstring = unit.toHierarchyString()
+    const opt = unit.symbol.getOptions(false)
+
+    if (isNaN(parseInt(opt.uniqueDesignation))) return hstring
+    if (opt.higherFormation != 'Node') return hstring
+    return 'Node ' + opt.uniqueDesignation
 }

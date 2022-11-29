@@ -1,19 +1,24 @@
+import { Map as LMap, TileLayer } from 'leaflet'
 import { useRef, useState } from 'react'
 
 
-export function LayerControl(props: any) {
+export function LayerControl({ layers, map, label }: {
+    map: LMap
+    layers: Record<string, TileLayer>
+    label: string
+}) {
     const headerCaretRef = useRef<HTMLElement>()
     const bodyRef = useRef<HTMLDivElement>()
 
-    const layers = new Array<JSX.Element>()
-    for (const layerName in props.layers) {
-        layers.push(
+    const layerModels = new Array<JSX.Element>()
+    for (const layerName in layers) {
+        layerModels.push(
             <LayerModel
-                enabled={props.layers[layerName]._map}
-                map={props.map}
+                enabled={(layers[layerName] as any)._map}
+                map={map}
                 key={layerName}
                 layerName={layerName}
-                layer={props.layers[layerName]}
+                layer={layers[layerName]}
             />
         )
     }
@@ -36,19 +41,24 @@ export function LayerControl(props: any) {
                     ref={headerCaretRef}
                     className='lc-header-caret fa fa-caret-down'
                 />
-                <div>{props.label}</div>
+                <div>{label}</div>
                 <br />
             </div>
             <div
                 ref={bodyRef}
                 className='lc-body'
-            >{layers}</div>
+            >{layerModels}</div>
         </>
     )
 }
 
 
-function LayerModel(props: any) {
+function LayerModel({ enabled, layer, map, layerName }: {
+    map: LMap
+    layerName: string
+    layer: TileLayer
+    enabled: boolean
+}) {
     const headRef = useRef<HTMLDivElement>()
     const checkboxRef = useRef<HTMLInputElement>()
     const optionsRef = useRef<HTMLDivElement>()
@@ -56,7 +66,7 @@ function LayerModel(props: any) {
         <div className='lc-layermodel'>
             <div
                 ref={headRef}
-                className={'lc-layermodel-head' + (props.enabled ? ' lclayermodel-head-selected' : '')}
+                className={'lc-layermodel-head' + (enabled ? ' lclayermodel-head-selected' : '')}
                 onClick={() => {
                     if ($(optionsRef.current).is(':visible')) {
                         $(optionsRef.current).slideUp()
@@ -74,27 +84,27 @@ function LayerModel(props: any) {
                             e.stopPropagation()
                             // Checked gets changed to the new value before this function is called.
                             !checkboxRef.current.checked
-                                ? props.layer.remove()
-                                : props.layer.addTo(props.map)
+                                ? layer.remove()
+                                : layer.addTo(map)
                         }}
                     >
                         <input
                             ref={checkboxRef}
                             type='checkbox'
-                            defaultChecked={props.enabled}
+                            defaultChecked={enabled}
                         />
                         <div className='toggler-slider'>
                             <div className='toggler-knob'></div>
                         </div>
                     </label>
-                    <span>{props.layerName}</span>
+                    <span>{layerName}</span>
                 </div>
                 <div
                     title='Bring to Front'
                     className='lc-bringtofront'
                     onClick={(e) => {
                         e.stopPropagation()
-                        props.layer.bringToFront()
+                        layer.bringToFront()
                     }}
                 ><i className='fa fa-ellipsis'></i>
                 </div>
@@ -104,7 +114,7 @@ function LayerModel(props: any) {
                 className={('hidden')}
             >
                 <LayerModelOptions
-                    layer={props.layer}
+                    layer={layer}
                 />
             </div>
         </div>
@@ -112,7 +122,9 @@ function LayerModel(props: any) {
 }
 
 
-function LayerModelOptions(props: any) {
+function LayerModelOptions({ layer }: {
+    layer: TileLayer & { options: { lcOptions?: any } }
+}) {
     const [state, setState] = useState(1)
     const sliderRef = useRef<HTMLInputElement>()
 
@@ -130,15 +142,15 @@ function LayerModelOptions(props: any) {
                     onChange={() => {
                         const value = parseInt(sliderRef.current.value) / 100
                         setState(value)
-                        props.layer.setOpacity(value)
+                        layer.setOpacity(value)
                     }}
                 />
                 <span>{state.toFixed(2)}</span>
             </div>
             {
-                (typeof props.layer.options.lcOptions) == 'string'
-                    ? <div dangerouslySetInnerHTML={{ __html: props.layer.options.lcOptions }}></div>
-                    : props.layer.options.lcOptions
+                (typeof layer.options.lcOptions) == 'string'
+                    ? <div dangerouslySetInnerHTML={{ __html: layer.options.lcOptions }}></div>
+                    : layer.options.lcOptions
             }
         </>
     )
