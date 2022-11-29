@@ -69,8 +69,12 @@ export default class Tool implements IToolbarItem {
     onEnabled() { }
     onDisabled() { }
     _mouseup(e: LeafletMouseEvent) {
-        if (e.originalEvent.button === 1)
-            if ('middlemouseclick' in this) (this as any).middlemouseclick(e)
+        if (e.originalEvent.button === 1) {
+            this._middlemouseclick(e)
+            if ('middlemouseclick' in this) {
+                (this as any).middlemouseclick(e)
+            }
+        }
     }
     _click(e: LeafletMouseEvent) {
         if (!e.originalEvent.ctrlKey)
