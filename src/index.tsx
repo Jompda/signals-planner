@@ -4,6 +4,7 @@ import 'leaflet-contextmenu/dist/leaflet.contextmenu.css'
 import 'leaflet-dialog/Leaflet.Dialog.css'
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
 import 'react-tabs/style/react-tabs.css'
+import 'leaflet-ruler/src/leaflet-ruler.css'
 
 import { Map as LMap, control, LeafletKeyboardEvent, LatLng as LLatLng } from 'leaflet'
 import '@geoman-io/leaflet-geoman-free'
@@ -99,6 +100,7 @@ import linkEditorTool from './ui/tools/linkeditortool'
 import { redo, undo } from './actionhistory'
 import './ui/menus/toolbar'
 import unitlinkicon from './assets/unitlink.png'
+import 'leaflet-ruler/src/leaflet-ruler'
 
 
 const map = new LMap('map', {
@@ -156,3 +158,26 @@ import { initMapHooks } from './ui/toolcontroller'
 import { showLinkGraphToolMenu } from './ui/menus/linkgraphmenus'
 initGeoman(map)
 initMapHooks(map)
+control.ruler({ // NOTE: For some reason, you have to double click the map after enabling this tool to be able to disable it.
+    position: 'topleft',
+    circleMarker: {
+        color: 'red',
+        radius: 2
+    },
+    lineStyle: {
+        color: 'red',
+        dashArray: '1,6'
+    },
+    lengthUnit: {
+        display: 'km',
+        decimal: 2,
+        factor: null,
+        label: 'Distance:'
+    },
+    angleUnit: {
+        display: '&deg;',
+        decimal: 2,
+        factor: null,
+        label: 'Bearing:'
+    }
+}).addTo(map)

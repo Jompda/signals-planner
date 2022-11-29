@@ -48,6 +48,7 @@ declare module 'leaflet' {
         export function optionsMenu(options?: ControlOptions): Control
         export function customToolbar(items: Array<IToolbarItem>, options?: ControlOptions): Control
         export function dialog(options?: LeafletDialogOptions): LeafletDialog
+        export function ruler(options?: any): Control
     }
 }
 
