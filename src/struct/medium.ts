@@ -123,6 +123,7 @@ export class CableMedium extends Medium {
         super('cable', options.name, options.preset)
         this.cableLength = options.cableLength
     }
+    // NOTE: Switch to on-ground-distance.
     estimateLinkStats({ lineStats, values, emitterHeight }: LinkEstimateOptions): CableLinkEstimate {
         const cables = Math.ceil(lineStats.distance / this.cableLength)
         const length = cables * this.cableLength
