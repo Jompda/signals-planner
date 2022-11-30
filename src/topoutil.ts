@@ -3,7 +3,7 @@ import * as mgrs from 'mgrs'
 import * as utm from 'utm'
 import { Map as LMap, LatLng as LLatLng, latLng, Topography, popup } from 'leaflet'
 import { asyncOperation, getMaxWorkers, round, workers } from './util'
-import { SourceName, TiledataLatLng } from '.'
+import { SourceName, TiledataLatLng } from './interfaces'
 
 
 export async function getTopographyValues<SourceName extends string>(sourceNames: Array<SourceName>, latlng: LatLng, zoom: number) {

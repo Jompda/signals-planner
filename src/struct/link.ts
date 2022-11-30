@@ -1,7 +1,6 @@
-import { CableLinkEstimate, LineStats, LinkOptions, MediumResolvable, RadioLinkEstimate, SaveLink } from '../interfaces'
+import { CableLinkEstimate, LineStats, LinkOptions, MediumResolvable, RadioLinkEstimate, SaveLink, SourceName, TiledataLatLng } from '../interfaces'
 import Unit from './unit'
 import { getValues } from '../topoutil'
-import { SourceName, TiledataLatLng } from '..'
 import { CableMedium, RadioMedium, resolveMedium } from './medium'
 import { createLosGetter, getGeodesocLine_PDist100to200, getLineStats } from '../linkutil'
 

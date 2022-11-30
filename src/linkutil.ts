@@ -7,8 +7,7 @@ import { Medium } from './struct/medium'
 import Link from './struct/link'
 import LatLon from 'geodesy/latlon-spherical'
 import { latLng } from 'leaflet'
-import { SourceName, TiledataLatLng } from '.'
-import { RadioLinkEstimate } from './interfaces'
+import { RadioLinkEstimate, SourceName, TiledataLatLng } from './interfaces'
 
 
 export function generateLinkLayers(

@@ -3,7 +3,7 @@ import { useRef, useState } from 'react'
 import { asyncOperation, createMapboxTerrainAttribution, workers, getMaxWorkers } from '../../util'
 import { getMap } from '../structurecontroller'
 import { getTopographyValues } from '../../topoutil'
-import { SourceName } from '../..'
+import { SourceName } from '../../interfaces'
 
 
 const _breakpoints = [0, 150, 250, 350, 500]

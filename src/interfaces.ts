@@ -110,6 +110,13 @@ export interface ContextMenuItem {
 }
 
 
+export type SourceName = 'elevation' | 'treeHeight'
+export interface TiledataLatLng extends Record<SourceName, number> {
+    tileName: string
+    latlng: LLatLng
+}
+
+
 export interface UnitOptions {
     id: string
     latlng: LLatLng
@@ -143,10 +150,6 @@ export interface RadioMediumOptions extends MediumOptions {
 export interface CableMediumOptions extends MediumOptions {
     /** Length of a single extendable cable. */
     cableLength: number
-    /** For instance copper: 1.68 * 10**(-8) ohm m. */
-    resistivity: number
-    /** For instance from diameter of 12mm to area = PI*(d/2)^2 => PI*(0.012 / 2)**2. */
-    sliceArea: number
 }
 
 export interface LineStats {
@@ -206,8 +209,6 @@ export interface SaveRadioMedium extends SaveMedium {
 export interface SaveCableMedium extends SaveMedium {
     type: 'cable'
     cableLength: number
-    resistivity: number
-    sliceArea: number
 }
 
 export interface RadioLinkEstimate {
@@ -218,7 +219,12 @@ export interface RadioLinkEstimate {
 export interface CableLinkEstimate {
     length: number
     cables: number
-    resistance: number
+}
+
+export interface LinkEstimateOptions {
+    lineStats: LineStats
+    values: Array<TiledataLatLng>
+    emitterHeight: number
 }
 
 export type MediumResolvable = RadioMedium | SaveRadioMedium | CableMedium | SaveCableMedium | Medium | string

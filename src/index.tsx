@@ -6,7 +6,7 @@ import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
 import 'react-tabs/style/react-tabs.css'
 import 'leaflet-ruler/src/leaflet-ruler.css'
 
-import { Map as LMap, control, LeafletKeyboardEvent, LatLng as LLatLng } from 'leaflet'
+import { Map as LMap, control, LeafletKeyboardEvent } from 'leaflet'
 import '@geoman-io/leaflet-geoman-free'
 import 'leaflet-contextmenu'
 import 'leaflet-dialog'
@@ -33,11 +33,6 @@ configure({
  * Setup tiledata
  */
 import { setConfig as setTiledataConfig } from 'tiledata'
-export type SourceName = 'elevation' | 'treeHeight'
-export interface TiledataLatLng extends Record<SourceName, number> {
-    tileName: string
-    latlng: LLatLng
-}
 const tileDataStorage = new Map<string, Record<SourceName, Int16Array>>()
 
 // Colors retrieved from: https://kartta.luke.fi/geoserver/MVMI/ows?service=WMS&version=1.3.0&request=GetLegendGraphic&format=image/png&width=20&height=20&layer=keskipituus_1519
@@ -156,6 +151,7 @@ map.on('keydown', (e: LeafletKeyboardEvent) => {
 import { initGeoman } from './ui/geomancontroller'
 import { initMapHooks } from './ui/toolcontroller'
 import { showLinkGraphToolMenu } from './ui/menus/linkgraphmenus'
+import { SourceName } from './interfaces'
 initGeoman(map)
 initMapHooks(map)
 control.ruler({ // NOTE: For some reason, you have to double click the map after enabling this tool to be able to disable it.

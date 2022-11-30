@@ -1,4 +1,4 @@
-import { CableLinkEstimate, CableMediumOptions, MediumResolvable, RadioLinkEstimate, RadioMediumOptions, SaveCableMedium, SaveMedium, SaveRadioMedium } from '../interfaces'
+import { CableLinkEstimate, CableMediumOptions, LinkEstimateOptions, MediumResolvable, RadioLinkEstimate, RadioMediumOptions, SaveCableMedium, SaveRadioMedium } from '../interfaces'
 import { createLosGetter } from '../linkutil'
 import Link from './link'
 
@@ -52,13 +52,12 @@ export class RadioMedium extends Medium {
     }
 
 
-    estimateLinkStats(link: Link): RadioLinkEstimate {
+    estimateLinkStats({ lineStats, values, emitterHeight }: LinkEstimateOptions): RadioLinkEstimate {
         const waveLength = (299_792_458) / (this.frequency * 1_000_000)
-        const distance = link.lineStats.distance
-        const values = link.values
+        const distance = lineStats.distance
 
-        const transmitterElevation = values[0].elevation + link.emitterHeight
-        const receiverElevation = values[values.length - 1].elevation + link.emitterHeight
+        const transmitterElevation = values[0].elevation + emitterHeight
+        const receiverElevation = values[values.length - 1].elevation + emitterHeight
 
         let itmLoss = 0, Pr = -108
         // https://www.doria.fi/handle/10024/118719 Page 4
@@ -120,23 +119,16 @@ export class RadioMedium extends Medium {
 
 export class CableMedium extends Medium {
     public cableLength: number
-    public resistivity: number
-    public sliceArea: number
     constructor(options: CableMediumOptions) {
         super('cable', options.name, options.preset)
         this.cableLength = options.cableLength
-        this.resistivity = options.resistivity
-        this.sliceArea = options.sliceArea
     }
-    estimateLinkStats(link: Link): CableLinkEstimate {
-        // R = (Rho) * l / A
-        const cables = Math.ceil(link.lineStats.distance / this.cableLength)
+    estimateLinkStats({ lineStats, values, emitterHeight }: LinkEstimateOptions): CableLinkEstimate {
+        const cables = Math.ceil(lineStats.distance / this.cableLength)
         const length = cables * this.cableLength
-        let resistance = this.resistivity * length / this.sliceArea
         return {
             length,
-            cables,
-            resistance
+            cables
         }
     }
 
@@ -146,9 +138,7 @@ export class CableMedium extends Medium {
         return {
             type: this.type,
             name: this.name,
-            cableLength: this.cableLength,
-            resistivity: this.resistivity,
-            sliceArea: this.sliceArea
+            cableLength: this.cableLength
         } as SaveCableMedium
     }
     static deserialize(obj: SaveCableMedium) {
@@ -190,15 +180,11 @@ const cablePresetArray = [
     new CableMedium({
         name: 'Copper',
         cableLength: 400,
-        resistivity: 1.68 * 10 ** (-8),
-        sliceArea: Math.PI * (0.010 / 2) ** 2,
         preset: true
     }),
     new CableMedium({
         name: 'Optical Fiber',
         cableLength: 500,
-        resistivity: 0.1 * 10 ** (-8),
-        sliceArea: Math.PI * (0.012 / 2) ** 2,
         preset: true
     })
 ]

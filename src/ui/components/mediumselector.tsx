@@ -26,7 +26,7 @@ export function MediumSelector({ defaultValue, updateMedium }: {
             <option
                 key={cable.name}
                 value={cable.name}
-            >{cable.name}: {cable.cableLength}m {cable.resistivity}Ω</option>
+            >{cable.name}: {cable.cableLength}m</option>
         )
     }
 

@@ -192,7 +192,7 @@ export function LinkStatistics({ linkLayer, setHighlightLatLng }: {
                         </>
                         : undefined
                     }
-                    {'resistance' in stats
+                    {'cables' in stats
                         ? <>
                             <tr>
                                 <td>Cables:</td>
@@ -201,10 +201,6 @@ export function LinkStatistics({ linkLayer, setHighlightLatLng }: {
                             <tr>
                                 <td>Length:</td>
                                 <td>{stats.length}m</td>
-                            </tr>
-                            <tr>
-                                <td>Resistance:</td>
-                                <td>{stats.resistance.toFixed(3)}Ω</td>
                             </tr>
                         </>
                         : undefined
