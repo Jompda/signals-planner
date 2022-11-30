@@ -96,7 +96,7 @@ import linkEditorTool from './ui/tools/linkeditortool'
 import { redo, undo } from './actionhistory'
 import './ui/menus/toolbar'
 import unitlinkicon from './assets/unitlink.png'
-import 'leaflet-ruler/src/leaflet-ruler'
+import { showLinkGraphToolMenu } from './ui/menus/linkgraphmenus'
 
 
 const map = new LMap('map', {
@@ -151,7 +151,7 @@ map.on('keydown', (e: LeafletKeyboardEvent) => {
 
 import { initGeoman } from './ui/geomancontroller'
 import { initMapHooks } from './ui/toolcontroller'
-import { showLinkGraphToolMenu } from './ui/menus/linkgraphmenus'
+import 'leaflet-ruler/src/leaflet-ruler'
 initGeoman(map)
 initMapHooks(map)
 control.ruler({ // NOTE: For some reason, you have to double click the map after enabling this tool to be able to disable it.
