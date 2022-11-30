@@ -33,6 +33,7 @@ configure({
  * Setup tiledata
  */
 import { setConfig as setTiledataConfig } from 'tiledata'
+import { SourceName } from './interfaces'
 const tileDataStorage = new Map<string, Record<SourceName, Int16Array>>()
 
 // Colors retrieved from: https://kartta.luke.fi/geoserver/MVMI/ows?service=WMS&version=1.3.0&request=GetLegendGraphic&format=image/png&width=20&height=20&layer=keskipituus_1519
@@ -151,7 +152,6 @@ map.on('keydown', (e: LeafletKeyboardEvent) => {
 import { initGeoman } from './ui/geomancontroller'
 import { initMapHooks } from './ui/toolcontroller'
 import { showLinkGraphToolMenu } from './ui/menus/linkgraphmenus'
-import { SourceName } from './interfaces'
 initGeoman(map)
 initMapHooks(map)
 control.ruler({ // NOTE: For some reason, you have to double click the map after enabling this tool to be able to disable it.
