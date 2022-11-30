@@ -6,9 +6,9 @@ import { getTopographyValues } from '../../topoutil'
 import { SourceName } from '../..'
 
 
-const breakpoints = [0, 150, 250, 350, 500]
+const _breakpoints = [0, 150, 250, 350, 500]
 function updateBreakpoint(i: number, value: number) {
-    breakpoints[i] = value
+    _breakpoints[i] = value
     layer.redraw()
 }
 
@@ -18,7 +18,7 @@ const layer = new TopoLayer({
     topotype: 'elevation',
     customization: {
         colors: ['#000000', '#00ff00', '#0000ff', '#ff0000', '#ffffff'],
-        breakpoints: breakpoints,
+        breakpoints: _breakpoints,
         breaksAt0: false,
         continuous: true
     }
@@ -32,27 +32,27 @@ const layer = new TopoLayer({
         max={500}
         breakpoints={[{
             name: 'Black',
-            value: breakpoints[0],
+            value: _breakpoints[0],
             update: (value: number) =>
                 updateBreakpoint(0, value)
         }, {
             name: 'Green',
-            value: breakpoints[1],
+            value: _breakpoints[1],
             update: (value: number) =>
                 updateBreakpoint(1, value)
         }, {
             name: 'Blue',
-            value: breakpoints[2],
+            value: _breakpoints[2],
             update: (value: number) =>
                 updateBreakpoint(2, value)
         }, {
             name: 'Red',
-            value: breakpoints[3],
+            value: _breakpoints[3],
             update: (value: number) =>
                 updateBreakpoint(3, value)
         }, {
             name: 'White',
-            value: breakpoints[4],
+            value: _breakpoints[4],
             update: (value: number) =>
                 updateBreakpoint(4, value)
         }]}
@@ -74,7 +74,7 @@ function CustomLayerOptions({ breakpoints, min, max }: {
     const values = new Array<React.MutableRefObject<HTMLInputElement>>()
     function updateElementValues() {
         for (let i = 0; i < breakpoints.length; i++)
-            sliders[i].current.value = values[i].current.value = String(breakpoints[i])
+            sliders[i].current.value = values[i].current.value = String(_breakpoints[i])
     }
     const elements = new Array<JSX.Element>()
     let i = 0
@@ -200,7 +200,7 @@ function fitToView(progressFunction: (state: number) => any, done: Function) {
 
 
 function scaleBreakpoints(min: number, max: number, avg: number, pad: number) {
-    const arr = breakpoints
+    const arr = _breakpoints
     const range = max - min
     const step = range / (arr.length - 1)
 
