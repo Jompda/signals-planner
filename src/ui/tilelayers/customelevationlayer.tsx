@@ -73,7 +73,7 @@ function CustomLayerOptions({ breakpoints, min, max }: {
     const sliders = new Array<React.MutableRefObject<HTMLInputElement>>()
     const values = new Array<React.MutableRefObject<HTMLInputElement>>()
     function updateElementValues() {
-        for (let i = 0; i < breakpoints.length; i++)
+        for (let i = 0; i < _breakpoints.length; i++)
             sliders[i].current.value = values[i].current.value = String(_breakpoints[i])
     }
     const elements = new Array<JSX.Element>()
