@@ -134,6 +134,8 @@ export interface MediumOptions {
     preset?: boolean
 }
 
+export type MediumType = 'radio' | 'cable'
+
 export interface RadioMediumOptions extends MediumOptions {
     /** Frequency in MHz. */
     frequency: number
@@ -193,7 +195,7 @@ export interface SaveLink {
 }
 
 export interface SaveMedium {
-    type: 'radio' | 'cable'
+    type: MediumType
     name: string
 }
 

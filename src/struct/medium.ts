@@ -1,9 +1,5 @@
-import { CableLinkEstimate, CableMediumOptions, LinkEstimateOptions, MediumResolvable, RadioLinkEstimate, RadioMediumOptions, SaveCableMedium, SaveRadioMedium } from '../interfaces'
+import { CableLinkEstimate, CableMediumOptions, LinkEstimateOptions, MediumResolvable, MediumType, RadioLinkEstimate, RadioMediumOptions, SaveCableMedium, SaveRadioMedium } from '../interfaces'
 import { createLosGetter } from '../linkutil'
-import Link from './link'
-
-
-export type MediumType = 'radio' | 'cable'
 
 
 export function resolveMedium(obj: MediumResolvable): RadioMedium | CableMedium {
@@ -31,7 +27,7 @@ export abstract class Medium {
         this.name = name
         this.preset = preset
     }
-    abstract estimateLinkStats(link: Link): any
+    abstract estimateLinkStats({ lineStats, values, emitterHeight }: LinkEstimateOptions): RadioLinkEstimate | CableLinkEstimate
     abstract serialize(): MediumResolvable
 }
 
