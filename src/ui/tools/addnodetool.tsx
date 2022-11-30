@@ -64,6 +64,7 @@ class AddNodeTool extends Tool {
         this.editDialog.setContent(container)
         createRoot(container).render(
             <MilSymbolEditor
+                disabledFields={['uniqueDesignation', 'higherFormation']}
                 milSymbol={this.symbol}
                 updateMilSymbol={(s: MilSymbol) => {
                     this.symbol = s;
