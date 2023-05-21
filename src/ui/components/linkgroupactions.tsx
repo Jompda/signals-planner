@@ -3,8 +3,9 @@ import { addAction } from '../../actionhistory'
 import { AddLinksAction, RemoveLinksAction } from '../../actions/linkactions'
 import { generateLinkLayers, generateMatrix } from '../../linkutil'
 import { resolveMedium } from '../../struct/medium'
-import { getLinkLayersByUnitLayers, getSelectedUnitLayers } from '../structurecontroller'
+import { getLinkLayersByUnitLayers, getSelectedUnitLayers, getSelectedUnits } from '../structurecontroller'
 import { MediumSelector } from './mediumselector'
+import { RadioLinkEstimate } from '../../interfaces'
 
 
 export function LinkGroupActions() {
@@ -98,8 +99,8 @@ export function LinkGroupActions() {
             <br />
             <button
             onClick={() => {
-                const unitLayers = getSelectedUnitLayers()
-                console.log(generateMatrix(unitLayers, getLinkLayersByUnitLayers(unitLayers)))
+                const links = getLinkLayersByUnitLayers(getSelectedUnitLayers()).map(linkLayer => linkLayer.link)
+                console.log(generateMatrix(getSelectedUnits(), links, (link) => String(Math.round((link.stats as RadioLinkEstimate).dB) || '')))
             }}
             >Export matrix</button>
         </>

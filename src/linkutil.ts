@@ -7,12 +7,34 @@ import { Medium } from './struct/medium'
 import Link from './struct/link'
 import LatLon from 'geodesy/latlon-spherical'
 import { latLng } from 'leaflet'
-import { RadioLinkEstimate, SourceName, TiledataLatLng } from './interfaces'
+import { CableLinkEstimate, RadioLinkEstimate, SourceName, TiledataLatLng } from './interfaces'
+import Unit from './struct/unit'
 
 
-export function generateMatrix(unitLayers: Array<UnitLayer>, linkLayers: Array<LinkLayer>) {
-    console.log('unitLayers:', unitLayers.length)
-    console.log('linkLayers:', linkLayers.length)
+export function generateMatrix(units: Array<Unit>, links: Array<Link>, linkToValue: (link: Link) => string) {
+    console.log('units:', units.length)
+    console.log('links:', links.length)
+
+    function unitPair(unit0: Unit, unit1: Unit) {
+        if (unit0.id > unit1.id) return unit1.id + '|' + unit0.id
+        else return unit0.id + '|' + unit1.id;
+    }
+
+    const pairs = new Map<string, string>()
+    for (const link of links) pairs.set(unitPair(link.unit0, link.unit1), linkToValue(link))
+
+    const lines = new Array<Array<string>>()
+    lines.push(['', ...units.map(unit => unit.id)])
+    for (const unit1 of units) {
+        const line = new Array<string>()
+        lines.push(line)
+        line.push(unit1.id)
+        for (const unit0 of units)
+            line.push(pairs.get(unitPair(unit0, unit1)) || '')
+    }
+
+    console.log(pairs)
+    return lines
 }
 
 
