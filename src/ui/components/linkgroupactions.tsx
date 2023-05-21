@@ -6,6 +6,7 @@ import { resolveMedium } from '../../struct/medium'
 import { getLinkLayersByUnitLayers, getSelectedUnitLayers, getSelectedUnits } from '../structurecontroller'
 import { MediumSelector } from './mediumselector'
 import { RadioLinkEstimate } from '../../interfaces'
+import { startDownload } from '../../util'
 
 
 export function LinkGroupActions() {
@@ -100,7 +101,9 @@ export function LinkGroupActions() {
             <button
             onClick={() => {
                 const links = getLinkLayersByUnitLayers(getSelectedUnitLayers()).map(linkLayer => linkLayer.link)
-                console.log(generateMatrix(getSelectedUnits(), links, (link) => String(Math.round((link.stats as RadioLinkEstimate).dB) || '')))
+                const matrix = generateMatrix(getSelectedUnits(), links, (link) => String(Math.round((link.stats as RadioLinkEstimate).dB) || ''))
+                const csvStr = matrix.map(line => line.join(',')).join('\n')
+                startDownload('matrix_' + new Date().toISOString() + '.csv', 'text/csv', csvStr)
             }}
             >Export matrix</button>
         </>
