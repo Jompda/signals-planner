@@ -142,8 +142,8 @@ export function toggleSelectAllUnitLayers() {
         allSelected = false
         break
     }
-    if (allSelected) selectAllUnitLayers()
-    else deselectAllUnitLayers()
+    if (allSelected) deselectAllUnitLayers()
+    else selectAllUnitLayers()
 }
 
 export function selectAllUnitLayers() {
