@@ -10,6 +10,12 @@ import { latLng } from 'leaflet'
 import { RadioLinkEstimate, SourceName, TiledataLatLng } from './interfaces'
 
 
+export function generateMatrix(unitLayers: Array<UnitLayer>, linkLayers: Array<LinkLayer>) {
+    console.log('unitLayers:', unitLayers.length)
+    console.log('linkLayers:', linkLayers.length)
+}
+
+
 export function generateLinkLayers(
     unitLayers: Array<UnitLayer>,
     minDist: number,

@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { addAction } from '../../actionhistory'
 import { AddLinksAction, RemoveLinksAction } from '../../actions/linkactions'
-import { generateLinkLayers } from '../../linkutil'
+import { generateLinkLayers, generateMatrix } from '../../linkutil'
 import { resolveMedium } from '../../struct/medium'
 import { getLinkLayersByUnitLayers, getSelectedUnitLayers } from '../structurecontroller'
 import { MediumSelector } from './mediumselector'
@@ -95,6 +95,13 @@ export function LinkGroupActions() {
                 ref={removeBtnRef}
                 onClick={removeLinks}
             >Remove selected links</button>
+            <br />
+            <button
+            onClick={() => {
+                const unitLayers = getSelectedUnitLayers()
+                console.log(generateMatrix(unitLayers, getLinkLayersByUnitLayers(unitLayers)))
+            }}
+            >Export matrix</button>
         </>
     )
 }
