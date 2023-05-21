@@ -131,11 +131,11 @@ export function showEditLinkMenu(map: LMap, linkLayer: LinkLayer) {
                 <h1>Edit Link:</h1>
                 <span>Source:</span>
                 <select disabled>
-                    <option>{unitIdentifier(linkLayer.unit0.unit)}</option>
+                    <option>{linkLayer.unit0.unit.unitIdentifier(true)}</option>
                 </select>
                 <span>Target:</span>
                 <select disabled>
-                    <option>{unitIdentifier(linkLayer.unit1.unit)}</option>
+                    <option>{linkLayer.unit1.unit.unitIdentifier(true)}</option>
                 </select>
                 <hr />
                 <span>Type:</span>
@@ -170,7 +170,7 @@ function LinkContructor({ unit, updateTargetUnit }: {
             <span>Source:</span>
             <select disabled>
                 <option>
-                    {unitIdentifier(unit)}
+                    {unit.unitIdentifier(true)}
                 </option>
             </select>
             <span>Target:</span>
@@ -193,7 +193,7 @@ function UnitSelector({ units, updateTargetUnit }: {
     const id = uuidv4()
 
     const unitElements = units.map((u: Unit, i: number) => {
-        const str = unitIdentifier(u)
+        const str = u.unitIdentifier(true)
         if (str.toLowerCase().indexOf(filter) < 0) return undefined
         return (
             <label key={i} className='unit-selector-button'>
@@ -225,24 +225,4 @@ function UnitSelector({ units, updateTargetUnit }: {
             </div>
         </>
     )
-}
-
-
-function LinkEditor({ }) {
-
-}
-
-
-function CableEditor({ }) {
-
-}
-
-
-function unitIdentifier(unit: Unit) {
-    const hstring = unit.toHierarchyString()
-    const opt = unit.symbol.getOptions(false)
-
-    if (isNaN(parseInt(opt.uniqueDesignation))) return hstring
-    if (opt.higherFormation != 'Node') return hstring
-    return 'Node ' + opt.uniqueDesignation
 }

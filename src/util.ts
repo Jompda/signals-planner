@@ -182,9 +182,9 @@ export const unitNames = [
     { name: 'Command', short: 'Cmd.' },
 ]
 
-export function symbolToHierarchyString(symbol: MilSymbol, undef?: string) {
+export function symbolToHierarchyString(symbol: MilSymbol, reverseOrder?: boolean, undef?: string) {
     const options = symbol.getOptions(false)
-    const hierarchy = new Array<String>()
+    let hierarchy = new Array<String>()
     const unitSize = options.sidc.charCodeAt(options.sidc.length - 1) - 65
 
     function add(specifier: string, i: number) {
@@ -201,7 +201,8 @@ export function symbolToHierarchyString(symbol: MilSymbol, undef?: string) {
             add(split[i], unitSize + 1 + i)
     }
 
-    return hierarchy.reverse().join(' | ')
+    if (reverseOrder) hierarchy = hierarchy.reverse()
+    return hierarchy.join(' | ')
 }
 
 

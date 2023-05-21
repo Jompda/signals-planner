@@ -94,7 +94,7 @@ export default class UnitLayer extends Marker {
     async openInfoPopup() {
         const topographyStr = await getTopographyStr(this.unit.latlng)
         const str = (
-            `${this.unit.toHierarchyString()}<br>` +
+            `${this.unit.unitIdentifier(false)}<br>` +
             `Id: ${this.unit.id}<br>` +
             '<hr>' +
             topographyStr

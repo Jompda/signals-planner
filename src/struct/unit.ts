@@ -19,8 +19,16 @@ export default class Unit {
     }
 
 
-    toHierarchyString() {
-        return symbolToHierarchyString(this.symbol, this.id)
+    toHierarchyString(reverseOrder?: boolean) {
+        return symbolToHierarchyString(this.symbol, reverseOrder, this.id)
+    }
+    unitIdentifier(reverseOrder?: boolean) {
+        const hstring = this.toHierarchyString(reverseOrder)
+        const opt = this.symbol.getOptions(false)
+    
+        if (isNaN(parseInt(opt.uniqueDesignation))) return hstring
+        if (opt.higherFormation != 'Node') return hstring
+        return 'Node ' + opt.uniqueDesignation
     }
 
 
