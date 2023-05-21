@@ -133,3 +133,23 @@ export function getSelectedUnitLayers() {
     }
     return units
 }
+
+
+export function toggleSelectAllUnitLayers() {
+    const unitLayers = getUnitLayers()
+    let allSelected = true
+    for (const unitLayer of unitLayers) if (!unitLayer.isSelected()) {
+        allSelected = false
+        break
+    }
+    if (allSelected) selectAllUnitLayers()
+    else deselectAllUnitLayers()
+}
+
+export function selectAllUnitLayers() {
+    for (const unitLayer of getUnitLayers()) unitLayer.select()
+}
+
+export function deselectAllUnitLayers() {
+    for (const unitLayer of getUnitLayers()) unitLayer.deselect()
+}

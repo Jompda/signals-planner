@@ -88,7 +88,7 @@ import './ui/menus/optionsmenu'
 import './ui/menus/layercontrolmenu'
 import './ui/menus/toolbar'
 import { initContextMenu } from './ui/menus/contextmenu'
-import { addTo as lgAddTo, getMap } from './ui/structurecontroller'
+import { addTo as lgAddTo, getMap, toggleSelectAllUnitLayers } from './ui/structurecontroller'
 import { baseLayers, overlays } from './ui/tilelayers'
 import defaultTool from './ui/tools/defaultool'
 import addNodeTool from './ui/tools/addnodetool'
@@ -146,6 +146,13 @@ map.on('keydown', (e: LeafletKeyboardEvent) => {
         event.ctrlKey && !event.shiftKey && !event.altKey
         && event.key.toUpperCase() == 'Y'
     ) redo()
+    if (
+        event.ctrlKey && !event.shiftKey && !event.altKey
+        && event.key.toLocaleUpperCase() == 'A'
+    ) {
+        event.preventDefault()
+        toggleSelectAllUnitLayers()
+    }
 })
 
 

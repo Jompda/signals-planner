@@ -8,30 +8,40 @@ import { addAction, redo, undo } from '../../actionhistory'
 import ImportAction from '../../actions/importaction'
 import RemoveAllAction from '../../actions/removeallaction'
 import { getDrawnLayers, getDrawStyleOptions } from '../geomancontroller'
+import { deselectAllUnitLayers, selectAllUnitLayers, toggleSelectAllUnitLayers } from '../structurecontroller'
 
+let i = 0;
 
 export function initContextMenu(map: LMap) {
     const mapOnlyItems: Array<ContextMenuItem> = [{
         text: 'Undo',
-        index: 1,
+        index: ++i,
         callback: undo
     }, {
         text: 'Redo',
-        index: 2,
+        index: ++i,
         callback: redo
     }, {
         separator: true,
-        index: 3
+        index: ++i
     }, {
         text: 'Add Unit',
-        index: 4,
+        index: ++i,
         callback: (e) => showAddUnitMenu(map, e)
     }, {
+        text: 'Select All Units',
+        index: ++i,
+        callback: selectAllUnitLayers
+    }, {
+        text: 'Deselect All Units',
+        index: ++i,
+        callback: deselectAllUnitLayers
+    }, {
         separator: true,
-        index: 5
+        index: ++i
     }, {
         text: 'Export',
-        index: 6,
+        index: ++i,
         callback: () => {
             const structure = serialize()
             const str = JSON.stringify({
@@ -44,7 +54,7 @@ export function initContextMenu(map: LMap) {
         }
     }, {
         text: 'Import',
-        index: 7,
+        index: ++i,
         callback: () => requestFileUpload('application/json', (content) => {
             const parsed = JSON.parse(content)
             const { units, links, center, zoom, drawings } = deserialize(parsed)
@@ -53,19 +63,19 @@ export function initContextMenu(map: LMap) {
         })
     }, {
         text: 'Remove All',
-        index: 8,
+        index: ++i,
         callback: () => addAction(new RemoveAllAction().forward())
     }, {
         separator: true,
-        index: 9
+        index: ++i
     }]
     const baseContextMenuItems: Array<ContextMenuItem> = [{
         text: 'Topography',
-        index: 10,
+        index: ++i,
         callback: (e) => openTopographyPopup(map, e.latlng)
     }, {
         text: 'Center map here',
-        index: 11,
+        index: ++i,
         callback: (e: LeafletMouseEvent) => map.panTo(e.latlng)
     }]
     setContextmenuItems(map, baseContextMenuItems)
