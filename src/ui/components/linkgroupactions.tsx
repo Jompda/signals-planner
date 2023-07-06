@@ -5,7 +5,7 @@ import { generateLinkLayers, generateMatrix } from '../../linkutil'
 import { resolveMedium } from '../../struct/medium'
 import { getLinkLayersByUnitLayers, getSelectedUnitLayers, getSelectedUnits } from '../structurecontroller'
 import { MediumSelector } from './mediumselector'
-import { RadioLinkEstimate } from '../../interfaces'
+import { CableLinkEstimate, RadioLinkEstimate } from '../../interfaces'
 import { startDownload } from '../../util'
 
 
@@ -99,13 +99,21 @@ export function LinkGroupActions() {
             >Remove selected links</button>
             <br />
             <button
-            onClick={() => {
-                const links = getLinkLayersByUnitLayers(getSelectedUnitLayers()).map(linkLayer => linkLayer.link)
-                const matrix = generateMatrix(getSelectedUnits(), links, (link) => String(Math.round((link.stats as RadioLinkEstimate).dB) || ''))
-                const csvStr = matrix.map(line => line.join(',')).join('\n')
-                startDownload('matrix_' + new Date().toISOString() + '.csv', 'text/csv', csvStr)
-            }}
-            >Export matrix</button>
+                onClick={() => {
+                    const links = getLinkLayersByUnitLayers(getSelectedUnitLayers()).map(linkLayer => linkLayer.link)
+                    const matrix = generateMatrix(getSelectedUnits(), links, (link) => String(Math.round((link.stats as RadioLinkEstimate).dB) || ''))
+                    const csvStr = matrix.map(line => line.join(',')).join('\n')
+                    startDownload('matrix_' + new Date().toISOString() + '.csv', 'text/csv', csvStr)
+                }}
+            >Export radio link matrix</button>
+            <button
+                onClick={() => {
+                    const links = getLinkLayersByUnitLayers(getSelectedUnitLayers()).map(linkLayer => linkLayer.link)
+                    const matrix = generateMatrix(getSelectedUnits(), links, (link) => String(Math.round((link.stats as CableLinkEstimate).length) || ''))
+                    const csvStr = matrix.map(line => line.join(',')).join('\n')
+                    startDownload('matrix_' + new Date().toISOString() + '.csv', 'text/csv', csvStr)
+                }}
+            >Export cable link matrix</button>
         </>
     )
 }
