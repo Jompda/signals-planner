@@ -4,17 +4,18 @@ import { AddDrawLayerAction, EditDrawLayersAction, RemoveDrawLayerAction } from 
 import { setLinkInteraction, setUnitInteraction } from './structurecontroller'
 
 
-let styleOptions: PathOptions | CircleMarkerOptions = {
+let styleOptions: CircleMarkerOptions = {
     color: 'black',
     opacity: 0.8,
     interactive: false,
     fillColor: 'black',
     fillOpacity: 0.1,
+    radius: 1
 }
 export function getDrawStyleOptions() {
     return styleOptions
 }
-export function setDrawStyleOptions(options: PathOptions | CircleMarkerOptions) {
+export function setDrawStyleOptions(options: CircleMarkerOptions) {
     styleOptions = options
     drawnLayers.setStyle(options)
 }
