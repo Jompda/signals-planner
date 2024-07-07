@@ -220,5 +220,12 @@ export function createDialog(map: LMap, options: LeafletDialogOptions) {
         }
     }
 
+    function eventFilter(e: KeyboardEvent) {
+        e.stopPropagation();
+    }
+
+    ((dialog as any)._contentNode as HTMLElement).onkeydown = eventFilter;
+    ((dialog as any)._contentNode as HTMLElement).onkeyup = eventFilter;
+
     return dialog
 }
