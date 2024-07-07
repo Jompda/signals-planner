@@ -17,6 +17,11 @@ export default class UnitLayer extends Marker {
     public unit: Unit
     public svg: HTMLElement
     constructor(unit: Unit) {
+        unit.symbol.setOptions({
+            infoBackground: '#ffffffaa',
+            outlineColor: '#000000aa',
+            outlineWidth: 2
+        })
         const { icon, svg } = createIcon(unit.symbol, iconSize);
         (svg as any).unitid = unit.id
 
