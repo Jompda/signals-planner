@@ -13,9 +13,9 @@ import { addAction } from '../../actionhistory'
 
 export function showAddUnitMenu(map: LMap, e: LeafletMouseEvent) {
     const dialog = createDialog(map, {
-        size: [400, 400],
+        size: [400, 420],
         maxSize: [400, 700],
-        minSize: [400, 400],
+        minSize: [400, 420],
         anchor: [innerHeight / 2 - 350, 0],
         position: 'topleft',
         initOpen: true
@@ -60,9 +60,9 @@ export function showAddUnitMenu(map: LMap, e: LeafletMouseEvent) {
 
 export function showEditUnitMenu(map: LMap, unitLayer: UnitLayer) {
     const dialog = createDialog(map, {
-        size: [400, 400],
+        size: [400, 420],
         maxSize: [400, 700],
-        minSize: [400, 400],
+        minSize: [400, 420],
         anchor: [innerHeight / 2 - 350, 0],
         position: 'topleft',
         initOpen: true,

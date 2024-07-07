@@ -125,13 +125,16 @@ export function MilSymbolEditor({ milSymbol, updateMilSymbol, disabledFields }: 
     updateMilSymbol(symbol)
 
     return (
-        <div className='milsymbol-editor'>
-            <div className='milsymbol-editor-fields'>
-                {inputFields}
-            </div>
-            <div>
-                <img src={svg} />
-            </div>
+        <div>
+            <a href="https://spatialillusions.com/unitgenerator/" target="_blank">https://spatialillusions.com/unitgenerator/</a>
+            <div className='milsymbol-editor'>
+                <div className='milsymbol-editor-fields'>
+                    {inputFields}
+                </div>
+                <div>
+                    <img src={svg} />
+                </div>
+            </div>  
         </div>
     )
 }
