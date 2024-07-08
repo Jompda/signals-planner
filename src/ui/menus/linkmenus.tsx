@@ -206,7 +206,13 @@ function UnitSelector({ units, updateTargetUnit }: {
                         setSelected(u.id)
                     }}
                 />
-                <div><p>{str}</p></div>
+                <div>
+                    <img
+                        src={u.symbol.toDataURL()}
+                        style={{height: '2em'}}
+                    />
+                    <p>| {str}</p>
+                </div>
             </label>
         )
     }).filter((el?: JSX.Element) => el)
