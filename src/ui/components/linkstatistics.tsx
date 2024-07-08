@@ -144,7 +144,7 @@ export function LinkStatistics({ linkLayer, setHighlightLatLng }: {
                             data: losElevations,
                             pointRadius: 0,
                             pointHitRadius: 0,
-                            borderColor: linkLayer.options.color,
+                            borderColor: linkLayer.line.options.color,
                             spanGaps: true
                         }
                     ]

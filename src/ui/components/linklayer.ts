@@ -1,4 +1,4 @@
-import { LeafletMouseEvent, Polyline } from 'leaflet'
+import { LeafletMouseEvent, LayerGroup, Polyline, Marker, DivIcon, DomUtil } from 'leaflet'
 import { addAction } from '../../actionhistory'
 import { RemoveLinkAction } from '../../actions/linkactions'
 import Link from '../../struct/link'
@@ -9,19 +9,22 @@ import { linkLayerClick, linkLayerMouseDown, linkLayerMouseUp } from '../toolcon
 import UnitLayer from './unitlayer'
 
 
-export default class LinkLayer extends Polyline {
+export default class LinkLayer extends LayerGroup {
     public link: Link
     public unit0: UnitLayer
     public unit1: UnitLayer
+    public line: Polyline
+    public marker: Marker
+    public element: HTMLElement
     constructor(link: Link, unit0: UnitLayer, unit1: UnitLayer, initUpdate = true) {
         const endPoints = getEndPoints(unit0, unit1)
-        super(endPoints, {
-            pmIgnore: true,
-            color: 'black',
-            opacity: 0.75,
-            interactive: isLinkInteractionEnabled(),
-            contextmenu: true,
-            contextmenuItems: [{
+        super()
+
+        this.link = link
+        this.unit0 = unit0
+        this.unit1 = unit1
+
+        const contextmenuItems = [{
                 text: 'Info',
                 index: 0,
                 callback: () => showLinkStatistics(this._map, this)
@@ -39,12 +42,32 @@ export default class LinkLayer extends Polyline {
             }, {
                 separator: true,
                 index: 4
-            }]
-        })
+        }]
 
-        this.link = link
-        this.unit0 = unit0
-        this.unit1 = unit1
+        this.line = new Polyline(endPoints, {
+            pmIgnore: true,
+            color: 'black',
+            opacity: 0.75,
+            interactive: isLinkInteractionEnabled(),
+            contextmenu: true,
+            contextmenuItems
+        })
+        this.addLayer(this.line)
+
+        this.element = DomUtil.create('span', 'unit-marker')
+        this.element.innerText = this.link.medium.name
+        this.marker = new Marker(endPoints[0], {
+            pmIgnore: true,
+            opacity: 0.75,
+            interactive: isLinkInteractionEnabled(),
+            contextmenu: true,
+            contextmenuItems,
+            icon: new DivIcon({
+                html: this.element,
+                iconAnchor: [8, 8]
+            })
+        })
+        this.addLayer(this.marker)
 
         this.addHandlers()
         if (initUpdate) this.update()
@@ -91,7 +114,9 @@ export default class LinkLayer extends Polyline {
             this.unit1 = temp
         }
         const endPoints = getEndPoints(this.unit0, this.unit1)
-        this.setLatLngs(endPoints)
+        this.line.setLatLngs(endPoints)
+        this.marker.setLatLng([(endPoints[0].lat + endPoints[1].lat) / 2, (endPoints[0].lng + endPoints[1].lng) / 2])
+        this.element.innerText = this.link.medium.name[0]
         const { values, lineStats, stats } = await this.link.calculate()
 
         let color: string, weight: number
@@ -114,7 +139,7 @@ export default class LinkLayer extends Polyline {
             color = 'gray'
             weight = 12
         }
-        this.setStyle({
+        this.line.setStyle({
             weight,
             color
         })
