@@ -36,7 +36,7 @@ class AddNodeTool extends Tool {
         this.symbol = symbol
     }
     _click(e: LeafletMouseEvent) {
-        const symbol = new MilSymbol(this.symbol.getOptions(false))
+        const symbol = new MilSymbol(this.symbol.getOptions())
         const unitId = getNewUnitId()
         symbol.setOptions({
             uniqueDesignation: unitId,
@@ -64,7 +64,6 @@ class AddNodeTool extends Tool {
         this.editDialog.setContent(container)
         createRoot(container).render(
             <MilSymbolEditor
-                disabledFields={['uniqueDesignation', 'higherFormation']}
                 milSymbol={this.symbol}
                 updateMilSymbol={(s: MilSymbol) => {
                     this.symbol = s;

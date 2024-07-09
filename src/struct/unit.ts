@@ -36,7 +36,7 @@ export default class Unit {
         return {
             id: this.id,
             latlng: this.latlng,
-            symbolOptions: filterEmpty(this.symbol.getOptions(false))
+            symbolOptions: filterEmpty(this.symbol.getOptions())
         } as SaveUnit
     }
     static deserialize(obj: SaveUnit) {
