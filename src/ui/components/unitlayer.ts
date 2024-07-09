@@ -4,7 +4,7 @@ import Unit from '../../struct/unit'
 import { showEditUnitMenu } from '../menus/unitmenus'
 import { showAddLinkMenu } from '../menus/linkmenus'
 import { getActiveTool, unitLayerClick, unitLayerMouseDown, unitLayerMouseUp } from '../toolcontroller'
-import { getTopographyStr } from '../../topoutil'
+import { getPointInfo } from '../../topoutil'
 import { addAction } from '../../actionhistory'
 import { MoveUnitAction, RemoveUnitAction } from '../../actions/unitactions'
 import { isUnitInteractionEnabled } from '../structurecontroller'
@@ -97,14 +97,17 @@ export default class UnitLayer extends Marker {
     }
 
     async openInfoPopup() {
-        const topographyStr = await getTopographyStr(this.unit.latlng)
-        const str = (
-            `${this.unit.unitIdentifier(false)}<br>` +
-            `Id: ${this.unit.id}<br>` +
-            '<hr>' +
-            topographyStr
-        )
-        this.bindPopup(str)
+        const info = await getPointInfo(this.unit.latlng) as any
+        info.unit = this.unit.unitIdentifier(false)
+        info.id = this.unit.id
+        const div = DomUtil.create('div', 'info-table')
+        for (const field in info) {
+            const a = DomUtil.create('span'), b = DomUtil.create('span')
+            a.innerText = field; b.innerText = info[field]
+            div.append(a, b)
+        }
+        
+        this.bindPopup(div)
         this.openPopup()
         this.unbindPopup()
     }

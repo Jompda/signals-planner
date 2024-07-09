@@ -1,7 +1,7 @@
 import { latlngToTileCoords, latlngToXYOnTile, getTiledata } from 'tiledata'
 import * as mgrs from 'mgrs'
 import * as utm from 'utm'
-import { Map as LMap, LatLng as LLatLng, latLng, Topography, popup } from 'leaflet'
+import { Map as LMap, LatLng as LLatLng, latLng, Topography, popup, DomUtil } from 'leaflet'
 import { asyncOperation, getMaxWorkers, round, workers } from './util'
 import { SourceName, TiledataLatLng } from './interfaces'
 
@@ -14,10 +14,19 @@ export async function getTopographyValues<SourceName extends string>(sourceNames
 }
 
 
-export async function openTopographyPopup(map: LMap, latlng: LLatLng) {
+export async function openInfoPopup(map: LMap, latlng: LLatLng) {
+    const info = await getPointInfo(latlng) as any
+    const div = DomUtil.create('div', 'info-table')
+
+    for (const field in info) {
+        const a = DomUtil.create('span'), b = DomUtil.create('span')
+        a.innerText = field; b.innerText = info[field]
+        div.append(a, b)
+    }
+
     popup()
         .setLatLng(latlng)
-        .setContent(await getTopographyStr(latlng) as string)
+        .setContent(div)
         .openOn(map)
 }
 
@@ -73,22 +82,22 @@ export function mapLatLngsToTiles(latlngs: Array<LatLng>, zoom: number) {
 }
 
 
-export async function getTopographyStr(latlng: LLatLng) {
+export async function getPointInfo(latlng: LLatLng) {
     const [topography, treeHeight] = await Promise.all([
         Topography.getTopography(latlng),
         getTopographyValues(['treeHeight'], latlng, 10)
     ])
-    let str =
-        'Lat: ' + String(round(latlng.lat, 6)).padEnd(9, '0') + '<br>' +
-        'Lng: ' + String(round(latlng.lng, 6)).padEnd(9, '0') + '<br>' +
-        'MGRS: ' + mgrs.forward([latlng.lng, latlng.lat]) + '<br>' +
-        'UTM: ' + latlngToUtm(latlng) + '<br>' +
-        'Tree height: ' + treeHeight[0] + 'm<br>' +
-        'Elevation: ' + round(topography.elevation) + 'm<br>' +
-        'Slope: ' + round(topography.slope) + '°<br>' +
-        'Aspect: ' + round(topography.aspect) + '°<br>' +
-        'Resolution: ' + round(topography.resolution)
-    return str
+    return {
+        lat: String(round(latlng.lat, 6)).padEnd(9, '0'),
+        lng: String(round(latlng.lng, 6)).padEnd(9, '0'),
+        mgrs: mgrs.forward([latlng.lng, latlng.lat]),
+        utm: latlngToUtm(latlng),
+        treeHeight: treeHeight[0] + 'm',
+        elevation: round(topography.elevation) + 'm',
+        slope: round(topography.slope) + '°',
+        aspect: round(topography.aspect) + '°',
+        resolution: round(topography.resolution)
+    }
 }
 
 export function latlngToUtm(latlng: LatLng) {

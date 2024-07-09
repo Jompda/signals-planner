@@ -3,7 +3,7 @@ import { ContextMenuItem } from '../../interfaces'
 import { deserialize, serialize } from '../../struct'
 import { geoJsonToLayers, layersToGeoJson, requestFileUpload, startDownload } from '../../util'
 import { showAddUnitMenu } from './unitmenus'
-import { openTopographyPopup } from '../../topoutil'
+import { openInfoPopup } from '../../topoutil'
 import { addAction, redo, undo } from '../../actionhistory'
 import ImportAction from '../../actions/importaction'
 import RemoveAllAction from '../../actions/removeallaction'
@@ -72,7 +72,7 @@ export function initContextMenu(map: LMap) {
     const baseContextMenuItems: Array<ContextMenuItem> = [{
         text: 'Topography',
         index: ++i,
-        callback: (e) => openTopographyPopup(map, e.latlng)
+        callback: (e) => openInfoPopup(map, e.latlng)
     }, {
         text: 'Center map here',
         index: ++i,

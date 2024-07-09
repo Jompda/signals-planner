@@ -4,6 +4,9 @@ import { Symbol as MilSymbol } from 'milsymbol'
 import { filterEmpty, symbolToHierarchyString } from '../util'
 
 
+const defaultSymbolOptions = new MilSymbol('').getOptions() as any
+
+
 export default class Unit {
     public id: string
     public latlng: LatLng
@@ -33,10 +36,15 @@ export default class Unit {
 
 
     serialize() {
+        const filtered = filterEmpty(this.symbol.getOptions())
+        for (const i in filtered)
+            if (filtered[i] === defaultSymbolOptions[i])
+                filtered[i] = undefined
+
         return {
             id: this.id,
             latlng: this.latlng,
-            symbolOptions: filterEmpty(this.symbol.getOptions())
+            symbolOptions: filtered
         } as SaveUnit
     }
     static deserialize(obj: SaveUnit) {

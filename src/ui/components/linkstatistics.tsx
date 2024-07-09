@@ -176,17 +176,17 @@ export function LinkStatistics({ linkLayer, setHighlightLatLng }: {
             <table className='link-stats'>
                 <tbody>
                     <tr>
-                        <td>Distance:</td>
+                        <td>Distance</td>
                         <td>{Math.round(lineStats.distance)}m</td>
                     </tr>
                     {'dB' in stats
                         ? <>
                             <tr>
-                                <td>ITM Loss:</td>
+                                <td>ITM Loss</td>
                                 <td>{Math.round(stats.itmLoss)}dB</td>
                             </tr>
                             <tr>
-                                <td>dB:</td>
+                                <td>dB</td>
                                 <td>{Math.round(stats.dB)}dB</td>
                             </tr>
                         </>
@@ -195,11 +195,11 @@ export function LinkStatistics({ linkLayer, setHighlightLatLng }: {
                     {'cables' in stats
                         ? <>
                             <tr>
-                                <td>Cables:</td>
+                                <td>Cables</td>
                                 <td>{stats.cables}</td>
                             </tr>
                             <tr>
-                                <td>Length:</td>
+                                <td>Length</td>
                                 <td>{stats.length}m</td>
                             </tr>
                         </>
@@ -210,23 +210,23 @@ export function LinkStatistics({ linkLayer, setHighlightLatLng }: {
             <table className='link-stats'>
                 <tbody>
                     <tr>
-                        <td>Position:</td>
+                        <td>Position</td>
                         <td ref={positionRef}></td>
                     </tr>
                     <tr>
-                        <td>Elevation:</td>
+                        <td>Elevation</td>
                         <td ref={elevationRef}></td>
                     </tr>
                     <tr>
-                        <td>Tree height:</td>
+                        <td>Tree height</td>
                         <td ref={treeHeightRef}></td>
                     </tr>
                     <tr>
-                        <td>Sum:</td>
+                        <td>Sum</td>
                         <td ref={sumRef}></td>
                     </tr>
                     <tr>
-                        <td>Line-of-sight elevation:</td>
+                        <td>Line-of-sight elevation</td>
                         <td ref={losRef}></td>
                     </tr>
                 </tbody>

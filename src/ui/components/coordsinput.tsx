@@ -73,7 +73,7 @@ export function CoordsInput({ latlng, mgrs, utm, updateLatLng }: {
         <div className='coords-input-menu'>
             <div className='coords-input-menu-latlng'>
                 <div>
-                    <span>Lat:</span>
+                    <span>Lat</span>
                     <input
                         ref={latRef}
                         type='text'
@@ -86,7 +86,7 @@ export function CoordsInput({ latlng, mgrs, utm, updateLatLng }: {
                     />
                 </div>
                 <div>
-                    <span>Lng:</span>
+                    <span>Lng</span>
                     <input
                         ref={lngRef}
                         type='text'
@@ -107,7 +107,7 @@ export function CoordsInput({ latlng, mgrs, utm, updateLatLng }: {
                 }}
             >Empty</button>
 
-            <span>MGRS:</span>
+            <span>MGRS</span>
             <input
                 ref={mgrsRef}
                 type='text'
@@ -125,7 +125,7 @@ export function CoordsInput({ latlng, mgrs, utm, updateLatLng }: {
                 }}
             >Empty</button>
 
-            <span>UTM:</span>
+            <span>UTM</span>
             <input
                 ref={utmRef}
                 type='text'

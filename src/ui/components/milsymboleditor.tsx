@@ -93,7 +93,7 @@ export function MilSymbolEditor({ milSymbol, updateMilSymbol }: {
     const inputFields = new Array<JSX.Element>()
     for (const field of fields) {
         const fieldRef = useRef<HTMLInputElement>()
-        inputFields.push(<span key={field.option + 1}>{field.title}:</span>)
+        inputFields.push(<span key={field.option + 1}>{field.title}</span>)
         inputFields.push(
             <input
                 key={field.option + 2}
@@ -128,9 +128,11 @@ export function MilSymbolEditor({ milSymbol, updateMilSymbol }: {
             <div className='milsymbol-editor'>
                 <div className='milsymbol-editor-fields'>
                     {inputFields}
-                    <select defaultValue="Light" onChange={e => {
-                        soptions.colorMode = e.target.value
-                        updateSvg()
+                    <span>Color</span>
+                    <select defaultValue="Light"
+                        onChange={e => {
+                            soptions.colorMode = e.target.value
+                            updateSvg()
                     }}>
                         <option>Light</option>
                         <option>Medium</option>

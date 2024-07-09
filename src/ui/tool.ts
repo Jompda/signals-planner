@@ -1,7 +1,7 @@
 import { LatLngBounds, LeafletKeyboardEvent, Map as LMap } from 'leaflet'
 import { LeafletMouseEvent } from 'leaflet'
 import { ToolOptions, IToolbarItem } from '../interfaces'
-import { openTopographyPopup } from '../topoutil'
+import { openInfoPopup } from '../topoutil'
 import LinkLayer from './components/linklayer'
 import UnitLayer from './components/unitlayer'
 import { showLinkStatistics } from './menus/linkstatisticsmenu'
@@ -83,7 +83,7 @@ export default class Tool implements IToolbarItem {
     }
     _middlemouseclick(e: LeafletMouseEvent) {
         if (this.mmbInfo && (e.originalEvent.target as HTMLElement).id === 'map')
-            openTopographyPopup(getMap(), e.latlng)
+            openInfoPopup(getMap(), e.latlng)
     }
     _dblclick(e: LeafletMouseEvent) { }
     _mousedown(e: LeafletMouseEvent) { }
