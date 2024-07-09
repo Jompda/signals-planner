@@ -1,4 +1,4 @@
-import { LeafletMouseEvent, LayerGroup, Polyline, Marker, DivIcon, DomUtil } from 'leaflet'
+import { LeafletMouseEvent, FeatureGroup, Polyline, Marker, DivIcon, DomUtil } from 'leaflet'
 import { addAction } from '../../actionhistory'
 import { RemoveLinkAction } from '../../actions/linkactions'
 import Link from '../../struct/link'
@@ -9,7 +9,7 @@ import { linkLayerClick, linkLayerMouseDown, linkLayerMouseUp } from '../toolcon
 import UnitLayer from './unitlayer'
 
 
-export default class LinkLayer extends LayerGroup {
+export default class LinkLayer extends FeatureGroup {
     public link: Link
     public unit0: UnitLayer
     public unit1: UnitLayer
@@ -76,8 +76,8 @@ export default class LinkLayer extends LayerGroup {
 
     addHandlers() {
         this.on('click', this.click, this)
-        this.on('mousedown', this.mousedown)
-        this.on('mouseup', this.mouseup)
+        this.on('mousedown', this.mousedown, this)
+        this.on('mouseup', this.mouseup, this)
 
         this.unit0.on('dragend', this.update, this)
         this.unit1.on('dragend', this.update, this)
