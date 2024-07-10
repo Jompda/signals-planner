@@ -82,7 +82,7 @@ export function MilSymbolEditor({ milSymbol, updateMilSymbol }: {
     const soptions = symbol.getOptions()
 
 
-    const fields: Array<Field> = [
+    const textFields: Array<Field> = [
         { title: 'SIDC', option: 'sidc' },
         { title: 'Unique Designation', option: 'uniqueDesignation' },
         { title: 'Higher Formation', option: 'higherFormation' },
@@ -91,7 +91,7 @@ export function MilSymbolEditor({ milSymbol, updateMilSymbol }: {
         { title: 'Additional Information', option: 'additionalInformation' }
     ]
     const inputFields = new Array<JSX.Element>()
-    for (const field of fields) {
+    for (const field of textFields) {
         const fieldRef = useRef<HTMLInputElement>()
         inputFields.push(<span key={field.option + 1}>{field.title}</span>)
         inputFields.push(
@@ -129,7 +129,7 @@ export function MilSymbolEditor({ milSymbol, updateMilSymbol }: {
                 <div className='milsymbol-editor-fields'>
                     {inputFields}
                     <span>Color</span>
-                    <select defaultValue="Light"
+                    <select defaultValue={soptions.colorMode as string}
                         onChange={e => {
                             soptions.colorMode = e.target.value
                             updateSvg()
