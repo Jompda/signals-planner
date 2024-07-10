@@ -390,8 +390,19 @@ body {
 .unit-selected {
     outline-offset: 1px;
     outline: 2px dashed white;
-    box-shadow:
-        0 0 0 4px rgba(0, 0, 0, 25%);
+    box-shadow: 0 0 0 4px rgba(0, 0, 0, 50%);
+
+    /* src: https://stackoverflow.com/questions/14387690/how-can-i-show-only-corner-borders */
+    /*--s: 12px;
+    padding: 2px;
+    margin-left: -6px;
+    margin-top: -6px;
+    border: 4px solid black;
+    -webkit-mask:
+    conic-gradient(at var(--s) var(--s),#0000 75%,#000 0)
+    0 0/calc(100% - var(--s)) calc(100% - var(--s)),
+    linear-gradient(#000 0 0) content-box;
+    */
 }
 
 
