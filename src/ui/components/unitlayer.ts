@@ -16,13 +16,14 @@ const iconSize = 40
 export default class UnitLayer extends Marker {
     public unit: Unit
     public svg: HTMLElement
+    public hitbox: HTMLDivElement
     constructor(unit: Unit) {
         unit.symbol.setOptions({
             infoBackground: '#ffffffaa',
             outlineColor: '#000000aa',
             outlineWidth: 2
         })
-        const { icon, svg } = createIcon(unit.symbol, iconSize);
+        const { icon, svg, hitbox } = createIcon(unit.symbol, iconSize);
         (svg as any).unitid = unit.id
 
         super(unit.latlng, {
@@ -62,6 +63,7 @@ export default class UnitLayer extends Marker {
         this.unit = unit
         this.svg = svg
         this.svg.id = this.unit.id
+        this.hitbox = hitbox
 
         this.addHandlers()
     }
@@ -129,20 +131,20 @@ export default class UnitLayer extends Marker {
 
 
     select() {
-        if (!this.svg.classList.contains('unit-selected'))
-            this.svg.classList.add('unit-selected')
+        if (!this.hitbox.classList.contains('unit-selected'))
+            this.hitbox.classList.add('unit-selected')
     }
     deselect() {
-        if (this.svg.classList.contains('unit-selected'))
-            this.svg.classList.remove('unit-selected')
+        if (this.hitbox.classList.contains('unit-selected'))
+            this.hitbox.classList.remove('unit-selected')
     }
     toggleSelect() {
-        if (this.svg.classList.contains('unit-selected'))
-            this.svg.classList.remove('unit-selected')
-        else this.svg.classList.add('unit-selected')
+        if (this.hitbox.classList.contains('unit-selected'))
+            this.hitbox.classList.remove('unit-selected')
+        else this.hitbox.classList.add('unit-selected')
     }
     isSelected() {
-        return this.svg.classList.contains('unit-selected')
+        return this.hitbox.classList.contains('unit-selected')
     }
 }
 
