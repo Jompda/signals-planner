@@ -503,3 +503,7 @@ body {
 .info-table > *:nth-child(4n+2) {
     background-color: lightgray;
 }
+
+.leaflet-bottom {
+    display: flex;
+}

@@ -42,6 +42,9 @@ declare module 'leaflet' {
         export class CustomToolbar {
             constructor(items: Array<IToolbarItem>, options?: ControlOptions)
         }
+        export class ZoomRatio {
+            constructor(options?: ControlOptions)
+        }
     }
     export namespace control {
         export function layerControl(layers: Record<string, Layer>, options: ControlOptions): Control
@@ -49,6 +52,7 @@ declare module 'leaflet' {
         export function customToolbar(items: Array<IToolbarItem>, options?: ControlOptions): Control
         export function dialog(options?: LeafletDialogOptions): LeafletDialog
         export function ruler(options?: any): Control
+        export function zoomRatio(options?: ControlOptions): Control
     }
 }
 

@@ -109,11 +109,16 @@ const map = new LMap('map', {
 
 initContextMenu(map)
 lgAddTo(map)
-control.scale({ imperial: false }).addTo(map);
+
+control.scale({ imperial: false }).addTo(map)
+import './ui/zoomRatio'
+control.zoomRatio().addTo(map)
 
 baseLayers.OSM.addTo(map)
 
-
+/* NOTE: Possibility to include some menus such as settings with this.
+ * https://github.com/turbo87/sidebar-v2/
+ */
 control.optionsMenu({ position: 'topright' }).addTo(map);
 control.layerControl({ ...baseLayers, ...overlays }, { position: 'topright' }).addTo(map)
 control.customToolbar([
