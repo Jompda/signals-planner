@@ -113,7 +113,6 @@ function toolbarItemsToJSX(items: Array<IToolbarItem>, setSelection: (item: Tool
     const elements = new Array<JSX.Element>()
     let i = 0
     for (const itemOptions of items as Array<IToolbarItem>) {
-        console.log(itemOptions)
         const item = itemOptions.items !== undefined
             ? new ToolbarCategory(itemOptions)
             : new ToolbarItem(itemOptions)

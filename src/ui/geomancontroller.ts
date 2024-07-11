@@ -40,9 +40,10 @@ drawnLayers.on('pm:textchange', (e) => {
         return (e.layer as any).skipTextChange = false
     if (editAction) addAction(editAction.saveNew())
 })
-drawnLayers.on('pm:edit', () =>
-    editAction.change = true
-)
+drawnLayers.on('pm:edit', () => {
+    // BUG: exiting text mode causes pm:edit to fire before editAction gets created
+    if(editAction) editAction.change = true
+})
 
 export function getDrawnLayers() {
     return drawnLayers
