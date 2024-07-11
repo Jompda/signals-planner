@@ -9,10 +9,12 @@ control.customToolbar = function (items: Array<IToolbarItem>, options?: ControlO
 
 
 export class ToolbarItem {
+    public name: string
     public tooltip?: string
     public icon: JSX.Element
     public radio: boolean
     constructor(options: IToolbarItem) {
+        this.name = options.name
         this.tooltip = options.tooltip
         this.icon = typeof options.icon == 'string'
             ? <span>{options.icon}</span>
@@ -111,6 +113,7 @@ function toolbarItemsToJSX(items: Array<IToolbarItem>, setSelection: (item: Tool
     const elements = new Array<JSX.Element>()
     let i = 0
     for (const itemOptions of items as Array<IToolbarItem>) {
+        console.log(itemOptions)
         const item = itemOptions.items !== undefined
             ? new ToolbarCategory(itemOptions)
             : new ToolbarItem(itemOptions)
@@ -152,7 +155,7 @@ function ToolbarRadioButton({ item, className, setSelection }: {
                 {
                     !item.radio ||
                     <>
-                        <input type="radio" name="ctoolbar-radio" />
+                        <input id={'ctoolbar-' + item.name} type="radio" name="ctoolbar-radio" />
                         <div></div>
                     </>
                 }

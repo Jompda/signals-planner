@@ -111,7 +111,7 @@ initContextMenu(map)
 lgAddTo(map)
 
 control.scale({ imperial: false }).addTo(map)
-import './ui/zoomRatio'
+import './ui/zoomratio'
 control.zoomRatio().addTo(map)
 
 baseLayers.OSM.addTo(map)
@@ -124,12 +124,14 @@ control.layerControl({ ...baseLayers, ...overlays }, { position: 'topright' }).a
 control.customToolbar([
     defaultTool,
     {
+        name: 'linktools',
         tooltip: 'Link Tools',
         icon: <img src={unitlinkicon} />,
         radio: false,
         items: [
             linkEditorTool,
             {
+                name: 'linkgraphs',
                 tooltip: 'Link Graphs',
                 icon: <i className='fa fa-diagram-project' />,
                 radio: false,
@@ -139,6 +141,8 @@ control.customToolbar([
     },
     addNodeTool
 ], { position: 'topleft' }).addTo(map)
+// bruh
+setTimeout(() => document.getElementById('ctoolbar-default').setAttribute('checked', ''))
 
 
 map.on('keydown', (e: LeafletKeyboardEvent) => {

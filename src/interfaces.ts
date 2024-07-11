@@ -80,6 +80,7 @@ export interface LeafletDialog extends Control {
 
 
 export interface IToolbarItem {
+    name: string
     tooltip?: string
     icon: string | JSX.Element
     /** Defaults to true */
@@ -91,6 +92,7 @@ export interface IToolbarItem {
 
 
 export interface ToolOptions {
+    name: string
     tooltip?: string
     icon: string | JSX.Element
     items?: Array<IToolbarItem>

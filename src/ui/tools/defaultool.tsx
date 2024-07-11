@@ -10,6 +10,7 @@ import { getUnitLayers } from '../structurecontroller'
 class DefaultTool extends Tool {
     constructor() {
         super({
+            name: 'default',
             tooltip: 'Default',
             icon: <i className='fa fa-mouse-pointer' />,
             mmbInfo: true,

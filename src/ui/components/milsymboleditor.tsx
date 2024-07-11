@@ -88,7 +88,8 @@ export function MilSymbolEditor({ milSymbol, updateMilSymbol }: {
         { title: 'Higher Formation', option: 'higherFormation' },
         { title: 'Reinforced or Reduced', option: 'reinforcedReduced' },
         { title: 'Type', option: 'type' },
-        { title: 'Additional Information', option: 'additionalInformation' }
+        { title: 'Additional Information', option: 'additionalInformation' },
+        { title: 'Date Time Group', option: 'dtg' }
     ]
     const inputFields = new Array<JSX.Element>()
     for (const field of textFields) {

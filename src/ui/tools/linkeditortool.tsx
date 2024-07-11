@@ -21,9 +21,11 @@ class LinkEditorTool extends Tool {
     public editDialog: LeafletDialog
     constructor() {
         super({
+            name: 'linkeditor',
             tooltip: 'Link Editor',
             icon: <i className='fa fa-pen' />,
             items: [{
+                name: 'linkeditoredit',
                 icon: 'Edit',
                 radio: false,
                 addHooks: () => {

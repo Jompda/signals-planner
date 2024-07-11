@@ -31,6 +31,7 @@ const leafletMapEvents = [
  * If a method without the underscore exists, it is called after the internal event handler is called.
  */
 export default class Tool implements IToolbarItem {
+    public name: string
     public tooltip: string
     public icon: string | JSX.Element
     public items: Array<IToolbarItem>
@@ -40,6 +41,7 @@ export default class Tool implements IToolbarItem {
     public mmbInfo: boolean
     public areaSelect: boolean
     constructor(options: ToolOptions) {
+        this.name = options.name
         this.tooltip = options.tooltip
         this.icon = options.icon
         this.items = options.items
