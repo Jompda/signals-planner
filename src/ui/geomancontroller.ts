@@ -6,11 +6,11 @@ import { setLinkInteraction, setUnitInteraction } from './structurecontroller'
 
 let styleOptions: CircleMarkerOptions = {
     color: 'black',
-    opacity: 0.8,
+    opacity: 1,
     interactive: false,
-    fillColor: 'black',
-    fillOpacity: 0.1,
-    radius: 1
+    fill: false,
+    radius: 1,
+    weight: 4
 }
 export function getDrawStyleOptions() {
     return styleOptions
