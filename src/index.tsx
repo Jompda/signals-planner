@@ -142,6 +142,7 @@ control.customToolbar([
     addNodeTool
 ], { position: 'topleft' }).addTo(map)
 // bruh
+setActiveTool(defaultTool)
 setTimeout(() => document.getElementById('ctoolbar-default').setAttribute('checked', ''))
 
 
@@ -166,7 +167,7 @@ map.on('keydown', (e: LeafletKeyboardEvent) => {
 
 
 import { initGeoman } from './ui/geomancontroller'
-import { initMapHooks } from './ui/toolcontroller'
+import { initMapHooks, setActiveTool } from './ui/toolcontroller'
 import 'leaflet-ruler/src/leaflet-ruler'
 initGeoman(map)
 initMapHooks(map)
