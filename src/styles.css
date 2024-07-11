@@ -510,3 +510,7 @@ body {
     display: flex;
 }
 
+.leaflet-ruler.leaflet-bar {
+    width: 30px;
+    height: 30px;
+}
