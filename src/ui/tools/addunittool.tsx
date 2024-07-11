@@ -20,7 +20,8 @@ class AddUnitTool extends Tool {
         const symbol = new MilSymbol({
             sidc: 'SFGPUUS----B',
             size: 15,
-            higherFormation: 'Node'
+            higherFormation: 'Node',
+            colorMode: 'Medium'
         })
         super({
             name: 'addunit',
