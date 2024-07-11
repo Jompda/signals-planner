@@ -39,6 +39,14 @@ export const overlays = {
             fallback: '#00ff00'
         }
     }),
+    'Topography: Aspect': new TopoLayer({
+        attribution: 'Topography by Seth "slutske22" Lutske, ' + createMapboxTerrainAttribution(),
+        topotype: 'aspect'
+    }),
+    'Topography: Slope Aspect': new TopoLayer({
+        attribution: 'Topography by Seth "slutske22" Lutske, ' + createMapboxTerrainAttribution(),
+        topotype: 'slopeaspect'
+    }),
     'Luke: Avg. tree height': WMS.tileLayer('https://kartta.luke.fi/geoserver/MVMI/ows', {
         attribution: '<a href="https://www.luke.fi/en">Natural Resources Institute Finland</a> under <a href="https://creativecommons.org/licenses/by/4.0/legalcode">CC-4.0</a>',
         tileSize: 256,

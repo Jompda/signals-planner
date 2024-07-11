@@ -1,4 +1,4 @@
-import { CircleMarker, DomEvent, DomUtil, Map as LMap } from 'leaflet'
+import { CircleMarker, DomUtil, Map as LMap } from 'leaflet'
 import { createRoot } from 'react-dom/client'
 import { createDialog } from '../../util'
 import LinkLayer from '../components/linklayer'
@@ -30,8 +30,6 @@ export function showLinkStatistics(map: LMap, linkLayer: LinkLayer) {
     const highlight = new CircleMarker(linkLayer.link.unit0.latlng, { radius: 10 }).addTo(map)
 
     const container = DomUtil.create('div', 'dialog-menu')
-    DomEvent.disableClickPropagation(container)
-    DomEvent.disableScrollPropagation(container)
     dialog.setContent(container)
     let root = createUI(container)
 

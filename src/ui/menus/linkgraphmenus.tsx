@@ -1,5 +1,5 @@
 import { createDialog } from '../../util'
-import { DomEvent, DomUtil, Map as LMap } from 'leaflet'
+import { DomUtil, Map as LMap } from 'leaflet'
 import { createRoot } from 'react-dom/client'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import { LinkGroupActions } from '../components/linkgroupactions'
@@ -17,8 +17,6 @@ export function showLinkGraphToolMenu(map: LMap) {
     })
 
     const container = DomUtil.create('div', 'dialog-menu')
-    DomEvent.disableClickPropagation(container)
-    DomEvent.disableScrollPropagation(container)
     dialog.setContent(container)
 
     const root = createRoot(container)

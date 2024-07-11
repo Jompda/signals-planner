@@ -91,7 +91,7 @@ import { initContextMenu } from './ui/menus/contextmenu'
 import { addTo as lgAddTo, getMap, toggleSelectAllUnitLayers } from './ui/structurecontroller'
 import { baseLayers, overlays } from './ui/tilelayers'
 import defaultTool from './ui/tools/defaultool'
-import addNodeTool from './ui/tools/addnodetool'
+import addUnitTool from './ui/tools/addunittool'
 import linkEditorTool from './ui/tools/linkeditortool'
 import { redo, undo } from './actionhistory'
 import './ui/menus/toolbar'
@@ -139,7 +139,7 @@ control.customToolbar([
             }
         ]
     },
-    addNodeTool
+    addUnitTool
 ], { position: 'topleft' }).addTo(map)
 // bruh
 setActiveTool(defaultTool)

@@ -1,4 +1,4 @@
-import { Map as LMap, DomUtil, DomEvent } from 'leaflet'
+import { Map as LMap, DomUtil } from 'leaflet'
 import { createRoot } from 'react-dom/client'
 import Link from '../../struct/link'
 import Unit from '../../struct/unit'
@@ -26,8 +26,6 @@ export function showAddLinkMenu(map: LMap, unitLayer0: UnitLayer) {
     })
 
     const container = DomUtil.create('div', 'dialog-menu')
-    DomEvent.disableClickPropagation(container)
-    DomEvent.disableScrollPropagation(container)
     dialog.setContent(container)
     let root = createUI(container)
 
@@ -101,8 +99,6 @@ export function showEditLinkMenu(map: LMap, linkLayer: LinkLayer) {
     })
 
     const container = DomUtil.create('div', 'dialog-menu')
-    DomEvent.disableClickPropagation(container)
-    DomEvent.disableScrollPropagation(container)
     dialog.setContent(container)
     let root = createUI(container)
 

@@ -1,4 +1,4 @@
-import { Map as LMap, Layer, DomUtil, control, Polyline, Polygon, Circle, Marker, geoJSON, PolylineOptions } from 'leaflet'
+import { Map as LMap, Layer, DomUtil, control, Polyline, Polygon, Circle, Marker, geoJSON, PolylineOptions, DomEvent } from 'leaflet'
 import { Symbol as MilSymbol } from 'milsymbol'
 import { v4 as uuidv4 } from 'uuid'
 import { LeafletDialogOptions } from './interfaces'
@@ -208,6 +208,8 @@ export function symbolToHierarchyString(symbol: MilSymbol, reverseOrder?: boolea
 
 export function createDialog(map: LMap, options: LeafletDialogOptions) {
     const dialog = control.dialog(options).addTo(map)
+    DomEvent.disableClickPropagation(dialog._container)
+    DomEvent.disableScrollPropagation(dialog._container)
     dialog.identifier = uuidv4()
     map.on('dialog:closed', onDialogClose)
 
