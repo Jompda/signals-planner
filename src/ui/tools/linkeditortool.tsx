@@ -88,9 +88,9 @@ class LinkEditorTool extends Tool {
 
     createEditMenu() {
         this.editDialog = createDialog(getMap(), {
-            size: [600, 500],
-            maxSize: [600, 700],
-            minSize: [600, 400],
+            size: [300, 150],
+            maxSize: [400, 300],
+            minSize: [300, 100],
             anchor: [innerHeight / 2 - 300, innerWidth / 2 - 300],
             position: 'topleft',
             destroyOnClose: false
