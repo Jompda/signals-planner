@@ -183,7 +183,8 @@ function fitToView(progressFunction: (state: number) => any, done: Function) {
         try {
             const topoValues = await getTopographyValues(['elevation'] as Array<SourceName>, latlng, zoom)
             elevations.push(topoValues[0])
-        } catch (e) {}
+        }
+        catch (e) {}
         finally {
             progressFunction(++i / latlngs.length)
             check()
