@@ -17,7 +17,7 @@ const layer = new TopoLayer({
     attribution: 'Topography by Seth "slutske22" Lutske, ' + createMapboxTerrainAttribution(),
     topotype: 'elevation',
     customization: {
-        colors: ['#000000', '#00ff00', '#0000ff', '#ff0000', '#ffffff'],
+        colors: ['#0000ff', '#ff00ff', '#00ff00', '#ffff00', '#ff0000'],
         breakpoints: _breakpoints,
         breaksAt0: false,
         continuous: true
@@ -31,27 +31,27 @@ const layer = new TopoLayer({
         min={0}
         max={500}
         breakpoints={[{
-            name: 'Black',
+            name: 'Blue',
             value: _breakpoints[0],
             update: (value: number) =>
                 updateBreakpoint(0, value)
         }, {
-            name: 'Green',
+            name: 'Violet',
             value: _breakpoints[1],
             update: (value: number) =>
                 updateBreakpoint(1, value)
         }, {
-            name: 'Blue',
+            name: 'Green',
             value: _breakpoints[2],
             update: (value: number) =>
                 updateBreakpoint(2, value)
         }, {
-            name: 'Red',
+            name: 'Yellow',
             value: _breakpoints[3],
             update: (value: number) =>
                 updateBreakpoint(3, value)
         }, {
-            name: 'White',
+            name: 'Red',
             value: _breakpoints[4],
             update: (value: number) =>
                 updateBreakpoint(4, value)
@@ -97,6 +97,7 @@ function CustomLayerOptions({ breakpoints, min, max }: {
                 onMouseUp={() => p.update(parseInt(sliderRef.current.value))}
             />
         )
+        // buttons changing value doesn't update the value
         elements.push(
             <input
                 key={i++}
@@ -104,9 +105,11 @@ function CustomLayerOptions({ breakpoints, min, max }: {
                 type='number'
                 className='lc-valueinput'
                 defaultValue={p.value}
-                onChange={() => {
-                    sliderRef.current.value = valueRef.current.value || '0'
-                    p.update(parseInt(valueRef.current.value) || 0)
+                onKeyUp={e => {
+                    if (e.key === 'Enter') {
+                        sliderRef.current.value = valueRef.current.value || '0'
+                        p.update(parseInt(valueRef.current.value) || 0)
+                    }
                 }}
             />
         )
@@ -191,7 +194,7 @@ function fitToView(progressFunction: (state: number) => any, done: Function) {
             if (temp > max) max = temp
         }
         const avg = sum / elevations.length
-        scaleBreakpoints(min, max, avg, 75)
+        scaleBreakpoints(min, max, avg, 0)
 
         done()
         layer.redraw()
