@@ -1,6 +1,5 @@
 import Tool from '../tool'
 import { DomUtil, LeafletKeyboardEvent, LeafletMouseEvent, polyline, Polyline } from 'leaflet'
-import unitlayer from '../components/unitlayer'
 import UnitLayer from '../components/unitlayer'
 import { Medium, resolveMedium } from '../../struct/medium'
 import { addAction } from '../../actionhistory'
@@ -38,7 +37,7 @@ class LinkEditorTool extends Tool {
         })
         this.medium = resolveMedium('SHF1')
     }
-    unitlayermousedown(e: LeafletMouseEvent, unitLayer: unitlayer) {
+    unitlayermousedown(e: LeafletMouseEvent, unitLayer: UnitLayer) {
         this.startUnit = unitLayer
         this.highlight = polyline([unitLayer.getLatLng()], {
             color: 'black',
@@ -59,7 +58,7 @@ class LinkEditorTool extends Tool {
         this.startUnit = undefined
     }
     // Is called before mouseup
-    unitlayermouseup(e: LeafletMouseEvent, unitLayer: unitlayer) {
+    unitlayermouseup(e: LeafletMouseEvent, unitLayer: UnitLayer) {
         if (!this.startUnit) return
         if (this.startUnit.unit.id == unitLayer.unit.id) return
         this.highlight.remove()
