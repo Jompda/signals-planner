@@ -180,12 +180,18 @@ function fitToView(progressFunction: (state: number) => any, done: Function) {
     let i = 0
     const elevations = new Array<number>()
     workers(latlngs, async (latlng: LatLng) => {
-        elevations.push((await getTopographyValues(['elevation'] as Array<SourceName>, latlng, zoom))[0])
-        progressFunction(++i / latlngs.length)
-        check()
+        try {
+            const topoValues = await getTopographyValues(['elevation'] as Array<SourceName>, latlng, zoom)
+            elevations.push(topoValues[0])
+        } catch (e) {}
+        finally {
+            progressFunction(++i / latlngs.length)
+            check()
+        }
     }, getMaxWorkers())
 
     function postGet() {
+        if (elevations.length == 0) return done()
         let sum = elevations[0], min = sum, max = sum
         for (let i = 1; i < elevations.length; i++) {
             const temp = elevations[i]
