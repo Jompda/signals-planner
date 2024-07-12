@@ -22,7 +22,8 @@ export const baseLayers = {
         attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
     }),
     'MML: Maastokartta': new (GridLayer as any).basicAuthLayer(`https://avoin-karttakuva.maanmittauslaitos.fi/avoin/wmts/1.0.0/maastokartta/default/WGS84_Pseudo-Mercator/{z}/{y}/{x}.png`, {
-        username: options.MMLApiKey
+        username: options.MMLApiKey,
+        lcOptions: '<a href="https://www.maanmittauslaitos.fi/sites/maanmittauslaitos.fi/files/old/Karttamerkkien_selitys.pdf" target="_blank">MML Symbol explanations</a>'
     } as any)
 }
 
