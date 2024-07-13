@@ -142,7 +142,7 @@ control.customToolbar([
     addUnitTool
 ], { position: 'topleft' }).addTo(map)
 // bruh
-setActiveTool(defaultTool)
+defaultTool.addHooks(map)
 setTimeout(() => document.getElementById('ctoolbar-default').setAttribute('checked', ''))
 
 
