@@ -74,7 +74,7 @@ export function generateLinkLayers(
         structAddLink(linkLayer.link)
         lgAddLink(linkLayer)
         check()
-    }, getMaxWorkers())
+    }, 1)
 }
 
 
