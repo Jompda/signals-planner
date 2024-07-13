@@ -88,7 +88,7 @@ import './ui/menus/optionsmenu'
 import './ui/menus/layercontrolmenu'
 import './ui/menus/toolbar'
 import { initContextMenu } from './ui/menus/contextmenu'
-import { addTo as lgAddTo, getMap, toggleSelectAllUnitLayers } from './ui/structurecontroller'
+import { addTo as lgAddTo, getMap, toggleSelectAllUnitLayers, getSelectedUnits } from './ui/structurecontroller'
 import { baseLayers, overlays } from './ui/tilelayers'
 import defaultTool from './ui/tools/defaultool'
 import addUnitTool from './ui/tools/addunittool'
@@ -147,21 +147,28 @@ setTimeout(() => document.getElementById('ctoolbar-default').setAttribute('check
 
 
 map.on('keydown', (e: LeafletKeyboardEvent) => {
-    const event = e.originalEvent
+    const ev = e.originalEvent
     if (
-        event.ctrlKey && !event.shiftKey && !event.altKey
-        && event.key.toUpperCase() == 'Z'
+        ev.ctrlKey && !ev.shiftKey && !ev.altKey
+        && ev.key.toUpperCase() == 'Z'
     ) undo()
     if (
-        event.ctrlKey && !event.shiftKey && !event.altKey
-        && event.key.toUpperCase() == 'Y'
+        ev.ctrlKey && !ev.shiftKey && !ev.altKey
+        && ev.key.toUpperCase() == 'Y'
     ) redo()
     if (
-        event.ctrlKey && !event.shiftKey && !event.altKey
-        && event.key.toLocaleUpperCase() == 'A'
+        ev.ctrlKey && !ev.shiftKey && !ev.altKey
+        && ev.key.toLocaleUpperCase() == 'A'
     ) {
-        event.preventDefault()
+        ev.preventDefault()
         toggleSelectAllUnitLayers()
+    }
+    if (
+        ev.ctrlKey && !ev.shiftKey && !ev.altKey
+        && ev.key.toUpperCase() == 'C'
+    ) {
+        const selection = getSelectedUnits()
+        console.log(selection)
     }
 })
 

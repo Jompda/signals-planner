@@ -62,8 +62,8 @@ export default class UnitLayer extends Marker {
 
         this.unit = unit
         this.svg = svg
-        this.svg.id = this.unit.id
         this.hitbox = hitbox
+        this.hitbox.id = this.unit.id
 
         this.addHandlers()
     }
