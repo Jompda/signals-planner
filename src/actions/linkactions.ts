@@ -6,7 +6,7 @@ import { MediumResolvable } from '../interfaces'
 
 
 abstract class LinkAction extends Action {
-    protected linkLayer: LinkLayer
+    public linkLayer: LinkLayer
     constructor(linkLayer: LinkLayer) {
         super()
         this.linkLayer = linkLayer

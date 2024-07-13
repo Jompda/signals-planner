@@ -8,7 +8,7 @@ import { Symbol as MilSymbol } from 'milsymbol'
 
 
 abstract class UnitAction extends Action {
-    protected unitLayer: UnitLayer
+    public unitLayer: UnitLayer
     constructor(unitLayer: UnitLayer) {
         super()
         this.unitLayer = unitLayer

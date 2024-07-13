@@ -183,9 +183,9 @@ export interface LineStats {
 export interface SaveStructure {
     units: Array<SaveUnit>
     links: Array<SaveLink>
-    center: LatLng
-    zoom: number
-    drawings: Array<any>
+    center?: LatLng
+    zoom?: number
+    drawings?: Array<any>
 }
 
 export interface SaveUnit {

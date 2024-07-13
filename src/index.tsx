@@ -93,7 +93,7 @@ import { baseLayers, overlays } from './ui/tilelayers'
 import defaultTool from './ui/tools/defaultool'
 import addUnitTool from './ui/tools/addunittool'
 import linkEditorTool from './ui/tools/linkeditortool'
-import { redo, undo } from './actionhistory'
+import { addAction, redo, undo } from './actionhistory'
 import './ui/menus/toolbar'
 import unitlinkicon from './assets/unitlink.png'
 import { showLinkGraphToolMenu } from './ui/menus/linkgraphmenus'
@@ -146,29 +146,44 @@ setActiveTool(defaultTool)
 setTimeout(() => document.getElementById('ctoolbar-default').setAttribute('checked', ''))
 
 
-map.on('keydown', (e: LeafletKeyboardEvent) => {
+map.on('keydown', async (e: LeafletKeyboardEvent) => {
     const ev = e.originalEvent
     if (
         ev.ctrlKey && !ev.shiftKey && !ev.altKey
         && ev.key.toUpperCase() == 'Z'
     ) undo()
-    if (
+
+    else if (
         ev.ctrlKey && !ev.shiftKey && !ev.altKey
         && ev.key.toUpperCase() == 'Y'
     ) redo()
-    if (
+
+    else if (
         ev.ctrlKey && !ev.shiftKey && !ev.altKey
         && ev.key.toLocaleUpperCase() == 'A'
     ) {
         ev.preventDefault()
         toggleSelectAllUnitLayers()
     }
-    if (
+
+    else if (
         ev.ctrlKey && !ev.shiftKey && !ev.altKey
         && ev.key.toUpperCase() == 'C'
     ) {
-        const selection = getSelectedUnits()
-        console.log(selection)
+        const result = JSON.stringify(serialize(true), undefined, 2)
+        navigator.clipboard.writeText(result)
+        // NOTE: a popup notification of some kind?
+        console.log('Copied selection to clipboard.')
+    }
+
+    else if (
+        ev.ctrlKey && !ev.shiftKey && !ev.altKey
+        && ev.key.toUpperCase() == 'V'
+    ) {
+        const text = await navigator.clipboard.readText()
+        const parsed = JSON.parse(text)
+        const { units, links } = deserialize(parsed)
+        addAction(new ImportAction(units, links).forward())
     }
 })
 
@@ -176,6 +191,8 @@ map.on('keydown', (e: LeafletKeyboardEvent) => {
 import { initGeoman } from './ui/geomancontroller'
 import { initMapHooks, setActiveTool } from './ui/toolcontroller'
 import 'leaflet-ruler/src/leaflet-ruler'
+import { deserialize, getNewUnitId, serialize } from './struct'
+import ImportAction from './actions/importaction'
 initGeoman(map)
 initMapHooks(map)
 control.ruler({ // NOTE: For some reason, you have to double click the map after enabling this tool to be able to disable it.

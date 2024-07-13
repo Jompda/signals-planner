@@ -7,13 +7,14 @@ import UnitLayer from '../ui/components/unitlayer'
 import Action from './action'
 import { AddLinkAction } from './linkactions'
 import { AddUnitAction } from './unitactions'
+import { deselectAllUnitLayers } from '../ui/structurecontroller'
 
 
 export default class ImportAction extends Action {
     private units: Array<AddUnitAction>
     private links: Array<AddLinkAction>
-    private drawings: Array<Layer>
-    constructor(units: Array<Unit>, links: Array<Link>, drawings: Array<Layer>) {
+    private drawings?: Array<Layer>
+    constructor(units: Array<Unit>, links: Array<Link>, drawings?: Array<Layer>) {
         super()
         this.drawings = drawings
         const unitLayers = new Array<UnitLayer>()
@@ -35,14 +36,20 @@ export default class ImportAction extends Action {
         for (const unit of this.units) unit.forward()
         for (const link of this.links) link.forward()
         const drawnlayers = getDrawnLayers()
-        for (const layer of this.drawings) drawnlayers.addLayer(layer)
+        if (this.drawings) for (const layer of this.drawings) drawnlayers.addLayer(layer)
+
+        deselectAllUnitLayers()
+        for (const unit of this.units) unit.unitLayer.select()
+
         return this
     }
     reverse() {
+        for (const unit of this.units) unit.unitLayer.deselect()
+
         for (const link of this.links) link.reverse()
         for (const unit of this.units) unit.reverse()
         const drawnlayers = getDrawnLayers()
-        for (const layer of this.drawings) drawnlayers.removeLayer(layer)
+        if (this.drawings) for (const layer of this.drawings) drawnlayers.removeLayer(layer)
         return this
     }
 }

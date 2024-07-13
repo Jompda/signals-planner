@@ -43,7 +43,7 @@ export function initContextMenu(map: LMap) {
         text: 'Export',
         index: ++i,
         callback: () => {
-            const structure = serialize()
+            const structure = serialize(false)
             const str = JSON.stringify({
                 ...structure,
                 center: map.getCenter(),

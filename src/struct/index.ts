@@ -2,6 +2,7 @@ import Link from './link'
 import Unit from './unit'
 import deepEqual from 'deep-equal'
 import { SaveLink, SaveStructure, SaveUnit } from '../interfaces'
+import { getSelectedUnits } from '../ui/structurecontroller'
 
 
 const units = new Map<string, Unit>()
@@ -67,12 +68,13 @@ export function getLinks() {
 }
 
 
-export function serialize() {
+export function serialize(selectionOnly: boolean) {
     const sUnits = new Array<SaveUnit>(), sLinks = new Array<SaveLink>()
-    for (const unit of units.values())
+    for (const unit of selectionOnly ? getSelectedUnits() : units.values())
         sUnits.push(unit.serialize())
     for (const link of links.values())
-        sLinks.push(link.serialize())
+        if (sUnits.find(s => s.id === link.unit0.id) && sUnits.find(s => s.id === link.unit1.id))
+            sLinks.push(link.serialize())
     return {
         units: sUnits,
         links: sLinks
@@ -89,17 +91,17 @@ export function deserialize(obj: SaveStructure) {
         // FIXME: After a couple conflicting import the ids have changed so much that a new import doesn't detect a conflict with a very old import the chain.
         if (unitIdExists(unit.id)) {
             const conflict = getUnitById(unit.id)
-            if (
+            /*if (
                 !deepEqual(unit.latlng, conflict.latlng)
                 || !deepEqual(unit.symbol.getOptions(false), conflict.symbol.getOptions(false))
-            ) {
+            ) {*/
                 let i = 1, lastId = unit.id
                 while (unitIdExists((lastId = unit.id + (i ? `(${i})` : '')))) i++
                 remappedIds.set(unit.id, lastId)
                 unit.id = lastId
                 pUnits.push(unit)
-            }
-            else remappedIds.set(unit.id, unit.id)
+            //}
+            //else remappedIds.set(unit.id, unit.id)
         } else {
             remappedIds.set(unit.id, unit.id)
             pUnits.push(unit)
