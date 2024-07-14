@@ -2,6 +2,7 @@ import { GridLayer, tileLayer } from 'leaflet'
 import WMS from 'leaflet.wms'
 import customElevationLayer from './customelevationlayer'
 import './basicauthlayer'
+import './emissionlayer'
 import options from '../../../options'
 import { TopoLayer } from 'leaflet-topography'
 import { createMapboxTerrainAttribution } from '../../util'
@@ -24,7 +25,8 @@ export const baseLayers = {
     'MML: Maastokartta': new (GridLayer as any).basicAuthLayer(`https://avoin-karttakuva.maanmittauslaitos.fi/avoin/wmts/1.0.0/maastokartta/default/WGS84_Pseudo-Mercator/{z}/{y}/{x}.png`, {
         username: options.MMLApiKey,
         lcOptions: '<a href="https://www.maanmittauslaitos.fi/sites/maanmittauslaitos.fi/files/old/Karttamerkkien_selitys.pdf" target="_blank">MML Symbol explanations</a>'
-    } as any)
+    } as any),
+    'Emission Layer': new (GridLayer as any).emissionLayer()
 }
 
 

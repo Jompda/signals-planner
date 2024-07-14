@@ -1,6 +1,10 @@
+import { DomUtil, GridLayer, Map as LMap } from 'leaflet'
+import { getTiledata } from 'tiledata'
+import { tileDataStorage } from '../..'
+import { getLinks } from '../../struct';
 
 
-/** // NOTE: EmissionLayer planning below:
+/* // NOTE: EmissionLayer planning below:
  * Extend GridLayer:
  * To limit the covered area, the layer must take a bounds option.
  *   Use OSM:s slippy tiles function to get the covered tiles' coordinates at certain zoom level.
@@ -27,3 +31,91 @@
  *       Maybe go create that function in the tiledata library?
  */
 
+
+const drawBuffer = new Map<string, Function>();
+const timeout = 1000;
+let tid: number
+
+
+function waitFinish() {
+    if (tid) clearTimeout(tid)
+    tid = setTimeout(() => {
+        console.log('wait finished')
+        calculateCoverage()
+        for (const [coords, callback] of drawBuffer.entries()) {
+            callback()
+        }
+        drawBuffer.clear()
+    }, timeout) as unknown as number
+}
+
+function onMoveEnd() {
+    console.log('moveend:')
+    waitFinish()
+}
+
+
+/**
+ * // NOTE: Ota huomioon geodeesinen los linja.
+ */
+function calculateCoverage() {
+    const links = getLinks()
+    console.log(links)
+    for (const [coords] of drawBuffer.entries()) {
+        console.log('Coords:', coords)
+    }
+}
+
+
+(GridLayer as any).emissionLayer = GridLayer.extend({
+    onAdd: function(map: LMap) {
+        this._map = map
+
+        map.on('moveend', onMoveEnd)
+
+        GridLayer.prototype.onAdd.call(this, map)
+    },
+    onRemove: function(map: LMap) {
+        map.off('moveend', onMoveEnd)
+        GridLayer.prototype.onRemove.call(this, map)
+    },
+    createTile: function (coords: TileCoords, callback: Function) {
+        console.log('loading')
+        waitFinish()
+        const tile = DomUtil.create('canvas', 'leaflet-tile')
+        const size = this.getTileSize()
+        tile.width = size.x
+        tile.height = size.y
+
+        drawBuffer.set(`${coords.x}|${coords.y}|${coords.z}`, () => this.drawEmission(coords, tile))
+
+        async function loadData() {
+            try {
+                await getTiledata(coords, ['elevation'])
+            }
+            catch (e) {
+                // try reloading it?
+            }
+            finally {
+                console.log('loaded')
+                waitFinish()
+                callback(null, tile)
+            }
+        }
+        loadData()
+
+        return tile
+    },
+    drawEmission: function(coords: TileCoords, tile: HTMLCanvasElement) {
+        const ctx = tile.getContext('2d')
+        ctx.clearRect(0, 0, tile.width, tile.height)
+
+        ctx.strokeStyle = 'black'
+        ctx.strokeRect(0, 0, tile.width, tile.height)
+
+        ctx.fillStyle = 'gray'
+        const coordsText = [coords.x, coords.y, coords.z].join(', ')
+        ctx.strokeText(coordsText, 0, 10)
+        ctx.fillText(coordsText, 0, 10)
+    }
+})
