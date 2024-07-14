@@ -2,6 +2,7 @@ import { DomUtil, GridLayer, Map as LMap } from 'leaflet'
 import { getTiledata } from 'tiledata'
 import { tileDataStorage } from '../..'
 import { getLinks } from '../../struct';
+import { getMap } from '../structurecontroller';
 
 
 /* // NOTE: EmissionLayer planning below:
@@ -32,7 +33,7 @@ import { getLinks } from '../../struct';
  */
 
 
-const drawBuffer = new Map<string, Function>();
+const cache = new Map<number, Map<string, { data: any, tile: HTMLCanvasElement, callback: Function }>>()
 const timeout = 1000;
 let tid: number
 
@@ -42,10 +43,6 @@ function waitFinish() {
     tid = setTimeout(() => {
         console.log('wait finished')
         calculateCoverage()
-        for (const [coords, callback] of drawBuffer.entries()) {
-            callback()
-        }
-        drawBuffer.clear()
     }, timeout) as unknown as number
 }
 
@@ -54,50 +51,68 @@ function onMoveEnd() {
     waitFinish()
 }
 
-
 /**
  * // NOTE: Ota huomioon geodeesinen los linja.
  */
 function calculateCoverage() {
     const links = getLinks()
-    console.log(links)
-    for (const [coords] of drawBuffer.entries()) {
-        console.log('Coords:', coords)
+    console.log('Links:', links)
+    const zoom = getMap().getZoom()
+    const zLayer = cache.get(zoom)
+    for (const [coords, obj] of zLayer.entries()) {
+        console.log(coords)
+        obj.callback(coords, obj.tile)
     }
 }
 
 
 (GridLayer as any).emissionLayer = GridLayer.extend({
     onAdd: function(map: LMap) {
-        this._map = map
-
+        //this._map = map
         map.on('moveend', onMoveEnd)
-
         GridLayer.prototype.onAdd.call(this, map)
     },
+
     onRemove: function(map: LMap) {
         map.off('moveend', onMoveEnd)
         GridLayer.prototype.onRemove.call(this, map)
     },
+
     createTile: function (coords: TileCoords, callback: Function) {
-        console.log('loading')
+        //console.log('loading')
         waitFinish()
         const tile = DomUtil.create('canvas', 'leaflet-tile')
         const size = this.getTileSize()
         tile.width = size.x
         tile.height = size.y
 
-        drawBuffer.set(`${coords.x}|${coords.y}|${coords.z}`, () => this.drawEmission(coords, tile))
+        const loadData = async () => {
+            // debug outline
+            const ctx = tile.getContext('2d')
+            ctx.font = '12px Arial'
+            ctx.lineWidth = 1
+            ctx.strokeStyle = 'black'
+            ctx.strokeRect(0, 0, tile.width, tile.height)
+            ctx.fillStyle = 'white'
+            const coordsText = [coords.x, coords.y, coords.z].join(', ')
+            ctx.lineWidth = 2
+            ctx.strokeText(coordsText, 4, 12)
+            ctx.fillText(coordsText, 4, 12)
 
-        async function loadData() {
             try {
-                await getTiledata(coords, ['elevation'])
+                let m = cache.get(coords.z)
+                if (!m) cache.set(coords.z, m = new Map())
+                m.set(`${coords.x}|${coords.y}|${coords.z}`, {
+                    data: await getTiledata(coords, ['elevation']),
+                    tile,
+                    callback: this.drawEmission
+                })
             }
             catch (e) {
-                // try reloading it?
+                console.error(e)
             }
             finally {
-                console.log('loaded')
+                //console.log('loaded')
                 waitFinish()
                 callback(null, tile)
             }
@@ -106,16 +121,14 @@ function calculateCoverage() {
 
         return tile
     },
+
     drawEmission: function(coords: TileCoords, tile: HTMLCanvasElement) {
         const ctx = tile.getContext('2d')
-        ctx.clearRect(0, 0, tile.width, tile.height)
 
-        ctx.strokeStyle = 'black'
-        ctx.strokeRect(0, 0, tile.width, tile.height)
-
-        ctx.fillStyle = 'gray'
-        const coordsText = [coords.x, coords.y, coords.z].join(', ')
-        ctx.strokeText(coordsText, 0, 10)
-        ctx.fillText(coordsText, 0, 10)
+        // temp to illustrate emission draw has been called
+        const size = 256
+        ctx.clearRect(size/4, size/4, tile.width / 2, tile.height / 2)
+        ctx.fillStyle = '#00ff0088'
+        ctx.fillRect(size/4, size/4, tile.width / 2, tile.height / 2)
     }
 })
