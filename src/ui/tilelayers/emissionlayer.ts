@@ -33,6 +33,7 @@ import { getMap } from '../structurecontroller';
  */
 
 
+let update = false;
 const cache = new Map<number, Map<string, { data: any, tile: HTMLCanvasElement, callback: Function }>>()
 const timeout = 1000;
 let tid: number
@@ -42,7 +43,8 @@ function waitFinish() {
     if (tid) clearTimeout(tid)
     tid = setTimeout(() => {
         console.log('wait finished')
-        calculateCoverage()
+        if (update) calculateCoverage()
+        update = false
     }, timeout) as unknown as number
 }
 
@@ -80,6 +82,7 @@ function calculateCoverage() {
 
     createTile: function (coords: TileCoords, callback: Function) {
         //console.log('loading')
+        update = true
         waitFinish()
         const tile = DomUtil.create('canvas', 'leaflet-tile')
         const size = this.getTileSize()
