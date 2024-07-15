@@ -1,4 +1,4 @@
-import { DomUtil, GridLayer, Map as LMap } from 'leaflet'
+import { DomUtil, GridLayer, Map as LMap, Coords, Bounds, LatLngBounds } from 'leaflet'
 import { getTiledata } from 'tiledata'
 import { tileDataStorage } from '../..'
 import { getLinks } from '../../struct';
@@ -33,8 +33,16 @@ import { getMap } from '../structurecontroller';
  */
 
 
+interface CoverageTile {
+    coords: Coords,
+    bounds: LatLngBounds,
+    data: any,
+    drawEmission: Function
+}
+
+
 let update = false;
-const cache = new Map<number, Map<string, { data: any, tile: HTMLCanvasElement, callback: Function }>>()
+const cache = new Map<number, Map<string, CoverageTile>>()
 const timeout = 1000;
 let tid: number
 
@@ -59,11 +67,14 @@ function onMoveEnd() {
 function calculateCoverage() {
     const links = getLinks()
     console.log('Links:', links)
+    
+    const viewBounds = getMap().getBounds()
     const zoom = getMap().getZoom()
+
     const zLayer = cache.get(zoom)
-    for (const [coords, obj] of zLayer.entries()) {
-        console.log(coords)
-        obj.callback(coords, obj.tile)
+    for (const [coordsStr, obj] of zLayer.entries()) {
+        console.log(coordsStr, viewBounds.overlaps(obj.bounds))
+        obj.drawEmission()
     }
 }
 
@@ -80,7 +91,7 @@ function calculateCoverage() {
         GridLayer.prototype.onRemove.call(this, map)
     },
 
-    createTile: function (coords: TileCoords, callback: Function) {
+    createTile: function (coords: Coords, callback: Function) {
         //console.log('loading')
         update = true
         waitFinish()
@@ -106,9 +117,10 @@ function calculateCoverage() {
                 let m = cache.get(coords.z)
                 if (!m) cache.set(coords.z, m = new Map())
                 m.set(`${coords.x}|${coords.y}|${coords.z}`, {
+                    coords,
+                    bounds: this._tileCoordsToBounds(coords),
                     data: await getTiledata(coords, ['elevation']),
-                    tile,
-                    callback: this.drawEmission
+                    drawEmission: () => this.drawEmission(coords, tile)
                 })
             }
             catch (e) {
