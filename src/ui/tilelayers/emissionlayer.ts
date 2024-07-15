@@ -97,12 +97,18 @@ function calculateCoverage() {
         const bearing0 = (180 + -1 * (angle(map, link.unit0.latlng, link.unit1.latlng) - 180) + 90) % 360
         const bearing1 = (bearing0 + 180) % 360
         console.log(link, bearing0, bearing1)
-        if (viewBounds.contains(link.unit0.latlng)) unitEmission(link.unit0, link, bearing0)
-        if (viewBounds.contains(link.unit1.latlng)) unitEmission(link.unit1, link, bearing1)
+
+        console.log(link.lineStats)
+        console.log(link.values)
+        // TODO: figure out a way to continue the geodesic line
+
+        // instead of viewbounds check if it's inside the active tiles?
+        if (viewBounds.contains(link.unit0.latlng)) calculateEmission(link.unit0, link.unit1, link, bearing0)
+        if (viewBounds.contains(link.unit1.latlng)) calculateEmission(link.unit1, link.unit0, link, bearing1)
     }
 
-    function unitEmission(unit: Unit, link: Link, bearing: number) {
-
+    function calculateEmission(unit0: Unit, unit1: Unit, link: Link, bearing: number) {
+        
     }
 }
 
