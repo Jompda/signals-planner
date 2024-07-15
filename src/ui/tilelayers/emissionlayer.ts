@@ -1,8 +1,11 @@
-import { DomUtil, GridLayer, Map as LMap, Coords, Bounds, LatLngBounds } from 'leaflet'
-import { getTiledata } from 'tiledata'
+import { DomUtil, GridLayer, Map as LMap, Coords, LatLngBounds } from 'leaflet'
+import { angle } from 'leaflet-geometryutil'
+import { getTiledata, latlngToTileCoords } from 'tiledata'
 import { tileDataStorage } from '../..'
 import { getLinks } from '../../struct';
 import { getMap } from '../structurecontroller';
+import Unit from '../../struct/unit';
+import Link from '../../struct/link';
 
 
 /* // NOTE: EmissionLayer planning below:
@@ -41,6 +44,9 @@ interface CoverageTile {
 }
 
 
+const res = 256/4
+
+
 let update = false;
 const cache = new Map<number, Map<string, CoverageTile>>()
 const timeout = 1000;
@@ -66,15 +72,37 @@ function onMoveEnd() {
  */
 function calculateCoverage() {
     const links = getLinks()
-    console.log('Links:', links)
     
-    const viewBounds = getMap().getBounds()
-    const zoom = getMap().getZoom()
-
+    const map = getMap()
+    const viewBounds = map.getBounds()
+    const zoom = map.getZoom()
     const zLayer = cache.get(zoom)
+
+    const nwTile = latlngToTileCoords(viewBounds.getNorthWest(), zoom),
+        seTile = latlngToTileCoords(viewBounds.getSouthEast(), zoom)
+
+    console.log('Links:', links)
+    console.log('nw:', nwTile)
+    console.log('se:', seTile)
+
+    // Initialize / clear emission data
     for (const [coordsStr, obj] of zLayer.entries()) {
-        console.log(coordsStr, viewBounds.overlaps(obj.bounds))
-        obj.drawEmission()
+        obj.data.emission = new Int16Array(res*res)
+        //console.log(coordsStr, viewBounds.overlaps(obj.bounds))
+        //obj.drawEmission()
+    }
+
+    for (const link of links) {
+        // Transformation: zero at east and increase counterclockwise.
+        const bearing0 = (180 + -1 * (angle(map, link.unit0.latlng, link.unit1.latlng) - 180) + 90) % 360
+        const bearing1 = (bearing0 + 180) % 360
+        console.log(link, bearing0, bearing1)
+        if (viewBounds.contains(link.unit0.latlng)) unitEmission(link.unit0, link, bearing0)
+        if (viewBounds.contains(link.unit1.latlng)) unitEmission(link.unit1, link, bearing1)
+    }
+
+    function unitEmission(unit: Unit, link: Link, bearing: number) {
+
     }
 }
 

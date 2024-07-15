@@ -11,3 +11,5 @@ declare module '*.png' {
 }
 
 declare module 'leaflet-ruler'
+
+declare module 'leaflet-geometryutil'
