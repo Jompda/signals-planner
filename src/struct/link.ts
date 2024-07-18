@@ -2,7 +2,7 @@ import { CableLinkEstimate, LineStats, LinkOptions, MediumResolvable, RadioLinkE
 import Unit from './unit'
 import { getValues } from '../topoutil'
 import { CableMedium, RadioMedium, resolveMedium } from './medium'
-import { createLosGetter, getGeodesicLine_PDist100to200, getLineStats } from '../linkutil'
+import { createLosGetter, getGeodesicLine, getGeodesicLineStats, getLineStats } from '../linkutil'
 
 
 export default class Link {
@@ -46,7 +46,8 @@ export default class Link {
 
     async calculate() {
         const sourceNames = ['elevation', 'treeHeight'] as Array<SourceName>
-        const { latlngs, delta } = getGeodesicLine_PDist100to200(this.unit0.latlng, this.unit1.latlng)
+        const { steps, delta } = getGeodesicLineStats(this.unit0.latlng, this.unit1.latlng, 200)
+        const latlngs = getGeodesicLine(this.unit0.latlng, this.unit1.latlng, steps)
         const values = await getValues(latlngs, sourceNames, 10)
         const lineStats = getLineStats(values, sourceNames)
 

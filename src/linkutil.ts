@@ -131,16 +131,9 @@ export function getLineStats(latlngs: Array<TiledataLatLng>, sourceNames: Array<
 }
 
 
-export function getGeodesicLine_PDist100to200(latlng0: LatLng, latlng1: LatLng) {
-    const { steps, delta } = geodesicLineStats(latlng0, latlng1)
-    const latlngs = getGeodesicLine(latlng0, latlng1, steps)
-    return { latlngs, delta }
-}
-
-
-export function geodesicLineStats(latlng0: LatLng, latlng1: LatLng) {
+export function getGeodesicLineStats(latlng0: LatLng, latlng1: LatLng, maxDelta: number) {
     const distance = new LatLon(latlng0.lat, latlng0.lng).distanceTo(new LatLon(latlng1.lat, latlng1.lng))
-    const steps = Math.floor(Math.log2(distance / 100)) // delta: min 100, max 2*100=200 meters
+    const steps = Math.floor(Math.log2(distance / (maxDelta / 2)))
     const delta = distance / (2 ** steps)
     return { steps, delta }
 }

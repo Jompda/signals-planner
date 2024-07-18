@@ -7,6 +7,7 @@ import Unit from '../../struct/unit';
 import Link from '../../struct/link';
 import LatLon from 'geodesy/latlon-spherical'
 import { RadioMedium } from '../../struct/medium';
+import { getGeodesicLine, getGeodesicLineStats } from '../../linkutil';
 
 
 /* // NOTE: EmissionLayer planning below:
@@ -135,22 +136,25 @@ function calculateSourceEmission(
     link: Link,
     bearing: number
 ) {
-    const latlng  = latLng(ll0.lat, ll0.lon)
-    const tileCoords = getTileCoords(latlng, zoom)
-    const xy = getTileXYCoords(tileCoords, latlng)
+    const latlng0  = latLng(ll0.lat, ll0.lon)
+    const tileCoords = getTileCoords(latlng0, zoom)
+    const xy = getTileXYCoords(tileCoords, latlng0)
 
+    const map = getMap()
     for (const temp of borderPoints) {
         const ll1 = new LatLon(temp.latlng.lat, temp.latlng.lng)
         const bearing1 = ll0.initialBearingTo(ll1);
         const beamWidth = (link.medium as RadioMedium).beamWidth
         if (beamWidth && Math.abs(bearing-bearing1) > beamWidth) continue;
 
-        // endpoint is accepted
-        new Marker([ll1.lat, ll1.lon]).addTo(getMap()) // temp visualization
+        const {steps, delta} = getGeodesicLineStats(latlng0, temp.latlng, 10000) // 10000m good enough
+        const latlngs = getGeodesicLine(latlng0, temp.latlng, steps)
+        
+        // temp visualization
+        for (const temp of latlngs)
+            new Marker(temp).addTo(map)
 
-        /* // TODO: Estimate the geodesic path between the border point and
-         * the source using getGeodesicLine_PDist2000to4000 from linkutil (not written yet).
-         * Then use transform to pixel using latlngToTileCoords and latlngToXYOnTile from tiledata.
+        /* // TODO: Transform latlng to pixel using latlngToTileCoords and latlngToXYOnTile from tiledata.
          * Use Bresenham's line algorithm (implemented as getLinePlot in RadioProjekti) to fill the gaps.
          */
         
@@ -166,7 +170,7 @@ function getBorderPoints(nwCoords: TileCoords, seCoords: TileCoords) {
         for (let xp = 0, yp = 0; xp < res; ++xp)
             borderPoints.push(cp(x, y, xp, yp))
     // to prevent duplicates
-    borderPoints.unshift()
+    borderPoints.shift()
     borderPoints.pop()
 
     // left
@@ -235,6 +239,8 @@ function getTileXYCoords(tileCoords: TileCoords, latlng: LatLng) {
         //this._map = map
         map.on('moveend', onMoveEnd)
         GridLayer.prototype.onAdd.call(this, map)
+
+        // TODO: Hook to actions to update. Also actions need to fire events of addition, undo and redo.
     },
 
     onRemove: function(map: LMap) {
