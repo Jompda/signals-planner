@@ -137,8 +137,6 @@ function calculateSourceEmission(
     bearing: number
 ) {
     const latlng0  = latLng(ll0.lat, ll0.lon)
-    const tileCoords = getTileCoords(latlng0, zoom)
-    const xy = getTileXYCoords(tileCoords, latlng0)
 
     const map = getMap()
     for (const temp of borderPoints) {
@@ -147,17 +145,30 @@ function calculateSourceEmission(
         const beamWidth = (link.medium as RadioMedium).beamWidth
         if (beamWidth && Math.abs(bearing-bearing1) > beamWidth) continue;
 
-        const {steps, delta} = getGeodesicLineStats(latlng0, temp.latlng, 10000) // 10000m good enough
+        const {steps, delta} = getGeodesicLineStats(latlng0, temp.latlng, 10000) // accuracy good enough
         const latlngs = getGeodesicLine(latlng0, temp.latlng, steps)
-        
-        // temp visualization
-        for (const temp of latlngs)
-            new Marker(temp).addTo(map)
 
-        /* // TODO: Transform latlng to pixel using latlngToTileCoords and latlngToXYOnTile from tiledata.
-         * Use Bresenham's line algorithm (implemented as getLinePlot in RadioProjekti) to fill the gaps.
-         */
-        
+        // temp visualization
+        //for (const temp of latlngs)
+        //    new Marker(temp).addTo(map)
+
+        for (let i = 1; i < latlngs.length; ++i) {
+            const latlng0 = latlngs[i-1], latlng1 = latlngs[i]
+            const tileCoords0 = getTileCoords(latlng0, zoom)
+            const xy0 = getTileXYCoords(tileCoords0, latlng0) // res 256
+            const p0 = new Point(Math.floor(tileCoords0.x * res + xy0.x * scale), Math.floor(tileCoords0.y * res + xy0.y * scale))
+            const tileCoords1 = getTileCoords(latlng1, zoom)
+            const xy1 = getTileXYCoords(tileCoords1, latlng1)
+            const p1 = new Point(Math.floor(tileCoords1.x * res + xy1.x * scale), Math.floor(tileCoords1.y * res + xy1.y * scale))
+
+            for (const p of getLinePlot(p0.x, p0.y, p1.x, p1.y)) {
+                const rx = p.x / res, ry = p.y / res
+                const tx = Math.floor(rx), ty = Math.floor(ry) // tile coordinates
+                const x = Math.floor(rx % 1 * res), y = Math.floor(ry % 1 * res) // xy on tile
+                console.log(tx, ty, x, y)
+            }
+        }
+
     }
 }
 
@@ -231,6 +242,42 @@ function getTileXYCoords(tileCoords: TileCoords, latlng: LatLng) {
     const x = Math.floor(xOffset / resUnit)
     const y = Math.floor(yOffset / resUnit)
     return { x, y }
+}
+
+
+/**
+ * Bresenham's line algorithm
+ * Author: Jack Elton Bresenham
+ * Date: 22.10.2022
+ * Source: https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
+ * Modified for context by Joni Rapo 18.7.2024
+ */
+function getLinePlot(x0: number, y0: number, x1: number, y1: number) {
+    const gridPoints = new Array<{x: number, y: number}>()
+
+    const dx = Math.abs(x1 - x0)
+    const sx = x0 < x1 ? 1 : -1
+    const dy = -Math.abs(y1 - y0)
+    const sy = y0 < y1 ? 1 : -1
+    let error = dx + dy
+
+    while (true) {
+        gridPoints.push({ x: x0, y: y0 })
+        if (x0 == x1 && y0 == y1) break
+        const e2 = 2 * error
+        if (e2 >= dy) {
+            if (x0 == x1) break
+            error = error + dy
+            x0 = x0 + sx
+        }
+        if (e2 <= dx) {
+            if (y0 == y1) break
+            error = error + dx
+            y0 = y0 + sy
+        }
+    }
+
+    return gridPoints
 }
 
 
