@@ -1,11 +1,11 @@
-import { DomUtil, GridLayer, Map as LMap, Coords, LatLngBounds } from 'leaflet'
-import { angle } from 'leaflet-geometryutil'
-import { getTiledata, latlngToTileCoords } from 'tiledata'
+import { DomUtil, GridLayer, Map as LMap, Coords, LatLngBounds, LatLng, Marker, CRS, Point } from 'leaflet'
+import { getTiledata, latlngToTileCoords, latlngToXYOnTile, tileCoordsToPoint } from 'tiledata'
 import { tileDataStorage } from '../..'
 import { getLinks } from '../../struct';
 import { getMap } from '../structurecontroller';
 import Unit from '../../struct/unit';
 import Link from '../../struct/link';
+import LatLon from 'geodesy/latlon-ellipsoidal-vincenty'
 
 
 /* // NOTE: EmissionLayer planning below:
@@ -44,7 +44,7 @@ interface CoverageTile {
 }
 
 
-const res = 256/4
+const scale = 1 / 16, res = 256 * scale
 
 
 let update = false;
@@ -57,7 +57,11 @@ function waitFinish() {
     if (tid) clearTimeout(tid)
     tid = setTimeout(() => {
         console.log('wait finished')
-        if (update) calculateCoverage()
+        if (update) {
+            console.time('calculateCoverage')
+            calculateCoverage()
+            console.timeEnd('calculateCoverage')
+        }
         update = false
     }, timeout) as unknown as number
 }
@@ -68,7 +72,7 @@ function onMoveEnd() {
 }
 
 /**
- * // NOTE: Ota huomioon geodeesinen los linja.
+ * // NOTE: Ota huomioon geodeettinen los linja.
  */
 function calculateCoverage() {
     const links = getLinks()
@@ -81,9 +85,11 @@ function calculateCoverage() {
     const nwTile = latlngToTileCoords(viewBounds.getNorthWest(), zoom),
         seTile = latlngToTileCoords(viewBounds.getSouthEast(), zoom)
 
-    console.log('Links:', links)
-    console.log('nw:', nwTile)
-    console.log('se:', seTile)
+    console.log('scale,res:', scale, res)
+    console.log('links:', links)
+
+    const borderPoints = getBorderPoints(nwTile, seTile)
+    console.log('borderpoints:', borderPoints.length)
 
     // Initialize / clear emission data
     for (const [coordsStr, obj] of zLayer.entries()) {
@@ -93,23 +99,106 @@ function calculateCoverage() {
     }
 
     for (const link of links) {
-        // Transformation: zero at east and increase counterclockwise.
-        const bearing0 = (180 + -1 * (angle(map, link.unit0.latlng, link.unit1.latlng) - 180) + 90) % 360
-        const bearing1 = (bearing0 + 180) % 360
-        console.log(link, bearing0, bearing1)
+        const ll0 = new LatLon(link.unit0.latlng.lat, link.unit0.latlng.lng)
+        const ll1 = new LatLon(link.unit1.latlng.lat, link.unit1.latlng.lng)
 
-        console.log(link.lineStats)
-        console.log(link.values)
-        // TODO: figure out a way to continue the geodesic line
+        const bearing00 = ll0.initialBearingTo(ll1)
+        const bearing01 = ll0.finalBearingTo(ll1)
+        const bearing10 = ll1.initialBearingTo(ll0)
+        const bearing11 = ll1.finalBearingTo(ll0)
+
+        //console.log(link)
+        //console.log('bearings:', bearing00, bearing01, bearing10, bearing11)
+
+        //console.log(link.lineStats)
+        console.log('link values:', link.values)
 
         // instead of viewbounds check if it's inside the active tiles?
-        if (viewBounds.contains(link.unit0.latlng)) calculateEmission(link.unit0, link.unit1, link, bearing0)
-        if (viewBounds.contains(link.unit1.latlng)) calculateEmission(link.unit1, link.unit0, link, bearing1)
+        if (viewBounds.contains(link.unit0.latlng)) calculateEmission(ll0, link, bearing00)
+        if (viewBounds.contains(link.unit1.latlng)) calculateEmission(ll1, link, bearing10)
     }
 
-    function calculateEmission(unit0: Unit, unit1: Unit, link: Link, bearing: number) {
-        
+    function calculateEmission(ll0: LatLon, link: Link, bearing: number) {
+        for (const temp of borderPoints) {
+            const ll1 = new LatLon(temp.latlng.lat, temp.latlng.lng)
+            const bearing1 = ll0.initialBearingTo(ll1);
+            if (Math.abs(bearing-bearing1) < 3) {
+                new Marker([ll1._lat, ll1.lon]).addTo(getMap())
+            }
+        }
     }
+}
+
+
+function getBorderPoints(nwCoords: TileCoords, seCoords: TileCoords) {
+    const borderPoints: {
+        tileCoords: TileCoords,
+        xp: number,
+        yp: number,
+        point: Point, // needed?
+        latlng: LatLng
+    }[] = []
+
+    // top border
+    for (let x = nwCoords.x, y = nwCoords.y; x <= seCoords.x; ++x)
+        for (let xp = 0, yp = 0; xp < res; ++xp)
+            borderPoints.push(cp(x, y, xp, yp))
+
+    // left // TODO: don't create top and bottom pixels
+    for (let x = nwCoords.x, y = nwCoords.y; y <= seCoords.y; ++y)
+        for (let xp = 0, yp = 0; yp < res; ++yp)
+            borderPoints.push(cp(x, y, xp, yp))
+
+    // right // TODO: don't create top and bottom pixels
+    for (let x = seCoords.x, y = nwCoords.y; y <= seCoords.y; ++y)
+        for (let xp = res-1, yp = 0; yp < res; ++yp)
+            borderPoints.push(cp(x, y, xp, yp))
+
+    // bottom
+    for (let x = nwCoords.x, y = seCoords.y; x <= seCoords.x; ++x)
+        for (let xp = 0, yp = res-1; xp < res; ++xp)
+            borderPoints.push(cp(x, y, xp, yp))
+
+
+    function cp(x: number, y: number, xp: number, yp: number) {
+        const point = new Point(x * 256 + xp / scale, y * 256 + yp / scale)
+        const latlng = CRS.EPSG3857.pointToLatLng(point, nwCoords.z)
+        return {
+            tileCoords: {x, y, z: nwCoords.z},
+            xp,
+            yp,
+            point,
+            latlng
+        }
+    }
+
+    return borderPoints
+}
+
+
+/**
+ * Utility function from RadioProjekti
+ */
+function getTileCoords(latlng: LatLng, scale: number) {
+    const point = CRS.EPSG3857.latLngToPoint(latlng, scale)
+    return {
+        x: Math.floor(point.x / 256),
+        y: Math.floor(point.y / 256),
+        z: scale
+    }
+}
+
+/**
+ * Utility function from RadioProjekti
+ */
+function getTileGridCoords(tileCoords: TileCoords, latlng: LatLng) {
+    const point = CRS.EPSG3857.latLngToPoint(latlng, tileCoords.z)
+    const xOffset = point.x / 256 - tileCoords.x
+    const yOffset = point.y / 256 - tileCoords.y
+    const resUnit = 1 / 256
+    const x = Math.floor(xOffset / resUnit)
+    const y = Math.floor(yOffset / resUnit)
+    return { x, y }
 }
 
 
