@@ -1,11 +1,12 @@
-import { DomUtil, GridLayer, Map as LMap, Coords, LatLngBounds, LatLng, Marker, CRS, Point } from 'leaflet'
+import { DomUtil, GridLayer, Map as LMap, Coords, LatLngBounds, LatLng, Marker, CRS, Point, latLng } from 'leaflet'
 import { getTiledata, latlngToTileCoords, latlngToXYOnTile, tileCoordsToPoint } from 'tiledata'
 import { tileDataStorage } from '../..'
 import { getLinks } from '../../struct';
 import { getMap } from '../structurecontroller';
 import Unit from '../../struct/unit';
 import Link from '../../struct/link';
-import LatLon from 'geodesy/latlon-ellipsoidal-vincenty'
+import LatLon from 'geodesy/latlon-spherical'
+import { RadioMedium } from '../../struct/medium';
 
 
 /* // NOTE: EmissionLayer planning below:
@@ -42,6 +43,13 @@ interface CoverageTile {
     data: any,
     drawEmission: Function
 }
+interface BorderPoint {
+    tileCoords: TileCoords,
+    xp: number,
+    yp: number,
+    point: Point, // needed?
+    latlng: LatLng
+}
 
 
 const scale = 1 / 16, res = 256 * scale
@@ -59,7 +67,7 @@ function waitFinish() {
         console.log('wait finished')
         if (update) {
             console.time('calculateCoverage')
-            calculateCoverage()
+            calculateEmission()
             console.timeEnd('calculateCoverage')
         }
         update = false
@@ -74,7 +82,7 @@ function onMoveEnd() {
 /**
  * // NOTE: Ota huomioon geodeettinen los linja.
  */
-function calculateCoverage() {
+function calculateEmission() {
     const links = getLinks()
     
     const map = getMap()
@@ -94,11 +102,11 @@ function calculateCoverage() {
     // Initialize / clear emission data
     for (const [coordsStr, obj] of zLayer.entries()) {
         obj.data.emission = new Int16Array(res*res)
-        //console.log(coordsStr, viewBounds.overlaps(obj.bounds))
-        //obj.drawEmission()
+        if (viewBounds.overlaps(obj.bounds)) obj.drawEmission()
     }
 
     for (const link of links) {
+        if (link.medium.type == 'cable') continue;
         const ll0 = new LatLon(link.unit0.latlng.lat, link.unit0.latlng.lng)
         const ll1 = new LatLon(link.unit1.latlng.lat, link.unit1.latlng.lng)
 
@@ -114,30 +122,39 @@ function calculateCoverage() {
         console.log('link values:', link.values)
 
         // instead of viewbounds check if it's inside the active tiles?
-        if (viewBounds.contains(link.unit0.latlng)) calculateEmission(ll0, link, bearing00)
-        if (viewBounds.contains(link.unit1.latlng)) calculateEmission(ll1, link, bearing10)
+        if (viewBounds.contains(link.unit0.latlng)) calculateSourceEmission(borderPoints, zoom, ll0, link, bearing00)
+        if (viewBounds.contains(link.unit1.latlng)) calculateSourceEmission(borderPoints, zoom, ll1, link, bearing10)
     }
+}
 
-    function calculateEmission(ll0: LatLon, link: Link, bearing: number) {
-        for (const temp of borderPoints) {
-            const ll1 = new LatLon(temp.latlng.lat, temp.latlng.lng)
-            const bearing1 = ll0.initialBearingTo(ll1);
-            if (Math.abs(bearing-bearing1) < 3) {
-                new Marker([ll1._lat, ll1.lon]).addTo(getMap())
-            }
-        }
+
+function calculateSourceEmission(
+    borderPoints: Array<BorderPoint>,
+    zoom: number,
+    ll0: LatLon,
+    link: Link,
+    bearing: number
+) {
+    const latlng  = latLng(ll0.lat, ll0.lon)
+    const tileCoords = getTileCoords(latlng, zoom)
+    const xy = getTileXYCoords(tileCoords, latlng)
+
+    for (const temp of borderPoints) {
+        const ll1 = new LatLon(temp.latlng.lat, temp.latlng.lng)
+        const bearing1 = ll0.initialBearingTo(ll1);
+        const beamWidth = (link.medium as RadioMedium).beamWidth
+        if (beamWidth && Math.abs(bearing-bearing1) > beamWidth) continue;
+
+        // endpoint is accepted
+        new Marker([ll1.lat, ll1.lon]).addTo(getMap()) // temp visualization
+
+        // TODO: generate 
     }
 }
 
 
 function getBorderPoints(nwCoords: TileCoords, seCoords: TileCoords) {
-    const borderPoints: {
-        tileCoords: TileCoords,
-        xp: number,
-        yp: number,
-        point: Point, // needed?
-        latlng: LatLng
-    }[] = []
+    const borderPoints = new Array<BorderPoint>()
 
     // top border
     for (let x = nwCoords.x, y = nwCoords.y; x <= seCoords.x; ++x)
@@ -190,8 +207,9 @@ function getTileCoords(latlng: LatLng, scale: number) {
 
 /**
  * Utility function from RadioProjekti
+ * Formerly known as getTileGridCoords
  */
-function getTileGridCoords(tileCoords: TileCoords, latlng: LatLng) {
+function getTileXYCoords(tileCoords: TileCoords, latlng: LatLng) {
     const point = CRS.EPSG3857.latLngToPoint(latlng, tileCoords.z)
     const xOffset = point.x / 256 - tileCoords.x
     const yOffset = point.y / 256 - tileCoords.y
