@@ -143,7 +143,8 @@ function calculateSourceEmission(
         const ll1 = new LatLon(temp.latlng.lat, temp.latlng.lng)
         const bearing1 = ll0.initialBearingTo(ll1);
         const beamWidth = (link.medium as RadioMedium).beamWidth
-        if (beamWidth && Math.abs(bearing-bearing1) > beamWidth) continue;
+        const bearingDiff = Math.abs(bearing-bearing1)
+        if (beamWidth && bearingDiff > beamWidth) continue;
 
         const {steps, delta} = getGeodesicLineStats(latlng0, temp.latlng, 10000) // accuracy good enough
         const latlngs = getGeodesicLine(latlng0, temp.latlng, steps)
@@ -152,20 +153,26 @@ function calculateSourceEmission(
         //for (const temp of latlngs)
         //    new Marker(temp).addTo(map)
 
+
+        // NOTE: LOS calculation starts here
+
         for (let i = 1; i < latlngs.length; ++i) {
             const latlng0 = latlngs[i-1], latlng1 = latlngs[i]
             const tileCoords0 = getTileCoords(latlng0, zoom)
             const xy0 = getTileXYCoords(tileCoords0, latlng0) // res 256
-            const p0 = new Point(Math.floor(tileCoords0.x * res + xy0.x * scale), Math.floor(tileCoords0.y * res + xy0.y * scale))
+            const p0 = new Point(Math.floor(tileCoords0.x * res + xy0.x * scale), Math.floor(tileCoords0.y * res + xy0.y * scale)) // scale the grid to the resolution
             const tileCoords1 = getTileCoords(latlng1, zoom)
             const xy1 = getTileXYCoords(tileCoords1, latlng1)
             const p1 = new Point(Math.floor(tileCoords1.x * res + xy1.x * scale), Math.floor(tileCoords1.y * res + xy1.y * scale))
 
-            for (const p of getLinePlot(p0.x, p0.y, p1.x, p1.y)) {
+            const linePlot = getLinePlot(p0.x, p0.y, p1.x, p1.y)
+            for (let j = 0; j < linePlot.length; ++j) { // skip last because next lineplot starts on the same pixel
+                const p = linePlot[j]
                 const rx = p.x / res, ry = p.y / res
                 const tx = Math.floor(rx), ty = Math.floor(ry) // tile coordinates
                 const x = Math.floor(rx % 1 * res), y = Math.floor(ry % 1 * res) // xy on tile
                 console.log(tx, ty, x, y)
+                // NOTE: LOS increment here
             }
         }
 
