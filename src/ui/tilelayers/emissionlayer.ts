@@ -165,16 +165,21 @@ function getBorderPoints(nwCoords: TileCoords, seCoords: TileCoords) {
     for (let x = nwCoords.x, y = nwCoords.y; x <= seCoords.x; ++x)
         for (let xp = 0, yp = 0; xp < res; ++xp)
             borderPoints.push(cp(x, y, xp, yp))
+    // to prevent duplicates
+    borderPoints.unshift()
+    borderPoints.pop()
 
-    // left // TODO: don't create top and bottom pixels
+    // left
     for (let x = nwCoords.x, y = nwCoords.y; y <= seCoords.y; ++y)
         for (let xp = 0, yp = 0; yp < res; ++yp)
             borderPoints.push(cp(x, y, xp, yp))
+    borderPoints.pop()
 
-    // right // TODO: don't create top and bottom pixels
+    // right
     for (let x = seCoords.x, y = nwCoords.y; y <= seCoords.y; ++y)
         for (let xp = res-1, yp = 0; yp < res; ++yp)
             borderPoints.push(cp(x, y, xp, yp))
+    borderPoints.pop()
 
     // bottom
     for (let x = nwCoords.x, y = seCoords.y; x <= seCoords.x; ++x)
