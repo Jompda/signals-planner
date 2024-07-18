@@ -131,7 +131,7 @@ export function getLineStats(latlngs: Array<TiledataLatLng>, sourceNames: Array<
 }
 
 
-export function getGeodesocLine_PDist100to200(latlng0: LatLng, latlng1: LatLng) {
+export function getGeodesicLine_PDist100to200(latlng0: LatLng, latlng1: LatLng) {
     const { steps, delta } = geodesicLineStats(latlng0, latlng1)
     const latlngs = getGeodesicLine(latlng0, latlng1, steps)
     return { latlngs, delta }

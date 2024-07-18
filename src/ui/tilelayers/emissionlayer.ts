@@ -148,7 +148,12 @@ function calculateSourceEmission(
         // endpoint is accepted
         new Marker([ll1.lat, ll1.lon]).addTo(getMap()) // temp visualization
 
-        // TODO: generate 
+        /* // TODO: Estimate the geodesic path between the border point and
+         * the source using getGeodesicLine_PDist2000to4000 from linkutil (not written yet).
+         * Then use transform to pixel using latlngToTileCoords and latlngToXYOnTile from tiledata.
+         * Use Bresenham's line algorithm (implemented as getLinePlot in RadioProjekti) to fill the gaps.
+         */
+        
     }
 }
 
