@@ -155,6 +155,7 @@ function calculateSourceEmission(
 
 
         // NOTE: LOS calculation starts here
+        let maxObstacle = 0
 
         for (let i = 1; i < latlngs.length; ++i) {
             const latlng0 = latlngs[i-1], latlng1 = latlngs[i]

@@ -9,7 +9,7 @@ export default class Link {
     public id: string
     public unit0: Unit
     public unit1: Unit
-    public emitterHeight: number
+    public emitterHeight: number // TODO: Separate emitterHeights
     public medium: RadioMedium | CableMedium
     public values: Array<TiledataLatLng>
     public lineStats: LineStats
