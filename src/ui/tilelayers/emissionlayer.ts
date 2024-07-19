@@ -84,6 +84,7 @@ function onMoveEnd() {
  * // NOTE: Ota huomioon geodeettinen los linja.
  */
 function calculateEmission() {
+    const receiverHeight = 20
     const links = getLinks()
     
     const map = getMap()
@@ -101,10 +102,8 @@ function calculateEmission() {
     console.log('borderpoints:', borderPoints.length)
 
     // Initialize / clear emission data
-    for (const [coordsStr, obj] of zLayer.entries()) {
+    for (const [coordsStr, obj] of zLayer.entries())
         obj.data.emission = new Int16Array(res*res)
-        if (viewBounds.overlaps(obj.bounds)) obj.drawEmission()
-    }
 
     for (const link of links) {
         if (link.medium.type == 'cable') continue;
@@ -123,9 +122,16 @@ function calculateEmission() {
         console.log('link values:', link.values)
 
         // instead of viewbounds check if it's inside the active tiles?
-        if (viewBounds.contains(link.unit0.latlng)) calculateSourceEmission(borderPoints, zLayer, zoom, ll0, link, bearing00)
-        if (viewBounds.contains(link.unit1.latlng)) calculateSourceEmission(borderPoints, zLayer, zoom, ll1, link, bearing10)
+        if (viewBounds.contains(link.unit0.latlng)) calculateSourceEmission(borderPoints, zLayer, zoom, ll0, link, bearing00, receiverHeight)
+        if (viewBounds.contains(link.unit1.latlng)) calculateSourceEmission(borderPoints, zLayer, zoom, ll1, link, bearing10, receiverHeight)
     }
+
+    console.log(zLayer)
+
+    // Finally draw emission
+    for (const [coordsStr, obj] of zLayer.entries())
+        if (viewBounds.overlaps(obj.bounds))
+            obj.drawEmission()
 }
 
 
@@ -135,25 +141,24 @@ function calculateSourceEmission(
     zoom: number,
     ll0: LatLon,
     link: Link,
-    bearing: number
+    bearing: number,
+    receiverHeight: number
 ) {
     const latlng0  = latLng(ll0.lat, ll0.lon)
     const srcTileCoords = getTileCoords(latlng0, zoom) // These two functions could be unified
     const srcTileXY = getTileXYCoords(srcTileCoords, latlng0);
-    const srcElevation = getTileDataValue(srcTileCoords, srcTileXY.x, srcTileXY.y, zLayer, 'elevation', 256)
-    // TODO: same for treeHeight
-    console.log('srcElevation:', srcElevation)
+    const srcElevation = getTileDataValue(srcTileCoords, srcTileXY.x, srcTileXY.y, zLayer, 'elevation', 256) + link.emitterHeight
 
     const map = getMap()
-    for (const temp of borderPoints) {
-        const ll1 = new LatLon(temp.latlng.lat, temp.latlng.lng)
+    for (const bp of borderPoints) {
+        const ll1 = new LatLon(bp.latlng.lat, bp.latlng.lng)
         const bearing1 = ll0.initialBearingTo(ll1);
         const beamWidth = (link.medium as RadioMedium).beamWidth
         const bearingDiff = Math.abs(bearing-bearing1)
         if (beamWidth && bearingDiff > beamWidth) continue;
 
-        const {steps, delta} = getGeodesicLineStats(latlng0, temp.latlng, 10000) // accuracy good enough
-        const latlngs = getGeodesicLine(latlng0, temp.latlng, steps)
+        const {steps, delta} = getGeodesicLineStats(latlng0, bp.latlng, 10000) // accuracy good enough
+        const latlngs = getGeodesicLine(latlng0, bp.latlng, steps)
 
         // temp visualization
         //for (const temp of latlngs)
@@ -161,7 +166,7 @@ function calculateSourceEmission(
 
 
         // NOTE: LOS calculation starts here
-        let maxObstacle = 0, maxAngle = 0, pxDist = 0
+        let blindRatio = 0, pxDist = 1
 
         for (let i = 1; i < latlngs.length; ++i) {
             const latlng0 = latlngs[i-1], latlng1 = latlngs[i]
@@ -173,12 +178,15 @@ function calculateSourceEmission(
             const p1 = new Point(Math.floor(tileCoords1.x * res + xy1.x * scale), Math.floor(tileCoords1.y * res + xy1.y * scale))
 
             const linePlot = getLinePlot(p0.x, p0.y, p1.x, p1.y)
-            for (let j = 0; j < linePlot.length; ++j) { // skip last because next lineplot starts on the same pixel
+            //const lineAngle = getAngle(p0.x, p0.y, p1.x, p1.y)
+            
+            for (let j = 1; j < linePlot.length; ++j) { // skip first
                 const p = linePlot[j]
                 const rx = p.x / res, ry = p.y / res
                 const tx = Math.floor(rx), ty = Math.floor(ry) // tile coordinates
                 const x = Math.floor(rx % 1 * res), y = Math.floor(ry % 1 * res) // xy on tile
                 // NOTE: LOS increment here
+                // Same for treeHeight
                 const pElevation = getTileDataValue(
                     {x: tx, y: ty, z: zoom},
                     x,
@@ -187,10 +195,31 @@ function calculateSourceEmission(
                     'elevation',
                     256
                 )
+                const emissionArr = zLayer.get(`${tx}|${ty}|${zoom}`).data.emission as Int16Array
                 //console.log(tx, ty, x, y, pElevation)
+                
+                const hRatio = (pElevation - srcElevation) / pxDist
+                let value = 1
+                // FIXME: LOS calculation is fucked
+                /*if (hRatio >= blindRatio) { // pxDist must be changed to a valid distancemeter
+                    blindRatio = hRatio
+                    // gets direct radiation
+                    value = 2
+                } else {
+                    // below radiation, receiverHeight might be enough to get to radiation
+                    if ((pElevation + receiverHeight - srcElevation) / pxDist >= blindRatio) value = 2
+                }*/
+                emissionArr[y*res + x] = value
+                ++pxDist
             }
         }
     }
+}
+
+
+function getAngle(x0: number, y0: number, x1: number, y1: number) {
+    const dx = x1 - x0, dy = y1 - y0
+    return Math.atan2(dy, dx)
 }
 
 
@@ -346,15 +375,7 @@ function getLinePlot(x0: number, y0: number, x1: number, y1: number) {
         const loadData = async () => {
             // debug outline
             const ctx = tile.getContext('2d')
-            ctx.font = '12px Arial'
-            ctx.lineWidth = 1
-            ctx.strokeStyle = 'black'
-            ctx.strokeRect(0, 0, tile.width, tile.height)
-            ctx.fillStyle = 'white'
-            const coordsText = [coords.x, coords.y, coords.z].join(', ')
-            ctx.lineWidth = 2
-            ctx.strokeText(coordsText, 4, 12)
-            ctx.fillText(coordsText, 4, 12)
+            drawCoords(ctx, tile, coords)
 
             try {
                 let m = cache.get(coords.z)
@@ -382,11 +403,34 @@ function getLinePlot(x0: number, y0: number, x1: number, y1: number) {
 
     drawEmission: function(coords: TileCoords, tile: HTMLCanvasElement) {
         const ctx = tile.getContext('2d')
+        ctx.clearRect(0, 0, tile.width, tile.height)
+        drawCoords(ctx, tile, coords)
 
-        // temp to illustrate emission draw has been called
-        const size = 256
-        ctx.clearRect(size/4, size/4, tile.width / 2, tile.height / 2)
-        ctx.fillStyle = '#00ff0088'
-        ctx.fillRect(size/4, size/4, tile.width / 2, tile.height / 2)
+        const emissionData = cache.get(coords.z).get(`${coords.x}|${coords.y}|${coords.z}`).data.emission as Int16Array
+
+        const s = 1/scale
+
+        const putpixel = (x: number, y: number) => ctx.fillRect(x, y, s, s)
+        for (let x = 0; x < res; ++x) {
+            for (let y = 0; y < res; ++y) {
+                const value = emissionData[y * res + x]
+                if (!value) ctx.fillStyle = '#00000088'
+                else ctx.fillStyle = '#00ff0088'
+                putpixel(x * s, y * s)
+            }
+        }
     }
 })
+
+
+function drawCoords(ctx: CanvasRenderingContext2D, tile: HTMLCanvasElement, coords: TileCoords) {
+    ctx.font = '12px Arial'
+    ctx.lineWidth = 1
+    ctx.strokeStyle = 'black'
+    ctx.strokeRect(0, 0, tile.width, tile.height)
+    ctx.fillStyle = 'white'
+    const coordsText = [coords.x, coords.y, coords.z].join(', ')
+    ctx.lineWidth = 2
+    ctx.strokeText(coordsText, 4, 12)
+    ctx.fillText(coordsText, 4, 12)
+}
