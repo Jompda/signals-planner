@@ -84,7 +84,7 @@ function onMoveEnd() {
  * // NOTE: Ota huomioon geodeettinen los linja.
  */
 function calculateEmission() {
-    const receiverHeight = 20
+    const receiverHeight = 50 // the los calculator is way too rough because values below 40 don't show much
     const links = getLinks()
     
     const map = getMap()
@@ -119,14 +119,12 @@ function calculateEmission() {
         //console.log('bearings:', bearing00, bearing01, bearing10, bearing11)
 
         //console.log(link.lineStats)
-        console.log('link values:', link.values)
+        //console.log('link values:', link.values)
 
         // instead of viewbounds check if it's inside the active tiles?
         if (viewBounds.contains(link.unit0.latlng)) calculateSourceEmission(borderPoints, zLayer, zoom, ll0, link, bearing00, receiverHeight)
         if (viewBounds.contains(link.unit1.latlng)) calculateSourceEmission(borderPoints, zLayer, zoom, ll1, link, bearing10, receiverHeight)
     }
-
-    console.log(zLayer)
 
     // Finally draw emission
     for (const [coordsStr, obj] of zLayer.entries())
@@ -147,7 +145,9 @@ function calculateSourceEmission(
     const latlng0  = latLng(ll0.lat, ll0.lon)
     const srcTileCoords = getTileCoords(latlng0, zoom) // These two functions could be unified
     const srcTileXY = getTileXYCoords(srcTileCoords, latlng0);
-    const srcElevation = getTileDataValue(srcTileCoords, srcTileXY.x, srcTileXY.y, zLayer, 'elevation', 256) + link.emitterHeight
+    const srcRawElevation = getTileDataValue(srcTileCoords, srcTileXY.x, srcTileXY.y, zLayer, 'elevation', 256)
+    const srcElevation = srcRawElevation + link.emitterHeight
+    console.log('srcRawElevation,srcElevation:', srcRawElevation, srcElevation)
 
     const map = getMap()
     for (const bp of borderPoints) {
@@ -166,7 +166,7 @@ function calculateSourceEmission(
 
 
         // NOTE: LOS calculation starts here
-        let blindRatio = 0, pxDist = 1
+        let blindRatio = Number.MIN_VALUE, pxDist = 1
 
         for (let i = 1; i < latlngs.length; ++i) {
             const latlng0 = latlngs[i-1], latlng1 = latlngs[i]
@@ -178,7 +178,7 @@ function calculateSourceEmission(
             const p1 = new Point(Math.floor(tileCoords1.x * res + xy1.x * scale), Math.floor(tileCoords1.y * res + xy1.y * scale))
 
             const linePlot = getLinePlot(p0.x, p0.y, p1.x, p1.y)
-            //const lineAngle = getAngle(p0.x, p0.y, p1.x, p1.y)
+            
             
             for (let j = 1; j < linePlot.length; ++j) { // skip first
                 const p = linePlot[j]
@@ -189,27 +189,29 @@ function calculateSourceEmission(
                 // Same for treeHeight
                 const pElevation = getTileDataValue(
                     {x: tx, y: ty, z: zoom},
-                    x,
-                    y,
+                    x / scale, // topleft corner of the pixel // TODO center
+                    y / scale,
                     zLayer,
                     'elevation',
                     256
                 )
+
                 const emissionArr = zLayer.get(`${tx}|${ty}|${zoom}`).data.emission as Int16Array
                 //console.log(tx, ty, x, y, pElevation)
                 
                 const hRatio = (pElevation - srcElevation) / pxDist
                 let value = 1
                 // FIXME: LOS calculation is fucked
-                /*if (hRatio >= blindRatio) { // pxDist must be changed to a valid distancemeter
-                    blindRatio = hRatio
+                // Consider implementing a Irregular Terrain Model algorithm.
+                if (hRatio >= blindRatio) { // pxDist should be changed to a more valid distancemeter
                     // gets direct radiation
+                    blindRatio = hRatio
                     value = 2
                 } else {
-                    // below radiation, receiverHeight might be enough to get to radiation
+                    // below radiation, receiverHeight might be enough to get radiation
                     if ((pElevation + receiverHeight - srcElevation) / pxDist >= blindRatio) value = 2
-                }*/
-                emissionArr[y*res + x] = value
+                }
+                emissionArr[y * res + x] = value
                 ++pxDist
             }
         }
@@ -217,10 +219,21 @@ function calculateSourceEmission(
 }
 
 
+//// Temporary utility functions
+function radTo2PI(rad: number) {
+    return (rad >= 0 ? rad : rad + 2 * Math.PI)
+}
+function degToRad(deg: number) {
+    return deg * Math.PI / 180
+}
+function radToDeg(rad: number) {
+    return rad * 180 / Math.PI
+}
 function getAngle(x0: number, y0: number, x1: number, y1: number) {
     const dx = x1 - x0, dy = y1 - y0
     return Math.atan2(dy, dx)
 }
+////
 
 
 function getTileDataValue(
@@ -401,6 +414,10 @@ function getLinePlot(x0: number, y0: number, x1: number, y1: number) {
         return tile
     },
 
+    // NOTE: At bigger scales is not accurate enough. Consider
+    // calculating at a set zoom level and constructing the tiles from there.
+
+    // NOTE: Also consider leaving out tiles that are not inside lines of sight to prevent loading thousands of tiles.
     drawEmission: function(coords: TileCoords, tile: HTMLCanvasElement) {
         const ctx = tile.getContext('2d')
         ctx.clearRect(0, 0, tile.width, tile.height)
@@ -415,7 +432,8 @@ function getLinePlot(x0: number, y0: number, x1: number, y1: number) {
             for (let y = 0; y < res; ++y) {
                 const value = emissionData[y * res + x]
                 if (!value) ctx.fillStyle = '#00000088'
-                else ctx.fillStyle = '#00ff0088'
+                else if (value == 1) ctx.fillStyle = '#ffff0088'
+                else if (value == 2) ctx.fillStyle = '#00ff0088'
                 putpixel(x * s, y * s)
             }
         }
