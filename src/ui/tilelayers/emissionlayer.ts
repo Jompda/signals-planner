@@ -417,13 +417,12 @@ function getLinePlot(x0: number, y0: number, x1: number, y1: number) {
 
     // NOTE: Also consider leaving out tiles that are not inside lines of sight to prevent loading thousands of tiles.
     drawEmission: function(coords: TileCoords, tile: HTMLCanvasElement) {
-        const ctx = tile.getContext('2d')
-        ctx.clearRect(0, 0, tile.width, tile.height)
-        drawCoords(ctx, tile, coords)
-
         const emissionData = cache.get(coords.z).get(`${coords.x}|${coords.y}|${coords.z}`).data.emission as Int16Array
 
-        const s = 1/scale
+        const ctx = tile.getContext('2d')
+        ctx.clearRect(0, 0, tile.width, tile.height)
+
+        const s = 1 / scale
 
         const putpixel = (x: number, y: number) => ctx.fillRect(x, y, s, s)
         for (let x = 0; x < res; ++x) {
@@ -435,6 +434,8 @@ function getLinePlot(x0: number, y0: number, x1: number, y1: number) {
                 putpixel(x * s, y * s)
             }
         }
+
+        drawCoords(ctx, tile, coords)
     }
 })
 
