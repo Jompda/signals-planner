@@ -123,20 +123,26 @@ function calculateEmission() {
         console.log('link values:', link.values)
 
         // instead of viewbounds check if it's inside the active tiles?
-        if (viewBounds.contains(link.unit0.latlng)) calculateSourceEmission(borderPoints, zoom, ll0, link, bearing00)
-        if (viewBounds.contains(link.unit1.latlng)) calculateSourceEmission(borderPoints, zoom, ll1, link, bearing10)
+        if (viewBounds.contains(link.unit0.latlng)) calculateSourceEmission(borderPoints, zLayer, zoom, ll0, link, bearing00)
+        if (viewBounds.contains(link.unit1.latlng)) calculateSourceEmission(borderPoints, zLayer, zoom, ll1, link, bearing10)
     }
 }
 
 
 function calculateSourceEmission(
     borderPoints: Array<BorderPoint>,
+    zLayer: Map<string, CoverageTile>,
     zoom: number,
     ll0: LatLon,
     link: Link,
     bearing: number
 ) {
     const latlng0  = latLng(ll0.lat, ll0.lon)
+    const srcTileCoords = getTileCoords(latlng0, zoom) // These two functions could be unified
+    const srcTileXY = getTileXYCoords(srcTileCoords, latlng0);
+    const srcElevation = getTileDataValue(srcTileCoords, srcTileXY.x, srcTileXY.y, zLayer, 'elevation', 256)
+    // TODO: same for treeHeight
+    console.log('srcElevation:', srcElevation)
 
     const map = getMap()
     for (const temp of borderPoints) {
@@ -155,7 +161,7 @@ function calculateSourceEmission(
 
 
         // NOTE: LOS calculation starts here
-        let maxObstacle = 0
+        let maxObstacle = 0, maxAngle = 0, pxDist = 0
 
         for (let i = 1; i < latlngs.length; ++i) {
             const latlng0 = latlngs[i-1], latlng1 = latlngs[i]
@@ -172,12 +178,32 @@ function calculateSourceEmission(
                 const rx = p.x / res, ry = p.y / res
                 const tx = Math.floor(rx), ty = Math.floor(ry) // tile coordinates
                 const x = Math.floor(rx % 1 * res), y = Math.floor(ry % 1 * res) // xy on tile
-                console.log(tx, ty, x, y)
                 // NOTE: LOS increment here
+                const pElevation = getTileDataValue(
+                    {x: tx, y: ty, z: zoom},
+                    x,
+                    y,
+                    zLayer,
+                    'elevation',
+                    256
+                )
+                console.log(tx, ty, x, y, pElevation)
             }
         }
-
     }
+}
+
+
+function getTileDataValue(
+    coords: TileCoords,
+    x: number,
+    y: number,
+    zLayer: Map<string, CoverageTile>,
+    dataField: string,
+    res: number
+) {
+    const data = zLayer.get(`${coords.x}|${coords.y}|${coords.z}`).data[dataField] as Int16Array
+    return data[y * res + x]
 }
 
 
