@@ -84,7 +84,7 @@ function onMoveEnd() {
  * // NOTE: Ota huomioon geodeettinen los linja.
  */
 function calculateEmission() {
-    const receiverHeight = 50 // the los calculator is way too rough because values below 40 don't show much
+    const receiverHeight = 25 // the los calculator is way too rough because values below 40 don't show much
     const links = getLinks()
     
     const map = getMap()
@@ -166,7 +166,7 @@ function calculateSourceEmission(
 
 
         // NOTE: LOS calculation starts here
-        let blindRatio = Number.MIN_VALUE, pxDist = 1
+        let blindRatio = Number.MIN_SAFE_INTEGER, pxDist = 1
 
         for (let i = 1; i < latlngs.length; ++i) {
             const latlng0 = latlngs[i-1], latlng1 = latlngs[i]
@@ -203,10 +203,12 @@ function calculateSourceEmission(
                 let value = 1
                 // FIXME: LOS calculation is fucked
                 // Consider implementing a Irregular Terrain Model algorithm.
+                //console.log('pxDist,srcElevation,pElevation,blindRatio,hRatio:', pxDist, srcElevation, pElevation, blindRatio, hRatio, hRatio >= blindRatio)
                 if (hRatio >= blindRatio) { // pxDist should be changed to a more valid distancemeter
                     // gets direct radiation
                     blindRatio = hRatio
                     value = 2
+                    //console.log('updated ratio:', srcElevation, pElevation, blindRatio)
                 } else {
                     // below radiation, receiverHeight might be enough to get radiation
                     if ((pElevation + receiverHeight - srcElevation) / pxDist >= blindRatio) value = 2
