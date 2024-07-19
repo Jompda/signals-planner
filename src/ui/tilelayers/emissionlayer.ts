@@ -53,7 +53,8 @@ interface BorderPoint {
 }
 
 
-const scale = 1 / 4, res = 256 * scale
+let scale = 1 / 4, res = 256 * scale
+let receiverHeight = 25
 
 
 let update = false;
@@ -84,7 +85,6 @@ function onMoveEnd() {
  * // NOTE: Ota huomioon geodeettinen los linja.
  */
 function calculateEmission() {
-    const receiverHeight = 25 // the los calculator is way too rough because values below 40 don't show much
     const links = getLinks()
     
     const map = getMap()
@@ -99,7 +99,6 @@ function calculateEmission() {
     console.log('links:', links)
 
     const borderPoints = getBorderPoints(nwTile, seTile)
-    console.log('borderpoints:', borderPoints.length)
 
     // Initialize / clear emission data
     for (const [coordsStr, obj] of zLayer.entries())
@@ -122,8 +121,8 @@ function calculateEmission() {
         //console.log('link values:', link.values)
 
         // instead of viewbounds check if it's inside the active tiles?
-        if (viewBounds.contains(link.unit0.latlng)) calculateSourceEmission(borderPoints, zLayer, zoom, ll0, link, bearing00, receiverHeight)
-        if (viewBounds.contains(link.unit1.latlng)) calculateSourceEmission(borderPoints, zLayer, zoom, ll1, link, bearing10, receiverHeight)
+        if (viewBounds.contains(link.unit0.latlng)) calculateSourceEmission(borderPoints, zLayer, zoom, ll0, link, bearing00)
+        if (viewBounds.contains(link.unit1.latlng)) calculateSourceEmission(borderPoints, zLayer, zoom, ll1, link, bearing10)
     }
 
     // Finally draw emission
@@ -139,15 +138,13 @@ function calculateSourceEmission(
     zoom: number,
     ll0: LatLon,
     link: Link,
-    bearing: number,
-    receiverHeight: number
+    bearing: number
 ) {
     const latlng0  = latLng(ll0.lat, ll0.lon)
     const srcTileCoords = getTileCoords(latlng0, zoom) // These two functions could be unified
     const srcTileXY = getTileXYCoords(srcTileCoords, latlng0);
     const srcRawElevation = getTileDataValue(srcTileCoords, srcTileXY.x, srcTileXY.y, zLayer, 'elevation', 256)
     const srcElevation = srcRawElevation + link.emitterHeight
-    console.log('srcRawElevation,srcElevation:', srcRawElevation, srcElevation)
 
     const map = getMap()
     for (const bp of borderPoints) {
@@ -163,7 +160,6 @@ function calculateSourceEmission(
         // temp visualization
         //for (const temp of latlngs)
         //    new Marker(temp).addTo(map)
-
 
         // NOTE: LOS calculation starts here
         let blindRatio = Number.MIN_SAFE_INTEGER, pxDist = 1
@@ -433,7 +429,7 @@ function getLinePlot(x0: number, y0: number, x1: number, y1: number) {
         for (let x = 0; x < res; ++x) {
             for (let y = 0; y < res; ++y) {
                 const value = emissionData[y * res + x]
-                if (!value) ctx.fillStyle = '#00000088'
+                if (!value) continue
                 else if (value == 1) ctx.fillStyle = '#ffff0088'
                 else if (value == 2) ctx.fillStyle = '#00ff0088'
                 putpixel(x * s, y * s)
