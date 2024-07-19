@@ -53,7 +53,7 @@ interface BorderPoint {
 }
 
 
-const scale = 1 / 16, res = 256 * scale
+const scale = 1 / 4, res = 256 * scale
 
 
 let update = false;
@@ -187,7 +187,7 @@ function calculateSourceEmission(
                     'elevation',
                     256
                 )
-                console.log(tx, ty, x, y, pElevation)
+                //console.log(tx, ty, x, y, pElevation)
             }
         }
     }
@@ -202,8 +202,13 @@ function getTileDataValue(
     dataField: string,
     res: number
 ) {
-    const data = zLayer.get(`${coords.x}|${coords.y}|${coords.z}`).data[dataField] as Int16Array
-    return data[y * res + x]
+    try {
+        const data = zLayer.get(`${coords.x}|${coords.y}|${coords.z}`).data[dataField] as Int16Array
+        return data[y * res + x]
+    } catch (e) {
+        console.error(e)
+        console.error(coords, x, y, zLayer, dataField, res)
+    }
 }
 
 
