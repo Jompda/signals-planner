@@ -155,6 +155,8 @@ export type MediumType = 'radio' | 'cable'
 export interface RadioMediumOptions extends MediumOptions {
     /** Frequency in MHz. */
     frequency: number
+    /**Height of the emitter above ground. */
+    emitterHeight: number
     /** Beam width in degrees. */
     beamWidth?: number
     /** Transmitted power. */

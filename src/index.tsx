@@ -123,16 +123,11 @@ baseLayers.OSM.addTo(map)
 // TODO: these OptionsItems should be constructed by their respective modules
 control.optionsMenu([
     {
-        apply: () => console.log('apply emitterHeights'),
-        reset: () => console.log('reset emitterHeights'),
-        element:
-            <>
-                <h1>Emitter heights</h1>
-            </>
-    },
-    {
         apply: () => console.log('apply mediums'),
         reset: () => console.log('reset mediums'),
+        // NOTE: Ability to modify existing medium presets without changing applied ones.
+        // Ability to create new mediums.
+        // Emitter heights
         element:
             <>
                 <h1>Mediums</h1>

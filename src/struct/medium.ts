@@ -1,4 +1,4 @@
-import { CableLinkEstimate, CableMediumOptions, LinkEstimateOptions, MediumResolvable, MediumType, RadioLinkEstimate, RadioMediumOptions, SaveCableMedium, SaveRadioMedium } from '../interfaces'
+import { CableLinkEstimate, CableMediumOptions, LinkEstimateOptions, MediumOptions, MediumResolvable, MediumType, RadioLinkEstimate, RadioMediumOptions, SaveCableMedium, SaveRadioMedium } from '../interfaces'
 import { createLosGetter } from '../linkutil'
 
 
@@ -22,10 +22,10 @@ export abstract class Medium {
     public type: MediumType
     public name: string
     public preset: boolean
-    constructor(type: MediumType, name: string, preset = false) {
+    constructor(type: MediumType, options: MediumOptions) {
         this.type = type
-        this.name = name
-        this.preset = preset
+        this.name = options.name
+        this.preset = Boolean(options.preset)
     }
     abstract estimateLinkStats(options: LinkEstimateOptions): RadioLinkEstimate | CableLinkEstimate
     abstract serialize(): MediumResolvable
@@ -35,12 +35,14 @@ export abstract class Medium {
 export class RadioMedium extends Medium {
     public frequency: number
     public beamWidth?: number
+    public emitterHeight: number
     public Pt: number
     public Gt: number
     public Gr: number
     constructor(options: RadioMediumOptions) {
-        super('radio', options.name, options.preset)
+        super('radio', options)
         this.frequency = options.frequency
+        this.emitterHeight = options.emitterHeight
         this.beamWidth = options.beamWidth
         this.Pt = options.Pt
         this.Gt = options.Gt
@@ -108,7 +110,10 @@ export class RadioMedium extends Medium {
         } as SaveRadioMedium
     }
     static deserialize(obj: SaveRadioMedium) {
-        return new RadioMedium(obj)
+        return new RadioMedium({
+            ...obj,
+            emitterHeight: 25 // TODO: Get emitterheight from options
+        })
     }
 }
 
@@ -116,9 +121,10 @@ export class RadioMedium extends Medium {
 export class CableMedium extends Medium {
     public cableLength: number
     constructor(options: CableMediumOptions) {
-        super('cable', options.name, options.preset)
+        super('cable', options)
         this.cableLength = options.cableLength
     }
+
     // NOTE: Switch to on-ground-distance.
     estimateLinkStats({ lineStats }: LinkEstimateOptions): CableLinkEstimate {
         const cables = Math.ceil(lineStats.distance / this.cableLength)
@@ -147,6 +153,7 @@ export class CableMedium extends Medium {
 const radioPresetArray = [
     new RadioMedium({
         name: 'VHF1',
+        emitterHeight: 4,
         frequency: 88,
         Pt: 17,
         Gt: 2.15,
@@ -155,6 +162,7 @@ const radioPresetArray = [
     }),
     new RadioMedium({
         name: 'UHF1',
+        emitterHeight: 22,
         frequency: 1200,
         beamWidth: 14,
         Pt: 10,
@@ -164,6 +172,7 @@ const radioPresetArray = [
     }),
     new RadioMedium({
         name: 'SHF1',
+        emitterHeight: 25,
         frequency: 4000,
         beamWidth: 6,
         Pt: 10,
