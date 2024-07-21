@@ -362,7 +362,7 @@ function getLinePlot(x0: number, y0: number, x1: number, y1: number) {
 
 (GridLayer as any).emissionLayer = GridLayer.extend({
     onAdd: function(map: LMap) {
-        //this._map = map
+        this._map = map
         map.on('moveend', onMoveEnd)
         GridLayer.prototype.onAdd.call(this, map)
 
@@ -375,19 +375,30 @@ function getLinePlot(x0: number, y0: number, x1: number, y1: number) {
     },
 
     createTile: function (coords: Coords, callback: Function) {
-        //console.log('loading')
-        update = true
-        waitFinish()
         const tile = DomUtil.create('canvas', 'leaflet-tile')
         const size = this.getTileSize()
         tile.width = size.x
         tile.height = size.y
 
-        const loadData = async () => {
-            // debug outline
-            const ctx = tile.getContext('2d')
-            drawCoords(ctx, tile, coords)
+        const ctx = tile.getContext('2d')
+        // debug outline
+        drawCoords(ctx, tile, coords)
+        if (coords.z > 14) { // MapBox only provides dem data up to zoom level 14.
+            const text = 'NO DATA AVAILABLE\nToo zoomed in.'
+            ctx.font = '12px Arial'
+            ctx.strokeStyle = 'red'
+            ctx.lineWidth = 2
+            ctx.strokeText(text, 4, 30)
+            ctx.fillText(text, 4, 30)
+            setTimeout(() => callback(null, tile))
+            return tile
+        }
 
+        //console.log('loading')
+        update = true
+        waitFinish()
+
+        const loadData = async () => {
             try {
                 let m = cache.get(coords.z)
                 if (!m) cache.set(coords.z, m = new Map())
@@ -404,8 +415,9 @@ function getLinePlot(x0: number, y0: number, x1: number, y1: number) {
             finally {
                 //console.log('loaded')
                 waitFinish()
-                callback(null, tile)
             }
+
+            callback(null, tile)
         }
         loadData()
 

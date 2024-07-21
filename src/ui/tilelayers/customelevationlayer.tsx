@@ -145,6 +145,8 @@ function FitToViewButton({ callback }: {
         <button
             disabled={btnDisabled}
             onClick={() => {
+                // TODO: popup?
+                if (getMap().getZoom() > 14) return console.log('Too zoomed in for Fit to View to work.'); // mapbox doesn't provide more accurate topography data.
                 setBtnDisabled(true)
                 fitToView(progressFunction, callback)
             }}
