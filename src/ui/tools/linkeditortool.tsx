@@ -64,9 +64,11 @@ class LinkEditorTool extends Tool {
         this.highlight.remove()
         this.highlight = undefined
         const link = new Link({
-            medium: this.medium,
             unit0: this.startUnit.unit,
-            unit1: unitLayer.unit
+            unit1: unitLayer.unit,
+            emitterHeight0: 25, // TODO: Add ability to change emitterHeight values
+            emitterHeight1: 25,
+            medium: this.medium,
         })
         addAction(new AddLinkAction(new LinkLayer(
             link,

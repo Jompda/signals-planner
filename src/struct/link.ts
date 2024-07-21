@@ -5,11 +5,15 @@ import { CableMedium, RadioMedium, resolveMedium } from './medium'
 import { createLosGetter, getGeodesicLine, getGeodesicLineStats, getLineStats } from '../linkutil'
 
 
+const defaultEmitterHeight = 25 // TODO: Change to modifiable
+
+
 export default class Link {
     public id: string
     public unit0: Unit
     public unit1: Unit
-    public emitterHeight: number // TODO: Separate emitterHeights
+    public emitterHeight0: number
+    public emitterHeight1: number
     public medium: RadioMedium | CableMedium
     public values: Array<TiledataLatLng>
     public lineStats: LineStats
@@ -17,16 +21,20 @@ export default class Link {
     constructor(options: LinkOptions) {
         Object.assign(this, options)
         this.medium = resolveMedium(options.medium)
-        this.emitterHeight = 25 // temp
         this.reorder()
     }
     reorder() {
         const [unit0, unit1] = Link.orderUnits(this.unit0, this.unit1)
+        if (unit0.id !== this.unit0.id) {
+            const temp = this.emitterHeight0
+            this.emitterHeight0 = this.emitterHeight1
+            this.emitterHeight1 = temp
+        }
         this.unit0 = unit0
         this.unit1 = unit1
         this.id = Link.createId(this.unit0, this.unit1)
     }
-    static createId(unit0: Unit, unit1: Unit /* Medium etc.. */) { // TODO: Add medium to link id generation
+    static createId(unit0: Unit, unit1: Unit) {
         [unit0, unit1] = this.orderUnits(unit0, unit1)
         return `${unit0.id}-${unit1.id}`
     }
@@ -51,8 +59,8 @@ export default class Link {
         const values = await getValues(latlngs, sourceNames, 10)
         const lineStats = getLineStats(values, sourceNames)
 
-        const transmitterElevation = values[0].elevation + this.emitterHeight
-        const receiverElevation = values[values.length - 1].elevation + this.emitterHeight
+        const transmitterElevation = values[0].elevation + this.emitterHeight0
+        const receiverElevation = values[values.length - 1].elevation + this.emitterHeight1
         const losElevationAtIndex = createLosGetter(transmitterElevation, receiverElevation, values.length - 1)
 
         let highestObstacle = lineStats.peaks.values[0] - losElevationAtIndex(1)
@@ -85,6 +93,8 @@ export default class Link {
         return {
             unit0: this.unit0.id,
             unit1: this.unit1.id,
+            emitterHeight0: this.emitterHeight0,
+            emitterHeight1: this.emitterHeight1,
             medium: this.medium.serialize()
         } as SaveLink
     }
@@ -92,6 +102,8 @@ export default class Link {
         return new Link({
             unit0: getUnitById(obj.unit0),
             unit1: getUnitById(obj.unit1),
+            emitterHeight0: obj.emitterHeight0 || defaultEmitterHeight,
+            emitterHeight1: obj.emitterHeight1 || defaultEmitterHeight,
             medium: resolveMedium(obj.medium)
         })
     }

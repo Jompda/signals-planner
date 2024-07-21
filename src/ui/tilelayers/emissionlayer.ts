@@ -121,8 +121,8 @@ function calculateEmission() {
         //console.log('link values:', link.values)
 
         // instead of viewbounds check if it's inside the active tiles?
-        if (viewBounds.contains(link.unit0.latlng)) calculateSourceEmission(borderPoints, zLayer, zoom, ll0, link, bearing00)
-        if (viewBounds.contains(link.unit1.latlng)) calculateSourceEmission(borderPoints, zLayer, zoom, ll1, link, bearing10)
+        if (viewBounds.contains(link.unit0.latlng)) calculateSourceEmission(borderPoints, zLayer, zoom, ll0, link, link.emitterHeight0, bearing00)
+        if (viewBounds.contains(link.unit1.latlng)) calculateSourceEmission(borderPoints, zLayer, zoom, ll1, link, link.emitterHeight1, bearing10)
     }
 
     // Finally draw emission
@@ -138,13 +138,14 @@ function calculateSourceEmission(
     zoom: number,
     ll0: LatLon,
     link: Link,
+    emitterheight: number,
     bearing: number
 ) {
     const latlng0  = latLng(ll0.lat, ll0.lon)
     const srcTileCoords = getTileCoords(latlng0, zoom) // These two functions could be unified
     const srcTileXY = getTileXYCoords(srcTileCoords, latlng0);
     const srcRawElevation = getTileDataValue(srcTileCoords, srcTileXY.x, srcTileXY.y, zLayer, 'elevation', 256)
-    const srcElevation = srcRawElevation + link.emitterHeight
+    const srcElevation = srcRawElevation + emitterheight
 
     const map = getMap()
     for (const bp of borderPoints) {

@@ -27,7 +27,7 @@ export abstract class Medium {
         this.name = name
         this.preset = preset
     }
-    abstract estimateLinkStats({ lineStats, values, emitterHeight }: LinkEstimateOptions): RadioLinkEstimate | CableLinkEstimate
+    abstract estimateLinkStats(options: LinkEstimateOptions): RadioLinkEstimate | CableLinkEstimate
     abstract serialize(): MediumResolvable
 }
 
@@ -48,12 +48,12 @@ export class RadioMedium extends Medium {
     }
 
 
-    estimateLinkStats({ lineStats, values, emitterHeight }: LinkEstimateOptions): RadioLinkEstimate {
+    estimateLinkStats({ lineStats, values, emitterHeight0, emitterHeight1 }: LinkEstimateOptions): RadioLinkEstimate {
         const waveLength = (299_792_458) / (this.frequency * 1_000_000)
         const distance = lineStats.distance
 
-        const transmitterElevation = values[0].elevation + emitterHeight
-        const receiverElevation = values[values.length - 1].elevation + emitterHeight
+        const transmitterElevation = values[0].elevation + emitterHeight0
+        const receiverElevation = values[values.length - 1].elevation + emitterHeight1
 
         let itmLoss = 0, Pr = -108
         // https://www.doria.fi/handle/10024/118719 Page 4
@@ -120,7 +120,7 @@ export class CableMedium extends Medium {
         this.cableLength = options.cableLength
     }
     // NOTE: Switch to on-ground-distance.
-    estimateLinkStats({ lineStats, values, emitterHeight }: LinkEstimateOptions): CableLinkEstimate {
+    estimateLinkStats({ lineStats }: LinkEstimateOptions): CableLinkEstimate {
         const cables = Math.ceil(lineStats.distance / this.cableLength)
         const length = cables * this.cableLength
         return {

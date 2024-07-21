@@ -27,6 +27,9 @@ export function generateMatrix(units: Array<Unit>, links: Array<Link>, linkToVal
 }
 
 
+let emitterHeight = 25 // TODO: Change to modifiable
+
+
 export function generateLinkLayers(
     unitLayers: Array<UnitLayer>,
     minDist: number,
@@ -46,6 +49,8 @@ export function generateLinkLayers(
             const link = new Link({
                 unit0: unitLayer0.unit,
                 unit1: unitLayer1.unit,
+                emitterHeight0: emitterHeight,
+                emitterHeight1: emitterHeight,
                 medium
             })
             if (linkIdExists(link.id)) {

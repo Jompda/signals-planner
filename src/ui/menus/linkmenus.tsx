@@ -71,7 +71,8 @@ export function showAddLinkMenu(map: LMap, unitLayer0: UnitLayer) {
                     <button onClick={() => {
                         if (!unit1) return // Tell user to select link.
                         if (linkIdExists(Link.createId(unitLayer0.unit, unit1.unit))) throw new Error('Link id already exists!')
-                        const link = new Link({ unit0: unitLayer0.unit, unit1: unit1.unit, medium })
+                        // TODO: Add ability to change emitterHeight values
+                        const link = new Link({ unit0: unitLayer0.unit, unit1: unit1.unit, emitterHeight0: 25, emitterHeight1: 25, medium })
                         const linkLayer = new LinkLayer(link, getUnitLayerById(link.unit0.id), getUnitLayerById(link.unit1.id))
                         addAction(new AddLinkAction(linkLayer).forward())
                         dialog.close()

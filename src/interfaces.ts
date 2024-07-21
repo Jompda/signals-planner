@@ -132,6 +132,8 @@ export interface UnitOptions {
 export interface LinkOptions {
     unit0: Unit
     unit1: Unit
+    emitterHeight0: number
+    emitterHeight1: number
     medium: MediumResolvable
 }
 
@@ -197,6 +199,8 @@ export interface SaveUnit {
 export interface SaveLink {
     unit0: string
     unit1: string
+    emitterHeight0: number
+    emitterHeight1: number
     medium: SaveRadioMedium | SaveCableMedium | string
 }
 
@@ -232,7 +236,8 @@ export interface CableLinkEstimate {
 export interface LinkEstimateOptions {
     lineStats: LineStats
     values: Array<TiledataLatLng>
-    emitterHeight: number
+    emitterHeight0: number
+    emitterHeight1: number
 }
 
 export type MediumResolvable = RadioMedium | SaveRadioMedium | CableMedium | SaveCableMedium | Medium | string

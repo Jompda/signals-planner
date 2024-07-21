@@ -35,14 +35,14 @@ export function LinkStatistics({ linkLayer, setHighlightLatLng }: {
     linkLayer: LinkLayer
     setHighlightLatLng: (latlng: LatLng) => any
 }) {
-    const { emitterHeight, values, lineStats, stats } = linkLayer.link as Link
+    const { emitterHeight0, emitterHeight1, values, lineStats, stats } = linkLayer.link as Link
     const canvas = DomUtil.create('canvas')
     canvas.width = 600
     canvas.height = 260
 
     const getLosElevationAtIndex = createLosGetter(
-        values[0].elevation + emitterHeight,
-        values[values.length - 1].elevation + emitterHeight,
+        values[0].elevation + emitterHeight0,
+        values[values.length - 1].elevation + emitterHeight1,
         values.length - 1
     )
 
@@ -50,9 +50,9 @@ export function LinkStatistics({ linkLayer, setHighlightLatLng }: {
     const elevations = new Array<number>()
     const treeHeights = new Array<number>()
     const losElevations = [
-        values[0].elevation + emitterHeight,
+        values[0].elevation + emitterHeight0,
         ...new Array<number>(values.length - 2).fill(null),
-        values[values.length - 1].elevation + emitterHeight
+        values[values.length - 1].elevation + emitterHeight1
     ]
     let dist = 0
     for (let i = 0; i < values.length; i++) {
