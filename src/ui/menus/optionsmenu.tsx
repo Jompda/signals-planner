@@ -1,10 +1,11 @@
-import { Map as LMap, control, Control, DomUtil, Util, DomEvent } from 'leaflet'
+import { Map as LMap, control, Control, DomUtil, Util, DomEvent, ControlOptions } from 'leaflet'
 import { createRoot } from 'react-dom/client';
 import { createDialog } from '../../util';
+import { OptionsItem } from '../../interfaces';
 
 
-control.optionsMenu = function (options: any) {
-    return new Control.OptionsMenu(options) as Control
+control.optionsMenu = function (items: Array<OptionsItem>, options: ControlOptions) {
+    return new Control.OptionsMenu(items, options) as Control
 };
 
 
@@ -13,8 +14,9 @@ Control.OptionsMenu = Control.extend({
         position: 'topright'
     },
 
-    initialize: function (options: any) {
+    initialize: function (items: Array<OptionsItem>, options: ControlOptions) {
         Util.setOptions(this, options)
+        this._items = items;
         this._container = this.createOpenButton()
     },
 
@@ -58,31 +60,36 @@ Control.OptionsMenu = Control.extend({
         })
 
         const container = DomUtil.create('div', 'dialog-menu')
-        DomEvent.disableClickPropagation(container)
-        DomEvent.disableScrollPropagation(container)
+
+        const items = this._items
+        const elements = new Array<React.JSX.Element>
+        for (let i = 0; i < this._items.length; ++i)
+            elements.push(<div key={i}>{this._items[i].element}</div>)
+        
+        const root = createRoot(container)
+
+        function applyOptions() {
+            for (const item of items) item.apply()
+        }
+
+        function resetOptions() {
+            for (const item of items) item.reset()
+        }
+
+        root.render(
+            <>
+                <h1>Options</h1>
+                <hr />
+                {elements}
+                <div className='grower'></div>
+                <div className='dialog-menu-submit'>
+                    <button onClick={applyOptions}>Apply</button>
+                    <button onClick={resetOptions}>Restore defaults</button>
+                </div>
+            </>
+        )
+
         dialog.setContent(container)
         dialog.close()
-
-        const root = createRoot(container)
-        root.render(<OptionsMenu />)
     },
 })
-
-
-function OptionsMenu({ apply }: {
-    apply?: Function
-}) {
-    return (
-        <>
-            <h1>Options Menu</h1>
-            <hr />
-            <div className='grower'></div>
-            <div className='dialog-menu-submit'>
-                <button onClick={() => apply()}>Apply</button>
-                <button onClick={() => {
-                    console.log('TODO: RESET')
-                }}>Restore defaults</button>
-            </div>
-        </>
-    )
-}

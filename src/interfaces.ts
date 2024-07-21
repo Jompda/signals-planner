@@ -2,6 +2,7 @@ import { Control, ControlPosition, LatLng as LLatLng, LeafletMouseEvent, Map as 
 import { Symbol as MilSymbol, SymbolOptions } from 'milsymbol'
 import { CableMedium, Medium, RadioMedium } from './struct/medium'
 import Unit from './struct/unit'
+import { ReactElement } from 'react'
 
 
 declare module 'leaflet' {
@@ -37,7 +38,7 @@ declare module 'leaflet' {
             constructor(layers: Record<string, Layer>, options?: ControlOptions)
         }
         export class OptionsMenu {
-            constructor(options?: ControlOptions)
+            constructor(items: Array<OptionsItem>, options?: ControlOptions)
         }
         export class CustomToolbar {
             constructor(items: Array<IToolbarItem>, options?: ControlOptions)
@@ -48,12 +49,19 @@ declare module 'leaflet' {
     }
     export namespace control {
         export function layerControl(layers: Record<string, Layer>, options: ControlOptions): Control
-        export function optionsMenu(options?: ControlOptions): Control
+        export function optionsMenu(items: Array<OptionsItem>, options?: ControlOptions): Control
         export function customToolbar(items: Array<IToolbarItem>, options?: ControlOptions): Control
         export function dialog(options?: LeafletDialogOptions): LeafletDialog
         export function ruler(options?: any): Control
         export function zoomRatio(options?: ControlOptions): Control
     }
+}
+
+
+export interface OptionsItem {
+    apply: Function
+    reset: Function
+    element: React.JSX.Element
 }
 
 

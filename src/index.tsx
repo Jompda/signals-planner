@@ -120,7 +120,27 @@ baseLayers.OSM.addTo(map)
 /* NOTE: Possibility to include some menus such as settings with this.
  * https://github.com/turbo87/sidebar-v2/
  */
-control.optionsMenu({ position: 'topright' }).addTo(map);
+// TODO: these OptionsItems should be constructed by their respective modules
+control.optionsMenu([
+    {
+        apply: () => console.log('apply emitterHeights'),
+        reset: () => console.log('reset emitterHeights'),
+        element:
+            <>
+                <h1>Emitter heights</h1>
+            </>
+    },
+    {
+        apply: () => console.log('apply mediums'),
+        reset: () => console.log('reset mediums'),
+        element:
+            <>
+                <h1>Mediums</h1>
+                <h2>Default Link Medium</h2>
+            </>
+    }
+],
+{ position: 'topright' }).addTo(map);
 control.layerControl({ ...baseLayers, ...overlays }, { position: 'topright' }).addTo(map)
 control.customToolbar([
     defaultTool,
@@ -190,9 +210,9 @@ map.on('keydown', async (e: LeafletKeyboardEvent) => {
 
 
 import { initGeoman } from './ui/geomancontroller'
-import { initMapHooks, setActiveTool } from './ui/toolcontroller'
+import { initMapHooks } from './ui/toolcontroller'
 import 'leaflet-ruler/src/leaflet-ruler'
-import { deserialize, getNewUnitId, serialize } from './struct'
+import { deserialize, serialize } from './struct'
 import ImportAction from './actions/importaction'
 initGeoman(map)
 initMapHooks(map)

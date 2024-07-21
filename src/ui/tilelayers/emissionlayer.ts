@@ -81,9 +81,6 @@ function onMoveEnd() {
     waitFinish()
 }
 
-/**
- * // NOTE: Ota huomioon geodeettinen los linja.
- */
 function calculateEmission() {
     const links = getLinks()
     
@@ -162,7 +159,7 @@ function calculateSourceEmission(
         //for (const temp of latlngs)
         //    new Marker(temp).addTo(map)
 
-        // NOTE: LOS calculation starts here
+        // LOS calculation starts here
         let blindRatio = Number.MIN_SAFE_INTEGER, pxDist = 1
 
         for (let i = 1; i < latlngs.length; ++i) {
@@ -182,8 +179,8 @@ function calculateSourceEmission(
                 const rx = p.x / res, ry = p.y / res
                 const tx = Math.floor(rx), ty = Math.floor(ry) // tile coordinates
                 const x = Math.floor(rx % 1 * res), y = Math.floor(ry % 1 * res) // xy on tile
-                // NOTE: LOS increment here
-                // Same for treeHeight
+                // LOS increment here
+                
                 const pElevation = getTileDataValue(
                     {x: tx, y: ty, z: zoom},
                     x / scale, // topleft corner of the pixel // TODO center
@@ -192,14 +189,14 @@ function calculateSourceEmission(
                     'elevation',
                     256
                 )
+                // TODO: Same for treeHeight
 
                 const emissionArr = zLayer.get(`${tx}|${ty}|${zoom}`).data.emission as Int16Array
                 //console.log(tx, ty, x, y, pElevation)
                 
                 const hRatio = (pElevation - srcElevation) / pxDist
                 let value = 1
-                // FIXME: LOS calculation is fucked
-                // Consider implementing a Irregular Terrain Model algorithm.
+                // NOTE: Consider implementing a Irregular Terrain Model algorithm.
                 //console.log('pxDist,srcElevation,pElevation,blindRatio,hRatio:', pxDist, srcElevation, pElevation, blindRatio, hRatio, hRatio >= blindRatio)
                 if (hRatio >= blindRatio) { // pxDist should be changed to a more valid distancemeter
                     // gets direct radiation
@@ -427,8 +424,7 @@ function getLinePlot(x0: number, y0: number, x1: number, y1: number) {
 
     // NOTE: At bigger scales is not accurate enough. Consider
     // calculating at a set zoom level and constructing the tiles from there.
-
-    // NOTE: Also consider leaving out tiles that are not inside lines of sight to prevent loading thousands of tiles.
+    // Also consider leaving out tiles that are not inside lines of sight to prevent loading thousands of tiles.
     drawEmission: function(coords: TileCoords, tile: HTMLCanvasElement) {
         const emissionData = cache.get(coords.z).get(`${coords.x}|${coords.y}|${coords.z}`).data.emission as Int16Array
 

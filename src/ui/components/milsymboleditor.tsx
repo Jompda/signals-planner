@@ -91,7 +91,7 @@ export function MilSymbolEditor({ milSymbol, updateMilSymbol }: {
         { title: 'Additional Information', option: 'additionalInformation' },
         { title: 'Date Time Group', option: 'dtg' }
     ]
-    const inputFields = new Array<JSX.Element>()
+    const inputFields = new Array<React.JSX.Element>()
     for (const field of textFields) {
         const fieldRef = useRef<HTMLInputElement>()
         inputFields.push(<span key={field.option + 1}>{field.title}</span>)

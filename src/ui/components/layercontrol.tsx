@@ -66,14 +66,14 @@ function LayerModel({ enabled, layer, map, layerName }: {
         <div className='lc-layermodel'>
             <div
                 ref={headRef}
-                className={'lc-layermodel-head' + (enabled ? ' lclayermodel-head-selected' : '')}
+                className={'lc-layermodel-head' + (enabled ? ' lc-layermodel-head-selected' : '')}
                 onClick={() => {
                     if ($(optionsRef.current).is(':visible')) {
                         $(optionsRef.current).slideUp()
-                        headRef.current.classList.remove('lclayermodel-head-selected')
+                        headRef.current.classList.remove('lc-layermodel-head-selected')
                     } else {
                         $(optionsRef.current).slideDown()
-                        headRef.current.classList.add('lclayermodel-head-selected')
+                        headRef.current.classList.add('lc-layermodel-head-selected')
                     }
                 }}
             >
@@ -111,7 +111,7 @@ function LayerModel({ enabled, layer, map, layerName }: {
             </div>
             <div
                 ref={optionsRef}
-                className={('hidden')}
+                className={enabled ? 'visible' : 'hidden'}
             >
                 <LayerModelOptions
                     layer={layer}
