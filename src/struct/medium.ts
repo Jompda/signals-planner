@@ -50,6 +50,7 @@ export class RadioMedium extends Medium {
     }
 
 
+    // FIXME: Review the implementation of the ITM algorithm.
     estimateLinkStats({ lineStats, values, emitterHeight0, emitterHeight1 }: LinkEstimateOptions): RadioLinkEstimate {
         const waveLength = (299_792_458) / (this.frequency * 1_000_000)
         const distance = lineStats.distance
