@@ -64,6 +64,7 @@ export function showAddLinkMenu(map: LMap, unitLayer0: UnitLayer) {
                 <hr />
                 <span>Type:</span>
                 <MediumSelector
+                    defaultValue='SHF1' // TODO: Modifiable
                     updateMedium={(value: string) => medium = value}
                 />
                 <div className='grower'></div>
