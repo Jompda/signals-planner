@@ -1,10 +1,10 @@
 //import 'leaflet/dist/leaflet.css'
-import './styles.css'
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.css'
 import 'leaflet-dialog/Leaflet.Dialog.css'
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
 import 'react-tabs/style/react-tabs.css'
 import 'leaflet-ruler/src/leaflet-ruler.css'
+import './styles.css'
 
 import { Map as LMap, control, LeafletKeyboardEvent } from 'leaflet'
 import '@geoman-io/leaflet-geoman-free'
@@ -102,7 +102,7 @@ import { showLinkGraphToolMenu } from './ui/menus/linkgraphmenus'
 
 const map = new LMap('map', {
     contextmenu: true,
-    contextmenuWidth: 140,
+    contextmenuWidth: 160,
     wheelPxPerZoomLevel: 60 / 0.5,
     doubleClickZoom: false,
     boxZoom: false

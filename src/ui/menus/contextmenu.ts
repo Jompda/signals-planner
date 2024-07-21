@@ -14,11 +14,11 @@ let i = 0;
 
 export function initContextMenu(map: LMap) {
     const mapOnlyItems: Array<ContextMenuItem> = [{
-        text: 'Undo',
+        text: '<span>Undo</span><span>ctrl+z</span>',
         index: ++i,
         callback: undo
     }, {
-        text: 'Redo',
+        text: '<span>Redo</span><span>ctrl+y</span>',
         index: ++i,
         callback: redo
     }, {
@@ -29,11 +29,11 @@ export function initContextMenu(map: LMap) {
         index: ++i,
         callback: (e) => showAddUnitMenu(map, e)
     }, {
-        text: 'Select All Units',
+        text: '<span>Select All Units</span><span>ctrl+a</span>',
         index: ++i,
         callback: selectAllUnitLayers
     }, {
-        text: 'Deselect All Units',
+        text: '<span>Deselect All Units</span><span>ctrl+a</span>',
         index: ++i,
         callback: deselectAllUnitLayers
     }, {
