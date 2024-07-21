@@ -87,8 +87,9 @@ export function initContextMenu(map: LMap) {
     map.on('contextmenu.hide', () => setContextmenuItems(map, baseContextMenuItems))
 }
 
-export function setContextmenuItems(map: LMap, items: Array<ContextMenuItem>) {
-    (map as any).options.contextmenuItems = items;
-    (map as any).contextmenu.removeAllItems();
-    (map as any).contextmenu._createItems();
+export function setContextmenuItems(lmap: LMap, items: Array<ContextMenuItem>) {
+    const map = lmap as any
+    map.options.contextmenuItems = items;
+    map.contextmenu.removeAllItems();
+    map.contextmenu._createItems();
 }
