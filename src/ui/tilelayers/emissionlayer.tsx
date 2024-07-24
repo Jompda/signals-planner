@@ -10,31 +10,31 @@ import { getSetting } from '../../settings';
 import { useRef } from 'react';
 
 
-/* // NOTE: EmissionLayer planning below:
- * Extend GridLayer:
- * To limit the covered area, the layer must take a bounds option.
- *   Use OSM:s slippy tiles function to get the covered tiles' coordinates at certain zoom level.
- * By default the layer draws an outline on the selected tiles.
- *   If emission data exists in the data structure then draw it.
- * Emission calculaton for the current zoom level is triggered with a function.
- *   After the calculation is finished, redraw the layer.
+/* 
+ * Emission layer logic description:
+ * 
+ * createTile-method from GridLayer begins loading dem data and stores it with tiledata.
+ * Once no more events are being fired (moveend, creataTile, demLoaded) emission calculation begins.
  * 
  * Emission calculation:
- * Create a huge raster from all covered tiles.
- * For each Link:
- *   For both endpoints (Units):
- *     Unit position can be acquired by using functions latlngToTilecoords and latlngToXYOnTile from tiledata.
- *     Get every possible ray by getting the line paths with Bresenham's line algorithm from Unit to raster edge pixel.
- *       I know it's only an approximation of the path since it doesn't take the geodesic path into account but the
- *       paths don't really differ that much at short ranges.
- *       It'd be too much for me to try to approximate the geodesic line path on a raster while covering every single pixel.
- *     If beam width is specified then filter out rays that are outside the beam.
- *       Take into account sidebeams / bad directivity?
- *       Simulate directivity by creating rays with varying strengths?
- *         Would be yet another field of science which I'm not familliar with.
- *     The ray length must be limited at max to radio horizon.
- *     Find a way to transform a tilepixel to LatLng.
- *       Maybe go create that function in the tiledata library?
+ * - Initialize tiledata tiles to include emission data at a possibly lower resolution.
+ * - Get visible tiles with map.getBounds and convert NW and SE corners to tile coordinates.
+ * - Based on rendering resolution, get border points including their tile coordinates, pixel coordinates on tile and latlng.
+ * 
+ * - For each Link:
+ *   - For both endpoints (Units):
+ *     If not in viewbounds skip
+ *     - For every border point which is hit by the beam based geodetic directions:
+ *       - Figure out unit position as tile coordinates and pixel coordinates inside the tile.
+ *       - Begin LOS calculation.
+ *       - To estimate geodesic line-of-sight, get a rough geodesic line between the endpoints (Unit and border point).
+ *         - Iterate through the given geodesic latlngs and convert them to tilecoords and pixel coords using tiledata functions.
+ *           - Use bresenham's line algorithm to connect the pixel coords between tiles.
+ *             - Each pixel is part of the LOS calculation.
+ * 
+ * // TODO: Implement the following to the LOS calculation algorithm:
+ * The LOS calculation must stop once ray length exceeds radio horizon.
+ * Energy loss over distance.
  */
 
 
