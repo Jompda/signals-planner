@@ -1,4 +1,4 @@
-import { DomUtil, GridLayer, Map as LMap, Coords, LatLngBounds, LatLng, Marker, CRS, Point, latLng } from 'leaflet'
+import { DomUtil, GridLayer, Map as LMap, Coords, LatLngBounds, LatLng, Marker, CRS, Point, latLng, ControlOptions } from 'leaflet'
 import { getTiledata, latlngToTileCoords } from 'tiledata'
 import { getLinks } from '../../struct';
 import { getMap } from '../structurecontroller';
@@ -6,6 +6,8 @@ import Link from '../../struct/link';
 import LatLon from 'geodesy/latlon-spherical'
 import { RadioMedium } from '../../struct/medium';
 import { getGeodesicLine, getGeodesicLineStats } from '../../linkutil';
+import { getSetting } from '../../settings';
+import { useRef } from 'react';
 
 
 /* // NOTE: EmissionLayer planning below:
@@ -52,20 +54,20 @@ interface BorderPoint {
 
 
 let scale = 1 / 4, res = 256 * scale
-let receiverHeight = 25 // TODO: Changeable
+let receiverHeight = getSetting('defaultEmitterHeight') as number
 
 
 let update = false;
 const cache = new Map<number, Map<string, CoverageTile>>()
-const timeout = 1000;
+let timeout = 1000;
 let tid: number
 
 
-function waitFinish() {
+function waitFinish(forceUpdate?: boolean) {
     if (tid) clearTimeout(tid)
     tid = setTimeout(() => {
         console.log('wait finished')
-        if (update) {
+        if (update || forceUpdate) {
             console.time('calculateCoverage')
             calculateEmission()
             console.timeEnd('calculateCoverage')
@@ -127,6 +129,8 @@ function calculateEmission() {
 }
 
 
+// BUG: zLayer is sometimes undefined.
+// Possible scenario when a receiving unitlayer is outside the viewbounds.
 function calculateSourceEmission(
     borderPoints: Array<BorderPoint>,
     zLayer: Map<string, CoverageTile>,
@@ -142,7 +146,7 @@ function calculateSourceEmission(
     const srcRawElevation = getTileDataValue(srcTileCoords, srcTileXY.x, srcTileXY.y, zLayer, 'elevation', 256)
     const srcElevation = srcRawElevation + emitterheight
 
-    const map = getMap()
+    //const map = getMap()
     for (const bp of borderPoints) {
         const ll1 = new LatLon(bp.latlng.lat, bp.latlng.lng)
         const bearing1 = ll0.initialBearingTo(ll1);
@@ -211,23 +215,6 @@ function calculateSourceEmission(
         }
     }
 }
-
-
-//// Temporary utility functions
-function radTo2PI(rad: number) {
-    return (rad >= 0 ? rad : rad + 2 * Math.PI)
-}
-function degToRad(deg: number) {
-    return deg * Math.PI / 180
-}
-function radToDeg(rad: number) {
-    return rad * 180 / Math.PI
-}
-function getAngle(x0: number, y0: number, x1: number, y1: number) {
-    const dx = x1 - x0, dy = y1 - y0
-    return Math.atan2(dy, dx)
-}
-////
 
 
 function getTileDataValue(
@@ -357,6 +344,9 @@ function getLinePlot(x0: number, y0: number, x1: number, y1: number) {
 
 
 (GridLayer as any).emissionLayer = GridLayer.extend({
+    options: {
+        lcOptions: <CustomLayerOptions />
+    },
     onAdd: function(map: LMap) {
         this._map = map
         map.on('moveend', onMoveEnd)
@@ -457,4 +447,58 @@ function drawCoords(ctx: CanvasRenderingContext2D, tile: HTMLCanvasElement, coor
     ctx.lineWidth = 2
     ctx.strokeText(coordsText, 4, 12)
     ctx.fillText(coordsText, 4, 12)
+}
+
+
+function CustomLayerOptions() {
+    const receiverHeightRef = useRef<HTMLInputElement>()
+    const divRef = useRef<HTMLInputElement>()
+    const timeoutRef = useRef<HTMLInputElement>()
+    const infoRef = useRef<HTMLInputElement>()
+
+    // divider = 4, scale = 1 / divider, res = 256 * scale
+
+    return (
+        <div className='lc-custom'>
+            <div className='emissionopt-row'>
+                <span>Receiver height (m):</span>
+                <input
+                    ref={receiverHeightRef}
+                    type='number'
+                    defaultValue={receiverHeight} />
+            </div>
+            <div className='emissionopt-row'>
+                <span>Tile res = 256 / 2^(value):</span>
+                <input
+                    ref={divRef}
+                    type='number'
+                    defaultValue={2} />
+            </div>
+            <div className='emissionopt-row'>
+                <span>Update timeout (ms):</span>
+                <input
+                    ref={timeoutRef}
+                    type='number'
+                    defaultValue={timeout} />
+            </div>
+            <button onClick={() => {
+                const rec = parseFloat(receiverHeightRef.current.value)
+                const div = 2 ** Math.floor(parseFloat(divRef.current.value))
+                const tim = parseFloat(timeoutRef.current.value)
+                if (isNaN(rec) || isNaN(div) ||isNaN(tim)) return console.error('INVALID VALUE DETECTED')
+
+                receiverHeight = rec
+                timeout = tim
+
+                scale = 1 / div
+                res = 256 * scale
+                console.log('div,scale,res:', div, scale, res)
+                infoRef.current.textContent = String(res)
+                waitFinish(true)
+            }}>Apply</button>
+            <hr />
+            <span>Resolution: </span>
+            <span ref={infoRef}>{res}</span>
+        </div>
+    )
 }

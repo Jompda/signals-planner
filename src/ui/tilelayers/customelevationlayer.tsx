@@ -97,7 +97,7 @@ function CustomLayerOptions({ breakpoints, min, max }: {
                 onMouseUp={() => p.update(parseInt(sliderRef.current.value))}
             />
         )
-        // buttons changing value doesn't update the value
+        // FIXME: buttons changing value doesn't update the value
         elements.push(
             <input
                 key={i++}

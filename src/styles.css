@@ -335,7 +335,20 @@ body {
     border: 1px solid #adadad;
 }
 
+.lc-custom {
+    margin: 0.5em 0.5em;
+}
 
+.emissionopt-row {
+    
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.emissionopt-row > input {
+    width: 4em;
+}
 
 
 /*

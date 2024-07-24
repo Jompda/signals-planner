@@ -25,12 +25,15 @@ export const baseLayers = {
     'MML: Maastokartta': new (GridLayer as any).basicAuthLayer(`https://avoin-karttakuva.maanmittauslaitos.fi/avoin/wmts/1.0.0/maastokartta/default/WGS84_Pseudo-Mercator/{z}/{y}/{x}.png`, {
         username: options.MMLApiKey,
         lcOptions: '<a href="https://www.maanmittauslaitos.fi/sites/maanmittauslaitos.fi/files/old/Karttamerkkien_selitys.pdf" target="_blank">MML Symbol explanations</a>'
-    } as any),
-    'Emission Layer': new (GridLayer as any).emissionLayer()
+    } as any)
 }
 
 
 export const overlays = {
+    'OpenRailwayMap': tileLayer('https://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | Map style: &copy; <a href="https://www.OpenRailwayMap.org">OpenRailwayMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+    }),
     'Topography: Elevation': customElevationLayer,
     'Topography: Slope': new TopoLayer({
         attribution: 'Topography by Seth "slutske22" Lutske, ' + createMapboxTerrainAttribution(),
@@ -58,8 +61,5 @@ export const overlays = {
         format: 'image/png',
         lcOptions: '<img style="padding:0.5em" src="https://kartta.luke.fi/geoserver/MVMI/ows?service=WMS&version=1.3.0&request=GetLegendGraphic&format=image/png&layer=keskipituus_1519" />'
     }),
-    'OpenRailwayMap': tileLayer('https://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | Map style: &copy; <a href="https://www.OpenRailwayMap.org">OpenRailwayMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
-    })
+    'Emission Layer': new (GridLayer as any).emissionLayer()
 }
