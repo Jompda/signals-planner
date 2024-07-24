@@ -1,9 +1,7 @@
 import { DomUtil, GridLayer, Map as LMap, Coords, LatLngBounds, LatLng, Marker, CRS, Point, latLng } from 'leaflet'
-import { getTiledata, latlngToTileCoords, latlngToXYOnTile, tileCoordsToPoint } from 'tiledata'
-import { tileDataStorage } from '../..'
+import { getTiledata, latlngToTileCoords } from 'tiledata'
 import { getLinks } from '../../struct';
 import { getMap } from '../structurecontroller';
-import Unit from '../../struct/unit';
 import Link from '../../struct/link';
 import LatLon from 'geodesy/latlon-spherical'
 import { RadioMedium } from '../../struct/medium';
@@ -54,7 +52,7 @@ interface BorderPoint {
 
 
 let scale = 1 / 4, res = 256 * scale
-let receiverHeight = 25
+let receiverHeight = 25 // TODO: Changeable
 
 
 let update = false;
@@ -152,7 +150,7 @@ function calculateSourceEmission(
         const bearingDiff = Math.abs(bearing-bearing1)
         if (beamWidth && bearingDiff > beamWidth) continue;
 
-        const {steps, delta} = getGeodesicLineStats(latlng0, bp.latlng, 10000) // accuracy good enough
+        const {steps} = getGeodesicLineStats(latlng0, bp.latlng, 10000) // accuracy good enough
         const latlngs = getGeodesicLine(latlng0, bp.latlng, steps)
 
         // temp visualization

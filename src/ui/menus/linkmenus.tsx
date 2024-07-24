@@ -11,7 +11,7 @@ import UnitLayer from '../components/unitlayer'
 import LinkLayer from '../components/linklayer'
 import { addAction } from '../../actionhistory'
 import { AddLinkAction, EditLinkAction } from '../../actions/linkactions'
-import { MediumSelector } from '../components/mediumselector'
+import { MediumOptions } from '../components/mediumoptions'
 
 
 export function showAddLinkMenu(map: LMap, unitLayer0: UnitLayer) {
@@ -31,6 +31,7 @@ export function showAddLinkMenu(map: LMap, unitLayer0: UnitLayer) {
 
     let unit1: UnitLayer
     let medium: string
+    let emitterHeight0: number, emitterHeight1: number
 
     structureEvents.addEventListener('updateunit', onUpdateUnits)
     structureEvents.addEventListener('addunit', onUpdateUnits)
@@ -63,17 +64,17 @@ export function showAddLinkMenu(map: LMap, unitLayer0: UnitLayer) {
                 />
                 <hr />
                 <span>Type:</span>
-                <MediumSelector
-                    defaultValue='SHF1' // TODO: Modifiable
+                <MediumOptions
                     updateMedium={(value: string) => medium = value}
+                    updateEmitterHeight0={value => emitterHeight0 = value}
+                    updateEmitterHeight1={value => emitterHeight1 = value}
                 />
                 <div className='grower'></div>
                 <div className='dialog-menu-submit'>
                     <button onClick={() => {
                         if (!unit1) return // Tell user to select link.
                         if (linkIdExists(Link.createId(unitLayer0.unit, unit1.unit))) throw new Error('Link id already exists!')
-                        // TODO: Add ability to change emitterHeight values
-                        const link = new Link({ unit0: unitLayer0.unit, unit1: unit1.unit, emitterHeight0: 25, emitterHeight1: 25, medium })
+                        const link = new Link({ unit0: unitLayer0.unit, unit1: unit1.unit, emitterHeight0, emitterHeight1, medium })
                         const linkLayer = new LinkLayer(link, getUnitLayerById(link.unit0.id), getUnitLayerById(link.unit1.id))
                         addAction(new AddLinkAction(linkLayer).forward())
                         dialog.close()
@@ -120,7 +121,7 @@ export function showEditLinkMenu(map: LMap, linkLayer: LinkLayer) {
     }
 
     let medium: string
-
+    let emitterHeight0: number, emitterHeight1: number
 
     function createUI(container: HTMLElement) {
         const root = createRoot(container)
@@ -137,14 +138,26 @@ export function showEditLinkMenu(map: LMap, linkLayer: LinkLayer) {
                 </select>
                 <hr />
                 <span>Type:</span>
-                <MediumSelector
-                    defaultValue={linkLayer.link.medium.name}
+                <MediumOptions
+                    defaultMedium={linkLayer.link.medium.name}
                     updateMedium={(value: string) => medium = value}
+                    defaultEmitterHeight0={linkLayer.link.emitterHeight0}
+                    updateEmitterHeight0={value => emitterHeight0 = value}
+                    defaultEmitterHeight1={linkLayer.link.emitterHeight1}
+                    updateEmitterHeight1={value => emitterHeight1 = value}
                 />
                 <div className='grower'></div>
                 <div className='dialog-menu-submit'>
                     <button onClick={() => {
-                        addAction(new EditLinkAction(linkLayer, linkLayer.link.medium, medium).forward())
+                        addAction(new EditLinkAction(
+                            linkLayer,
+                            linkLayer.link.medium,
+                            linkLayer.link.emitterHeight0,
+                            linkLayer.link.emitterHeight1,
+                            medium,
+                            emitterHeight0,
+                            emitterHeight1
+                        ).forward())
                         dialog.close()
                     }}>Apply</button>
                     <button onClick={() => {

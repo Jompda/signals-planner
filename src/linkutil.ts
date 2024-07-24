@@ -27,15 +27,13 @@ export function generateMatrix(units: Array<Unit>, links: Array<Link>, linkToVal
 }
 
 
-let emitterHeight = 25 // TODO: Change to modifiable
-
-
 export function generateLinkLayers(
     unitLayers: Array<UnitLayer>,
     minDist: number,
     maxDist: number,
     minDB: number,
     medium: Medium,
+    emitterHeight: number,
     override: boolean,
     progressFunction: (i: number) => any,
     done: (linkLayers: Array<LinkLayer>) => any

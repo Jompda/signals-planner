@@ -3,9 +3,7 @@ import Unit from './unit'
 import { getValues } from '../topoutil'
 import { CableMedium, RadioMedium, resolveMedium } from './medium'
 import { createLosGetter, getGeodesicLine, getGeodesicLineStats, getLineStats } from '../linkutil'
-
-
-const defaultEmitterHeight = 25 // TODO: Change to modifiable
+import { getSetting } from '../settings'
 
 
 export default class Link {
@@ -99,6 +97,7 @@ export default class Link {
         } as SaveLink
     }
     static deserialize(obj: SaveLink, getUnitById: (unitId: string) => Unit) {
+        const defaultEmitterHeight = getSetting('defaultEmitterHeight') as number
         return new Link({
             unit0: getUnitById(obj.unit0),
             unit1: getUnitById(obj.unit1),

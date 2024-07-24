@@ -4,15 +4,17 @@ import { AddLinksAction, RemoveLinksAction } from '../../actions/linkactions'
 import { generateLinkLayers, generateMatrix } from '../../linkutil'
 import { resolveMedium } from '../../struct/medium'
 import { getLinkLayersByUnitLayers, getSelectedUnitLayers, getSelectedUnits } from '../structurecontroller'
-import { MediumSelector } from './mediumselector'
+import { MediumOptions } from './mediumoptions'
 import { CableLinkEstimate, RadioLinkEstimate } from '../../interfaces'
 import { startDownload } from '../../util'
+import { getSetting } from '../../settings'
 
 
 export function LinkGroupActions() {
     const minDistRef = useRef<HTMLInputElement>()
     const maxDistRef = useRef<HTMLInputElement>()
     const mindbRef = useRef<HTMLInputElement>()
+    const emitterHeightRef = useRef<HTMLInputElement>()
 
     const nodesOnlyRef = useRef<HTMLInputElement>()
     const overrideRef = useRef<HTMLInputElement>()
@@ -21,7 +23,8 @@ export function LinkGroupActions() {
     const removeBtnRef = useRef<HTMLButtonElement>()
 
 
-    let mediumName = 'SHF1'
+    let mediumName = getSetting('defaultLinkMedium') as string
+    let emitterHeight = getSetting('defaultEmitterHeight') as string
 
     function prepGenerateLinks() {
         generateBtnRef.current.disabled = true
@@ -37,7 +40,14 @@ export function LinkGroupActions() {
         const maxDist = parseFloat(maxDistRef.current.value) * 1000
         const minDB = parseFloat(mindbRef.current.value)
 
-        generateLinkLayers(unitLayers, minDist, maxDist, minDB, medium, overrideRef.current.checked,
+        generateLinkLayers(
+            unitLayers,
+            minDist,
+            maxDist,
+            minDB,
+            medium,
+            parseFloat(emitterHeightRef.current.value),
+            overrideRef.current.checked,
             function progress(i) {
                 generateBtnRef.current.textContent = `Progress: ${Math.round(i * 100)}%.`
             },
@@ -56,13 +66,16 @@ export function LinkGroupActions() {
         addAction(new RemoveLinksAction(linkLayers).forward())
     }
 
+    // TODO: Add these hard coded default values to settings
     return (
         <>
             <h2>Group Actions</h2>
             <span>Link Medium:</span>
-            <MediumSelector
-                defaultValue={mediumName}
+            <MediumOptions
+                defaultMedium={mediumName}
                 updateMedium={(value: string) => mediumName = value}
+                updateEmitterHeight0={() => null} // NOTE: temp, can't be like this
+                updateEmitterHeight1={() => null}
             />
             <div className='ma-2xgrid'>
                 <span>Min distance (km):</span>
@@ -71,6 +84,8 @@ export function LinkGroupActions() {
                 <input ref={maxDistRef} type='number' defaultValue='20' />
                 <span>Min dB:</span>
                 <input ref={mindbRef} type='number' defaultValue='-108' />
+                <span>Emitter height (m):</span>
+                <input ref={emitterHeightRef} type='number' defaultValue={emitterHeight} />
             </div>
             <label>
                 <input

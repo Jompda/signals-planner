@@ -10,7 +10,9 @@ import { getMap } from '../structurecontroller'
 import { LeafletDialog } from '../../interfaces'
 import { createDialog } from '../../util'
 import { createRoot } from 'react-dom/client'
-import { MediumSelector } from '../components/mediumselector'
+import { MediumOptions } from '../components/mediumoptions'
+import { getSetting } from '../../settings'
+import { useRef } from 'react'
 
 
 class LinkEditorTool extends Tool {
@@ -18,6 +20,7 @@ class LinkEditorTool extends Tool {
     private startUnit: UnitLayer
     private highlight: Polyline
     public editDialog: LeafletDialog
+    private emitterHeight: number
     constructor() {
         super({
             name: 'linkeditor',
@@ -35,7 +38,8 @@ class LinkEditorTool extends Tool {
             unitDragging: false,
             mmbInfo: true
         })
-        this.medium = resolveMedium('SHF1')
+        this.medium = resolveMedium(getSetting('defaultLinkMedium') as string)
+        this.emitterHeight = getSetting('defaultEmitterHeight') as number
     }
     unitlayermousedown(e: LeafletMouseEvent, unitLayer: UnitLayer) {
         this.startUnit = unitLayer
@@ -66,8 +70,8 @@ class LinkEditorTool extends Tool {
         const link = new Link({
             unit0: this.startUnit.unit,
             unit1: unitLayer.unit,
-            emitterHeight0: 25, // TODO: Add ability to change emitterHeight values
-            emitterHeight1: 25,
+            emitterHeight0: this.emitterHeight, // TODO: Add ability to change emitterHeight values
+            emitterHeight1: this.emitterHeight,
             medium: this.medium,
         })
         addAction(new AddLinkAction(new LinkLayer(
@@ -89,9 +93,9 @@ class LinkEditorTool extends Tool {
 
     createEditMenu() {
         this.editDialog = createDialog(getMap(), {
-            size: [300, 150],
+            size: [300, 200],
             maxSize: [400, 300],
-            minSize: [300, 100],
+            minSize: [300, 200],
             anchor: [innerHeight / 2 - 300, innerWidth / 2 - 300],
             position: 'topleft',
             destroyOnClose: false
@@ -100,14 +104,36 @@ class LinkEditorTool extends Tool {
         const container = DomUtil.create('div', 'dialog-menu')
         this.editDialog.setContent(container)
         createRoot(container).render(
-            <>
-                <h2>Link type:</h2>
-                <MediumSelector
-                    defaultValue={this.medium.name}
-                    updateMedium={(mediumName: string) => this.medium = resolveMedium(mediumName)}
-                />
-            </>
+            <LinkEditorToolSettings
+                emitterHeight={String(this.emitterHeight)}
+                updateEmitterHeight0={(value) => this.emitterHeight = value} // NOTE can't be like this
+                updateEmitterHeight1={(value) => this.emitterHeight = value}
+                medium={this.medium.name}
+                updateMedium={(mediumName: string) => this.medium = resolveMedium(mediumName)} />
         )
     }
 }
 export default new LinkEditorTool()
+
+
+function LinkEditorToolSettings({ emitterHeight, updateEmitterHeight0, updateEmitterHeight1, medium, updateMedium }: {
+    emitterHeight: string
+    updateEmitterHeight0: (value: number) => any
+    updateEmitterHeight1: (value: number) => any
+    medium: string
+    updateMedium: (value: string) => any
+}) {
+    const emitterHeightRef = useRef<HTMLInputElement>()
+
+    return (
+        <>
+            <h2>Link type:</h2>
+            <MediumOptions
+                defaultMedium={medium}
+                updateMedium={updateMedium}
+                updateEmitterHeight0={updateEmitterHeight0}
+                updateEmitterHeight1={updateEmitterHeight1}
+            />
+        </>
+    )
+}

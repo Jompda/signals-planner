@@ -189,6 +189,14 @@ export function LinkStatistics({ linkLayer, setHighlightLatLng }: {
                                 <td>dB</td>
                                 <td>{Math.round(stats.dB)}dB</td>
                             </tr>
+                            <tr>
+                                <td>Emitter 0</td>
+                                <td>{emitterHeight0}m</td>
+                            </tr>
+                            <tr>
+                                <td>Emitter height 1</td>
+                                <td>{emitterHeight1}m</td>
+                            </tr>
                         </>
                         : undefined
                     }

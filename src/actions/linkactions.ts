@@ -49,18 +49,37 @@ export class RemoveLinkAction extends LinkAction {
 export class EditLinkAction extends LinkAction {
     private medium0: MediumResolvable
     private medium1: MediumResolvable
-    constructor(linkLayer: LinkLayer, medium0: MediumResolvable, medium1: MediumResolvable) {
+    private emitterheight00: number
+    private emitterheight10: number
+    private emitterheight01: number
+    private emitterheight11: number
+    constructor(linkLayer: LinkLayer,
+        medium0: MediumResolvable,
+        emitterheight00: number,
+        emitterheight10: number,
+        medium1: MediumResolvable,
+        emitterheight01: number,
+        emitterheight11: number,
+    ) {
         super(linkLayer)
         this.medium0 = medium0
         this.medium1 = medium1
+        this.emitterheight00 = emitterheight00;
+        this.emitterheight01 = emitterheight01;
+        this.emitterheight10 = emitterheight10;
+        this.emitterheight11 = emitterheight11;
     }
     forward() {
         this.linkLayer.link.setMedium(this.medium1)
+        this.linkLayer.link.emitterHeight0 = this.emitterheight01
+        this.linkLayer.link.emitterHeight1 = this.emitterheight11
         this.linkLayer.update()
         return this
     }
     reverse() {
         this.linkLayer.link.setMedium(this.medium0)
+        this.linkLayer.link.emitterHeight0 = this.emitterheight00
+        this.linkLayer.link.emitterHeight1 = this.emitterheight10
         this.linkLayer.update()
         return this
     }
