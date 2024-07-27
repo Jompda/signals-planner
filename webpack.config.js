@@ -44,7 +44,9 @@ module.exports = {
         new CopyPlugin({
             patterns: [
                 { from: path.resolve(srcDir, 'index.html'), to: path.resolve(destDir, 'index.html') },
-                { from: path.resolve(srcDir, 'styles.css'), to: path.resolve(destDir, 'styles.css') }
+                { from: path.resolve(srcDir, 'styles.css'), to: path.resolve(destDir, 'styles.css') },
+                { from: path.resolve(__dirname, 'node_modules/itm-webassembly/em_bin'), to: path.resolve(destDir, 'em_bin') },
+                { from: path.resolve(__dirname, 'node_modules/itm-webassembly/itm-webassembly.js'), to: path.resolve(destDir, 'itm-webassembly.js') }
             ]
         }),
         /*new CompressionPlugin({
