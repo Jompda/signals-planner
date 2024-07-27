@@ -2,7 +2,16 @@ import { Control, ControlPosition, LatLng as LLatLng, LeafletMouseEvent, Map as 
 import { Symbol as MilSymbol, SymbolOptions } from 'milsymbol'
 import { CableMedium, Medium, RadioMedium } from './struct/medium'
 import Unit from './struct/unit'
-import { ReactElement } from 'react'
+
+
+// Since webpack doesn't like itm-webassembly
+declare global {
+    interface Window {
+        onItmInitialize: Function
+        ITM_P2P_TLS_Ex: Function
+        ITM_P2P_CR_Ex: Function
+    }
+}
 
 
 declare module 'leaflet' {

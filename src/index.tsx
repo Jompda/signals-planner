@@ -87,14 +87,16 @@ setTiledataConfig<SourceName>({
 
 
 /*
- * Setup itm-webassembly
+ * Setup itm-webassembly.
+ * Curretly linked locally using `npm link itm-webassembly`
  */
-import 'itm-webassembly'
+import * as itm_assembly from 'itm-webassembly'
 
-(window as unknown as any).onItmInitialize(() => {
+// Temp debugging call
+window.onItmInitialize(() => {
     console.log('itm-webassembly initialized!')
     const pfl = [142,25.6,1692,1692,1693,1693,1693,1693,1693,1693,1694,1694,1694,1694,1694,1694,1694,1694,1694,1695,1695,1695,1695,1695,1695,1695,1695,1696,1696,1696,1696,1696,1696,1697,1697,1697,1697,1697,1697,1697,1697,1697,1697,1698,1698,1698,1698,1698,1698,1698,1698,1698,1698,1699,1699,1699,1699,1699,1699,1700,1700,1700,1700,1700,1700,1700,1701,1701,1701,1701,1701,1701,1702,1702,1702,1702,1702,1702,1702,1702,1703,1703,1703,1703,1703,1703,1703,1703,1703,1704,1704,1704,1704,1704,1704,1704,1704,1705,1705,1705,1705,1705,1705,1705,1705,1705,1705,1706,1706,1706,1706,1706,1706,1706,1706,1706,1707,1707,1707,1707,1707,1707,1707,1708,1708,1708,1708,1708,1708,1708,1708,1709,1709,1709,1709,1709,1710,1710,1710,1710,1710,1710,1710,1710,1709]
-    const result = (window as unknown as any).ITM_P2P_TLS_Ex(
+    const result = window.ITM_P2P_TLS_Ex(
         15.0, // double h_tx__meter
         3.0, // double h_rx__meter
         pfl, // double pfl[]
