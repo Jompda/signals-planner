@@ -5,18 +5,11 @@ const defaultSettings = [
     ['defaultUnitSIDC', 'string|30031000001211000000']
 ]
 
-export function initializeSettings() {
-    for (const setting of defaultSettings)
-        if (!localStorage.getItem(setting[0]))
-            localStorage.setItem(setting[0], setting[1])
-}
-
 export function getSetting(name: string) {
     let item = localStorage.getItem(name)
-    if (!item) {
+    if (!item)
         for (const setting of defaultSettings)
             if (setting[0] === name) item = setting[1]
-    }
     const parts = item.split("|", 2)
     if (parts[0] === "number") return parseFloat(parts[1])
     return parts[1]

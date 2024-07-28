@@ -11,12 +11,10 @@ import '@geoman-io/leaflet-geoman-free'
 import 'leaflet-contextmenu'
 import 'leaflet-dialog'
 
-import { initializeSettings } from './settings'
+// TODO: settings should also load options but not save them in localStorage
+import './settings'
 import options from '../options'
 
-
-// TODO: settings should also load options but not save them in localStorage
-initializeSettings();
 
 /*
  * Setup leaflet-topography
