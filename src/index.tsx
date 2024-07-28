@@ -11,9 +11,7 @@ import '@geoman-io/leaflet-geoman-free'
 import 'leaflet-contextmenu'
 import 'leaflet-dialog'
 
-// TODO: settings should also load options but not save them in localStorage
-import './settings'
-import options from '../options'
+import { getSetting } from './settings'
 
 
 /*
@@ -23,7 +21,7 @@ import 'regenerator-runtime'
 import { configure } from 'leaflet-topography'
 const topoLayerTileCache = new Map<string, any>()
 configure({
-    token: options.mapboxToken,
+    token: getSetting('mapboxToken') as string,
     priority: 'speed',
     saveTile: (name: string, data: any) => topoLayerTileCache.set(name, data),
     retrieveTile: (name: string) => topoLayerTileCache.get(name),
@@ -61,7 +59,7 @@ setTiledataConfig<SourceName>({
             name: 'elevation',
             type: 'wmts',
             // Source: https://docs.mapbox.com/data/tilesets/reference/mapbox-terrain-dem-v1/
-            url: `https://api.mapbox.com/v4/mapbox.mapbox-terrain-dem-v1/{z}/{x}/{y}.pngraw?access_token=${options.mapboxToken}`,
+            url: `https://api.mapbox.com/v4/mapbox.mapbox-terrain-dem-v1/{z}/{x}/{y}.pngraw?access_token=${getSetting('mapboxToken')}`,
             valueFunction: function (R: number, G: number, B: number) {
                 return -10000 + (R * 256 * 256 + G * 256 + B) * 0.1;
             }
@@ -88,9 +86,7 @@ setTiledataConfig<SourceName>({
  * Setup itm-webassembly.
  * Curretly linked locally using `npm link itm-webassembly`
  */
-import * as itm_assembly from 'itm-webassembly'
-
-// Temp debugging call
+import * as _ from 'itm-webassembly'
 window.onItmInitialize(() => console.log('itm-webassembly initialized!'))
 
 
