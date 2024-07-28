@@ -120,18 +120,18 @@ export default class LinkLayer extends FeatureGroup {
         const { values, lineStats, stats } = await this.link.calculate()
 
         let color: string, weight: number
-        if ('dB' in stats) {
+        if ('A__db' in stats) {
             color = '#00ff0c'
             weight = 12
-            if (stats.dB < -55) {
+            if (stats.A__db > 120) {
                 color = '#00b9ff'
                 weight = 8
             }
-            if (stats.dB < -70) {
+            if (stats.A__db > 130) {
                 color = '#e77800'
                 weight = 6
             }
-            if (stats.dB <= -80) {
+            if (stats.A__db  > 140) {
                 color = '#ec2400'
                 weight = 4
             }

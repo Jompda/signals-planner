@@ -73,7 +73,8 @@ export function generateLinkLayers(
 
     workers(linkLayers, async (linkLayer: LinkLayer) => {
         await linkLayer.update()
-        if ((linkLayer.link.stats as RadioLinkEstimate).dB < minDB) return check()
+        const linkStats = (linkLayer.link.stats as RadioLinkEstimate)
+        if (linkStats.A__db < minDB) return check()
         structAddLink(linkLayer.link)
         lgAddLink(linkLayer)
         check()

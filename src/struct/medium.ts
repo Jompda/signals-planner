@@ -50,49 +50,45 @@ export class RadioMedium extends Medium {
     }
 
 
-    // FIXME: Review the implementation of the ITM algorithm.
+
+    /**
+     * Sources:
+     * https://github.com/NTIA/itm
+     * https://en.wikipedia.org/wiki/ITU_terrain_model
+     * https://www.doria.fi/handle/10024/118719
+     * https://en.wikipedia.org/wiki/Friis_transmission_equation
+     */
     estimateLinkStats({ lineStats, values, emitterHeight0, emitterHeight1 }: LinkEstimateOptions): RadioLinkEstimate {
-        const waveLength = (299_792_458) / (this.frequency * 1_000_000)
-        const distance = lineStats.distance
-
-        const transmitterElevation = values[0].elevation + emitterHeight0
-        const receiverElevation = values[values.length - 1].elevation + emitterHeight1
-
-        let itmLoss = 0, Pr = -108
-        // https://www.doria.fi/handle/10024/118719 Page 4
-        const radioHorizon = 4.12 * (Math.sqrt(transmitterElevation) + Math.sqrt(receiverElevation)) * 1000
-
-        if (distance <= radioHorizon) {
-            const iToDist = (i: number) => distance * (i / (values.length - 1)) / 1000
-            const losElevationAtIndex = createLosGetter(transmitterElevation, receiverElevation, values.length - 1)
-
-            // https://en.wikipedia.org/wiki/ITU_terrain_model
-
-            // https://www.doria.fi/handle/10024/118719 Page 4
-            const R1Fmax = 274 * Math.sqrt((distance / 1000) / this.frequency)
-            for (let i = 1; i < values.length - 1; i++) {
-                const obstructionElevation = values[i].elevation + values[i].treeHeight
-                const losElevation = losElevationAtIndex(i)
-                const h = losElevation - obstructionElevation
-                const d1 = iToDist(i), d2 = iToDist(values.length - 1 - i)
-                if (h > R1Fmax) {
-                    // https://www.doria.fi/handle/10024/118719 Page 5
-                    const R1F = 548 * Math.sqrt((d1 * d2) / (this.frequency * (d1 + d2)))
-                    if (h > R1F) continue // Outside 1. Fresnel zone
-                }
-                const F1 = 17.3 * Math.sqrt((d1 * d2) / ((this.frequency / 1000) * (distance / 1000)))
-                const Cn = h / F1
-                const A = 10 - 20 * Cn
-                if (A > 6) itmLoss += A
-            }
-
-            // https://en.wikipedia.org/wiki/Friis_transmission_equation
-            Pr = this.Pt + this.Gt + this.Gr + 20 * Math.log10(waveLength / (4 * Math.PI * distance)) - itmLoss
-        }
+        // https://github.com/NTIA/itm check README.md
+        const pflRes = lineStats.delta // Approximate delta of points in meters.
+        const pfl = [values.length - 1, pflRes].concat(values.map(val => val.elevation + val.treeHeight))
+        //console.log('h0,h1,freq,pfl:', emitterHeight0, emitterHeight1, this.frequency, pfl)
+        const results = window.ITM_P2P_TLS_Ex(
+            emitterHeight0, // double h_tx__meter
+            emitterHeight1, // double h_rx__meter
+            pfl, // double pfl[]
+            5, // int climate
+            301.0, // double N_0
+            this.frequency, // double f__mhz
+            1, // int pol // TODO: Make modifiable, 0=hor 1=vert
+            // TODO: Figure out the following values
+            15.0, // double epsilon Relative permittivity 1<epsilon
+            0.005, // double sigma Conductivity S/m 0<sigma
+            1, // int mdvar 
+            50.0, // double time
+            50.0, // double location
+            50.0 // double situation
+        )
+        //console.log(results)
+        const A_fs__db = parseFloat(results.get('A_fs__db'))
+        const A__db = parseFloat(results.get('A__db'))
+        const mode = parseInt(results.get('mode'))
+        // TODO: parse warnings
 
         return {
-            itmLoss,
-            dB: Math.max(-108, Pr)
+            A_fs__db,
+            A__db,
+            mode
             //dBm: NaN,
             //RSSI: NaN,
             //CINR: NaN,

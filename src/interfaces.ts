@@ -243,8 +243,9 @@ export interface SaveCableMedium extends SaveMedium {
 }
 
 export interface RadioLinkEstimate {
-    itmLoss: number
-    dB: number
+    A_fs__db: number
+    A__db: number
+    mode: number
 }
 
 export interface CableLinkEstimate {

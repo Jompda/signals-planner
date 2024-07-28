@@ -13,7 +13,7 @@ import { getSetting } from '../../settings'
 export function LinkGroupActions() {
     const minDistRef = useRef<HTMLInputElement>()
     const maxDistRef = useRef<HTMLInputElement>()
-    const mindbRef = useRef<HTMLInputElement>()
+    const maxDbRef = useRef<HTMLInputElement>()
     const emitterHeightRef = useRef<HTMLInputElement>()
 
     const nodesOnlyRef = useRef<HTMLInputElement>()
@@ -38,13 +38,13 @@ export function LinkGroupActions() {
 
         const minDist = parseFloat(minDistRef.current.value) * 1000
         const maxDist = parseFloat(maxDistRef.current.value) * 1000
-        const minDB = parseFloat(mindbRef.current.value)
+        const maxDb = parseFloat(maxDbRef.current.value)
 
         generateLinkLayers(
             unitLayers,
             minDist,
             maxDist,
-            minDB,
+            maxDb,
             medium,
             parseFloat(emitterHeightRef.current.value),
             overrideRef.current.checked,
@@ -66,6 +66,7 @@ export function LinkGroupActions() {
         addAction(new RemoveLinksAction(linkLayers).forward())
     }
 
+    // TODO: change minDb default
     // TODO: Add these hard coded default values to settings
     return (
         <>
@@ -82,8 +83,8 @@ export function LinkGroupActions() {
                 <input ref={minDistRef} type='number' defaultValue='3' />
                 <span>Max distance (km):</span>
                 <input ref={maxDistRef} type='number' defaultValue='20' />
-                <span>Min dB:</span>
-                <input ref={mindbRef} type='number' defaultValue='-108' />
+                <span>Max dB loss:</span>
+                <input ref={maxDbRef} type='number' defaultValue='130' />
                 <span>Emitter height (m):</span>
                 <input ref={emitterHeightRef} type='number' defaultValue={emitterHeight} />
             </div>
@@ -116,7 +117,7 @@ export function LinkGroupActions() {
             <button
                 onClick={() => {
                     const links = getLinkLayersByUnitLayers(getSelectedUnitLayers()).map(linkLayer => linkLayer.link)
-                    const matrix = generateMatrix(getSelectedUnits(), links, (link) => String(Math.round((link.stats as RadioLinkEstimate).dB) || ''))
+                    const matrix = generateMatrix(getSelectedUnits(), links, (link) => String(Math.round((link.stats as RadioLinkEstimate).A__db) || ''))
                     const csvStr = matrix.map(line => line.join(',')).join('\n')
                     startDownload('matrix_' + new Date().toISOString() + '.csv', 'text/csv', csvStr)
                 }}

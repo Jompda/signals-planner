@@ -179,15 +179,19 @@ export function LinkStatistics({ linkLayer, setHighlightLatLng }: {
                         <td>Distance</td>
                         <td>{Math.round(lineStats.distance)}m</td>
                     </tr>
-                    {'dB' in stats
+                    {'A__db' in stats
                         ? <>
                             <tr>
-                                <td>ITM Loss</td>
-                                <td>{Math.round(stats.itmLoss)}dB</td>
+                                <td>A_fs__db</td>
+                                <td>{Math.round(stats.A_fs__db)}dB</td>
                             </tr>
                             <tr>
-                                <td>dB</td>
-                                <td>{Math.round(stats.dB)}dB</td>
+                                <td>A__db</td>
+                                <td>{Math.round(stats.A__db)}dB</td>
+                            </tr>
+                            <tr>
+                                <td>mode</td>
+                                <td>{stats.mode}</td>
                             </tr>
                             <tr>
                                 <td>Emitter 0</td>
