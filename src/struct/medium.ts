@@ -1,5 +1,4 @@
 import { CableLinkEstimate, CableMediumOptions, LinkEstimateOptions, MediumOptions, MediumResolvable, MediumType, RadioLinkEstimate, RadioMediumOptions, SaveCableMedium, SaveRadioMedium } from '../interfaces'
-import { createLosGetter } from '../linkutil'
 
 
 export function resolveMedium(obj: MediumResolvable): RadioMedium | CableMedium {
@@ -53,10 +52,27 @@ export class RadioMedium extends Medium {
 
     /**
      * Sources:
+     * Comparison of ITU-R and ITM-Longley-Rice
+     * https://ieeexplore.ieee.org/document/6873518
+     * 
+     * ITM-Longley-Rice
      * https://github.com/NTIA/itm
+     * https://en.wikipedia.org/wiki/Longley%E2%80%93Rice_model
+     * 
+     * ITU-R, rough implementation can be found from commit 1ade859ba3d154ef4ab513a15089026f60bff239 Wed Jul 24 20:11:01 2024 +0300
      * https://en.wikipedia.org/wiki/ITU_terrain_model
+     * https://www.itu.int/dms_pubrec/itu-r/rec/p/R-REC-P.530-18-202109-I!!PDF-E.pdf
+     * 
+     * Other
      * https://www.doria.fi/handle/10024/118719
      * https://en.wikipedia.org/wiki/Friis_transmission_equation
+     * http://wiki.towercoverage.com/wiki/110/propagation-model-description
+     * 
+     * // TODO: Improve estimateLinkStats
+     * - Take into account LOS is needed with extremely small wavelengths
+     * - With line-of-sight connection, take into account multipath propagation.
+     *   - Interference caused
+     * - Rain?
      */
     estimateLinkStats({ lineStats, values, emitterHeight0, emitterHeight1 }: LinkEstimateOptions): RadioLinkEstimate {
         // https://github.com/NTIA/itm check README.md
@@ -80,8 +96,8 @@ export class RadioMedium extends Medium {
             50.0 // double situation
         )
         //console.log(results)
-        const A_fs__db = parseFloat(results.get('A_fs__db'))
-        const A__db = parseFloat(results.get('A__db'))
+        const A_fs__db = parseFloat(results.get('A_fs__db')) // free-space transmission loss
+        const A__db = parseFloat(results.get('A__db')) // A_fs__db + terrain loss
         const mode = parseInt(results.get('mode'))
         // TODO: parse warnings
 
