@@ -57,7 +57,10 @@ export class RadioMedium extends Medium {
      * 
      * ITM-Longley-Rice
      * https://github.com/NTIA/itm
+     * http://radiomobile.pe1mew.nl/?Calculations___ITM_model_propagation_settings
      * https://en.wikipedia.org/wiki/Longley%E2%80%93Rice_model
+     * https://www.softwright.com/support/faq/underlying-calculations-parameters-assumptions-longley-rice-itm-propagation-model/
+     * https://www.ingenieros.cl/wp-content/uploads/2018/11/2do-Paper-IEEE_Mod.ITM_V2.8.1-paper-7.pdf
      * 
      * ITU-R, rough implementation can be found from commit 1ade859ba3d154ef4ab513a15089026f60bff239 Wed Jul 24 20:11:01 2024 +0300
      * https://en.wikipedia.org/wiki/ITU_terrain_model
@@ -69,10 +72,7 @@ export class RadioMedium extends Medium {
      * http://wiki.towercoverage.com/wiki/110/propagation-model-description
      * 
      * // TODO: Improve estimateLinkStats
-     * - Take into account LOS is needed with extremely small wavelengths
-     * - With line-of-sight connection, take into account multipath propagation.
-     *   - Interference caused
-     * - Rain?
+     * - With line-of-sight connection, take into account multipath interference
      */
     estimateLinkStats({ lineStats, values, emitterHeight0, emitterHeight1 }: LinkEstimateOptions): RadioLinkEstimate {
         // https://github.com/NTIA/itm check README.md
@@ -83,26 +83,28 @@ export class RadioMedium extends Medium {
             emitterHeight0, // double h_tx__meter
             emitterHeight1, // double h_rx__meter
             pfl, // double pfl[]
-            5, // int climate
-            301.0, // double N_0
+            5, // int climate temperate for Finland
+            301.0, // double N_0 default is 301 equal to K=4/3
             this.frequency, // double f__mhz
             1, // int pol // TODO: Make modifiable, 0=hor 1=vert
             // TODO: Figure out the following values
-            15.0, // double epsilon Relative permittivity 1<epsilon
-            0.005, // double sigma Conductivity S/m 0<sigma
-            1, // int mdvar 
+            15.0, // double epsilon Relative permittivity 1<epsilon (15.0 = average ground)
+            0.005, // double sigma Conductivity S/m 0<sigma (0.005 = average ground)
+            1, // int mdvar 1 = individual
             50.0, // double time
             50.0, // double location
             50.0 // double situation
         )
         //console.log(results)
         const A_fs__db = parseFloat(results.get('A_fs__db')) // free-space transmission loss
+        const A_ref__db = parseFloat(results.get('A_ref__db')) // reference attentuation
         const A__db = parseFloat(results.get('A__db')) // A_fs__db + terrain loss
         const mode = parseInt(results.get('mode'))
         // TODO: parse warnings
 
         return {
             A_fs__db,
+            A_ref__db,
             A__db,
             mode
             //dBm: NaN,

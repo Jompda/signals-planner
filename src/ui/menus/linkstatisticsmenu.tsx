@@ -9,11 +9,12 @@ let closeActive: Function
 
 
 export function showLinkStatistics(map: LMap, linkLayer: LinkLayer) {
-    const anchor = closeActive ? closeActive() : { x: 0, y: innerHeight / 2 - 350 }
+    const height = 600
+    const anchor = closeActive ? closeActive() : { x: 50, y: innerHeight - height - 20 }
     const dialog = createDialog(map, {
-        size: [600, 520],
-        maxSize: [600, 700],
-        minSize: [600, 400],
+        size: [600, height],
+        maxSize: [600, 800],
+        minSize: [600, height],
         anchor: [anchor.y, anchor.x],
         position: 'topleft',
         initOpen: true,
@@ -64,6 +65,7 @@ export function showLinkStatistics(map: LMap, linkLayer: LinkLayer) {
                     <span> — </span>
                     <span className='underline'>{linkLayer.link.unit1.toHierarchyString()}</span>
                 </h3>
+                <span>NOTE: Figure doesn't take into account earth curvature nor actual radio propagation path.</span>
                 <LinkStatistics
                     linkLayer={linkLayer}
                     setHighlightLatLng={(latlng: LatLng) =>

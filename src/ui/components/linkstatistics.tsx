@@ -186,6 +186,10 @@ export function LinkStatistics({ linkLayer, setHighlightLatLng }: {
                                 <td>{Math.round(stats.A_fs__db)}dB</td>
                             </tr>
                             <tr>
+                                <td>A_ref__db</td>
+                                <td>{Math.round(stats.A_ref__db)}dB</td>
+                            </tr>
+                            <tr>
                                 <td>A__db</td>
                                 <td>{Math.round(stats.A__db)}dB</td>
                             </tr>
@@ -194,7 +198,7 @@ export function LinkStatistics({ linkLayer, setHighlightLatLng }: {
                                 <td>{stats.mode}</td>
                             </tr>
                             <tr>
-                                <td>Emitter 0</td>
+                                <td>Emitter height 0</td>
                                 <td>{emitterHeight0}m</td>
                             </tr>
                             <tr>

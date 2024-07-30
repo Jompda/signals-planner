@@ -119,19 +119,20 @@ export default class LinkLayer extends FeatureGroup {
         this.element.innerText = this.link.medium.name[0]
         const { values, lineStats, stats } = await this.link.calculate()
 
+        // NOTE: Link performance values are basically just pulled out of the hat.
         let color: string, weight: number
         if ('A__db' in stats) {
             color = '#00ff0c'
             weight = 12
-            if (stats.A__db > 120) {
+            if (stats.A_ref__db > 5) {
                 color = '#00b9ff'
                 weight = 8
             }
-            if (stats.A__db > 130) {
+            if (stats.A_ref__db > 10) {
                 color = '#e77800'
                 weight = 6
             }
-            if (stats.A__db  > 140) {
+            if (stats.A_ref__db  > 20) {
                 color = '#ec2400'
                 weight = 4
             }
