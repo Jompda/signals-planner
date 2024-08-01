@@ -37,6 +37,7 @@
         "leaflet": "^1.9.2",
         "leaflet-contextmenu": "^1.4.0",
         "leaflet-dialog": "^1.0.5",
+        "leaflet-notifications": "^1.0.7",
         "leaflet-ruler": "^1.0.0",
         "leaflet-topography": "^0.2.1",
         "leaflet.wms": "^0.2.0",

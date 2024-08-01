@@ -70,7 +70,7 @@ class LinkEditorTool extends Tool {
         const link = new Link({
             unit0: this.startUnit.unit,
             unit1: unitLayer.unit,
-            emitterHeight0: this.emitterHeight, // TODO: Add ability to change emitterHeight values
+            emitterHeight0: this.emitterHeight,
             emitterHeight1: this.emitterHeight,
             medium: this.medium,
         })

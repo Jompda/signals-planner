@@ -4,6 +4,7 @@ import { asyncOperation, createMapboxTerrainAttribution, workers, getMaxWorkers 
 import { getMap } from '../structurecontroller'
 import { getTopographyValues } from '../../topoutil'
 import { SourceName } from '../../interfaces'
+import { notifications } from '../..'
 
 
 const _breakpoints = [0, 150, 250, 350, 500]
@@ -145,8 +146,11 @@ function FitToViewButton({ callback }: {
         <button
             disabled={btnDisabled}
             onClick={() => {
-                // TODO: popup?
-                if (getMap().getZoom() > 14) return console.log('Too zoomed in for Fit to View to work.'); // mapbox doesn't provide more accurate topography data.
+                if (getMap().getZoom() > 14) return notifications.alert(
+                    'Too zoomed in for Fit to View to work.',
+                    `Mapbox doesn't provide topography data for this zoom level.`,
+                    { timeout: 6000 }
+                )
                 setBtnDisabled(true)
                 fitToView(progressFunction, callback)
             }}

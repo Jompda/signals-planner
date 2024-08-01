@@ -63,6 +63,18 @@ declare module 'leaflet' {
         export function dialog(options?: LeafletDialogOptions): LeafletDialog
         export function ruler(options?: any): Control
         export function zoomRatio(options?: ControlOptions): Control
+        export function notifications(options?: ControlOptions & {
+            timeout: number
+            closable?: boolean
+            dismissable?: boolean
+            className?: string
+        }): Control & {
+            alert: Function
+            info: Function
+            success: Function
+            warning: Function
+            custom: Function
+        }
     }
 }
 

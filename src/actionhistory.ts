@@ -1,3 +1,4 @@
+import { notifications } from '.'
 import Action from './actions/action'
 
 
@@ -20,7 +21,9 @@ export function addAction(action: Action) {
 
 export function undo() {
     if (i > -1) timeline[i--].reverse()
+    notifications.info('Undo', `History: ${i + 1}`)
 }
 export function redo() {
     if (i < timeline.length - 1) timeline[++i].forward()
+    notifications.info('Redo', `History: ${i + 1}`)
 }

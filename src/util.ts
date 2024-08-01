@@ -51,7 +51,7 @@ export function startDownload(name: string, type: string, content: string) {
 }
 
 
-export function requestFileUpload(accept: string, callback: (content: string) => any) {
+export function requestFileUpload(accept: string, callback: (filename: string, content: string) => any) {
     const fileInput = DomUtil.create('input')
     fileInput.setAttribute('type', 'file')
     fileInput.setAttribute('accept', accept)
@@ -60,11 +60,10 @@ export function requestFileUpload(accept: string, callback: (content: string) =>
     fileInput.onchange = () => {
         const file = fileInput.files[0]
         if (!file) return alert('Select a file to load!')
-        console.log(`Reading "${file.name}" ..`)
         const reader = new FileReader()
         reader.onload = function (e) {
             //console.log(e.target.result)
-            callback(e.target.result.toString())
+            callback(file.name, e.target.result.toString())
         }
         reader.readAsText(file)
     }

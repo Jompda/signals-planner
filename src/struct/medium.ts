@@ -87,7 +87,7 @@ export class RadioMedium extends Medium {
             301.0, // double N_0 default is 301 equal to K=4/3
             this.frequency, // double f__mhz
             1, // int pol // TODO: Make modifiable, 0=hor 1=vert
-            // TODO: Figure out the following values
+            // TODO: Make the following values modifiable via settings.
             15.0, // double epsilon Relative permittivity 1<epsilon (15.0 = average ground)
             0.005, // double sigma Conductivity S/m 0<sigma (0.005 = average ground)
             1, // int mdvar 1 = individual

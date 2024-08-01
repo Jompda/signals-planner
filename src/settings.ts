@@ -1,7 +1,7 @@
 import options from '../options'
 
 const defaultSettings = new Map([
-    ['defaultEmitterHeight', 'number|25'], // NOTE: Medium-specific emitter heights?
+    ['defaultEmitterHeight', 'number|25'],
     ['defaultLinkMedium', 'string|SHF1'],
     ['defaultUnitSIDC', 'string|30031000001211000000']
 ])

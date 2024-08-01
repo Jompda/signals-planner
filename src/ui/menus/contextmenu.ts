@@ -9,6 +9,7 @@ import ImportAction from '../../actions/importaction'
 import RemoveAllAction from '../../actions/removeallaction'
 import { getDrawnLayers, getDrawStyleOptions } from '../geomancontroller'
 import { deselectAllUnitLayers, selectAllUnitLayers, toggleSelectAllUnitLayers } from '../structurecontroller'
+import { notifications } from '../..'
 
 let i = 0;
 
@@ -50,16 +51,19 @@ export function initContextMenu(map: LMap) {
                 zoom: map.getZoom(),
                 drawings: layersToGeoJson(getDrawnLayers().getLayers())
             }, undefined, 2)
-            startDownload(new Date().toISOString() + '.json', 'application/json', str)
+            const filename = new Date().toISOString() + '.json'
+            startDownload(filename, 'application/json', str)
+            notifications.success('Export', `Downloaded file "${filename}"`)
         }
     }, {
         text: 'Import',
         index: ++i,
-        callback: () => requestFileUpload('application/json', (content) => {
+        callback: () => requestFileUpload('application/json', (filename, content) => {
             const parsed = JSON.parse(content)
             const { units, links, center, zoom, drawings } = deserialize(parsed)
             addAction(new ImportAction(units, links, geoJsonToLayers(drawings, getDrawStyleOptions())).forward())
             map.setView([center.lat, center.lng], zoom)
+            notifications.success('Import', `Succesfully imported "${filename}"`)
         })
     }, {
         text: 'Remove All',

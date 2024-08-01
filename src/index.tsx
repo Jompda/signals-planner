@@ -4,6 +4,7 @@ import 'leaflet-dialog/Leaflet.Dialog.css'
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
 import 'react-tabs/style/react-tabs.css'
 import 'leaflet-ruler/src/leaflet-ruler.css'
+import 'leaflet-notifications/css/leaflet-notifications.css'
 import './styles.css'
 
 import { Map as LMap, control, LeafletKeyboardEvent } from 'leaflet'
@@ -122,10 +123,12 @@ lgAddTo(map)
 control.scale({ imperial: false }).addTo(map)
 import './ui/zoomratio'
 control.zoomRatio().addTo(map)
-
 baseLayers.OSM.addTo(map)
 
-/* NOTE: Possibility to include some menus such as settings with this.
+
+/*
+ * Init toolbar, geomand other tools.
+ * // NOTE: Possibility to include some menus such as settings with this.
  * https://github.com/turbo87/sidebar-v2/
  */
 // TODO: these OptionsItems should be constructed by their respective modules
@@ -170,48 +173,6 @@ defaultTool.addHooks(map)
 setTimeout(() => document.getElementById('ctoolbar-default').setAttribute('checked', ''))
 
 
-map.on('keydown', async (e: LeafletKeyboardEvent) => {
-    const ev = e.originalEvent
-    if (
-        ev.ctrlKey && !ev.shiftKey && !ev.altKey
-        && ev.key.toUpperCase() == 'Z'
-    ) undo()
-
-    else if (
-        ev.ctrlKey && !ev.shiftKey && !ev.altKey
-        && ev.key.toUpperCase() == 'Y'
-    ) redo()
-
-    else if (
-        ev.ctrlKey && !ev.shiftKey && !ev.altKey
-        && ev.key.toLocaleUpperCase() == 'A'
-    ) {
-        ev.preventDefault()
-        toggleSelectAllUnitLayers()
-    }
-
-    else if (
-        ev.ctrlKey && !ev.shiftKey && !ev.altKey
-        && ev.key.toUpperCase() == 'C'
-    ) {
-        const result = JSON.stringify(serialize(true), undefined, 2)
-        navigator.clipboard.writeText(result)
-        // NOTE: a popup notification of some kind?
-        console.log('Copied selection to clipboard.')
-    }
-
-    else if (
-        ev.ctrlKey && !ev.shiftKey && !ev.altKey
-        && ev.key.toUpperCase() == 'V'
-    ) {
-        const text = await navigator.clipboard.readText()
-        const parsed = JSON.parse(text)
-        const { units, links } = deserialize(parsed)
-        addAction(new ImportAction(units, links).forward())
-    }
-})
-
-
 import { initGeoman } from './ui/geomancontroller'
 import { initMapHooks } from './ui/toolcontroller'
 import 'leaflet-ruler/src/leaflet-ruler'
@@ -242,3 +203,67 @@ control.ruler({ // NOTE: For some reason, you have to double click the map after
         label: 'Bearing:'
     }
 }).addTo(map)
+
+
+import 'leaflet-notifications'
+export const notifications = control.notifications({
+    timeout: 3000,
+    position: 'topright',
+    closable: true,
+    //dismissable: true,
+    className: 'modern'
+}).addTo(map)
+
+
+//notifications.info('works', '2')
+
+
+/*
+ * Keyboard events
+ */
+map.on('keydown', async (e: LeafletKeyboardEvent) => {
+    const ev = e.originalEvent
+    if (
+        ev.ctrlKey && !ev.shiftKey && !ev.altKey
+        && ev.key.toUpperCase() == 'Z'
+    ) undo()
+
+    else if (
+        ev.ctrlKey && !ev.shiftKey && !ev.altKey
+        && ev.key.toUpperCase() == 'Y'
+    ) redo()
+
+    else if (
+        ev.ctrlKey && !ev.shiftKey && !ev.altKey
+        && ev.key.toLocaleUpperCase() == 'A'
+    ) {
+        ev.preventDefault()
+        toggleSelectAllUnitLayers()
+    }
+
+    else if (
+        ev.ctrlKey && !ev.shiftKey && !ev.altKey
+        && ev.key.toUpperCase() == 'C'
+    ) {
+        const result = JSON.stringify(serialize(true), undefined, 2)
+        navigator.clipboard.writeText(result)
+        notifications.info('Copied selection to clipboard')
+    }
+
+    else if (
+        ev.ctrlKey && !ev.shiftKey && !ev.altKey
+        && ev.key.toUpperCase() == 'V'
+    ) {
+        let text: string = undefined
+        try {
+            text = await navigator.clipboard.readText()
+        } catch (er) {
+            return notifications.alert(`Couldn't read the clipboard`)
+        }
+        const parsed = JSON.parse(text)
+        const { units, links } = deserialize(parsed)
+        if (units.length === 0) return notifications.warning('No units were found on the clipboard')
+        addAction(new ImportAction(units, links).forward())
+        notifications.info('Pasted from clipboard')
+    }
+})
