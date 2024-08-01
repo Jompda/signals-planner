@@ -114,8 +114,12 @@ const map = new LMap('map', {
     contextmenuWidth: 160,
     wheelPxPerZoomLevel: 60 / 0.5,
     doubleClickZoom: false,
-    boxZoom: false
+    boxZoom: false,
+    attributionControl: false
 }).setView([60, 24], 4)
+control.attribution({
+    position: 'topright'
+}).addTo(map)
 
 initContextMenu(map)
 lgAddTo(map)
@@ -208,14 +212,16 @@ control.ruler({ // NOTE: For some reason, you have to double click the map after
 import 'leaflet-notifications'
 export const notifications = control.notifications({
     timeout: 3000,
-    position: 'topright',
+    position: 'bottomright',
     closable: true,
-    //dismissable: true,
+    // needs to be set to false on notifications
+    // which include links to more information
+    dismissable: true, 
     className: 'modern'
 }).addTo(map)
 
 
-//notifications.info('works', '2')
+notifications.info('works', '2')
 
 
 /*

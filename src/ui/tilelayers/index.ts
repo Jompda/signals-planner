@@ -22,7 +22,9 @@ export const baseLayers = {
     'Esri: Satellite': tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
         attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
     }),
+    // capabilities: https://avoin-karttakuva.maanmittauslaitos.fi/avoin/wmts/1.0.0/WMTSCapabilities.xml
     'MML: Maastokartta': new (GridLayer as any).basicAuthLayer(`https://avoin-karttakuva.maanmittauslaitos.fi/avoin/wmts/1.0.0/maastokartta/default/WGS84_Pseudo-Mercator/{z}/{y}/{x}.png`, {
+        attribution: 'Maanmittauslaitos: maastokartta',
         username: getSetting('MMLApiKey'),
         lcOptions: '<a href="https://www.maanmittauslaitos.fi/sites/maanmittauslaitos.fi/files/old/Karttamerkkien_selitys.pdf" target="_blank">MML Symbol explanations</a>'
     } as any)
