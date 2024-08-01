@@ -221,9 +221,6 @@ export const notifications = control.notifications({
 }).addTo(map)
 
 
-notifications.info('works', '2')
-
-
 /*
  * Keyboard events
  */
