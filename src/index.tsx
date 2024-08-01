@@ -214,7 +214,7 @@ export const notifications = control.notifications({
     timeout: 3000,
     position: 'bottomright',
     closable: true,
-    // needs to be set to false on notifications
+    // NOTE: Dismissable needs to be set to false on notifications
     // which include links to more information
     dismissable: true, 
     className: 'modern'
