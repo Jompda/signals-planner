@@ -10,6 +10,8 @@ declare global {
         onItmInitialize: Function
         ITM_P2P_TLS_Ex: Function
         ITM_P2P_CR_Ex: Function
+        resolveReturnCode: Function
+        resolveWarnings: Function
     }
 }
 
@@ -248,6 +250,7 @@ export interface RadioLinkEstimate {
     A_ref__db: number
     A__db: number
     mode: number
+    warnings: Array<string>
 }
 
 export interface CableLinkEstimate {

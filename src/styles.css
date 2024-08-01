@@ -335,6 +335,11 @@ body {
     border: 1px solid #adadad;
 }
 
+.link-stats-warnings>tbody>tr>td {
+    width: 20em;
+    border: 1px solid #adadad;
+}
+
 .lc-custom {
     margin: 0.5em 0.5em;
 }

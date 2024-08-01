@@ -116,6 +116,8 @@ export function LinkStatistics({ linkLayer, setHighlightLatLng }: {
         }
     }]
 
+    const warnings = 'warnings' in stats ? stats.warnings.map((a, i) => <tr key={i}><td>{a}</td></tr>) : undefined
+
     return (
         <div>
             <Chart
@@ -247,6 +249,15 @@ export function LinkStatistics({ linkLayer, setHighlightLatLng }: {
                     </tr>
                 </tbody>
             </table>
+            {warnings
+                ? <table className='link-stats link-stats-warnings'>
+                    <tbody>
+                        <tr><td>Warnings:</td></tr>
+                        {warnings}
+                    </tbody>
+                </table>
+                : undefined
+            }
         </div>
     )
 }
