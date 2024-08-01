@@ -150,7 +150,7 @@ function calculateSourceEmission(
     for (const bp of borderPoints) {
         const ll1 = new LatLon(bp.latlng.lat, bp.latlng.lng)
         const bearing1 = ll0.initialBearingTo(ll1);
-        const beamWidth = (link.medium as RadioMedium).beamWidth
+        const beamWidth = (link.medium as RadioMedium).beamWidthDeg
         const bearingDiff = Math.abs(bearing-bearing1)
         if (beamWidth && bearingDiff > beamWidth) continue;
 

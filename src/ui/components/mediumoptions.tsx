@@ -22,7 +22,7 @@ export function MediumOptions({ defaultMedium, updateMedium, defaultEmitterHeigh
             <option
                 key={radio.name}
                 value={radio.name}
-            >{radio.name}: {radio.frequency}MHz {radio.beamWidth ? 'Directing ' + radio.beamWidth + '°' : ''}</option>
+            >{radio.name}: {radio.freqMhz}MHz {radio.beamWidthDeg ? 'Directing ' + radio.beamWidthDeg + '°' : ''}</option>
         )
     }
     for (const cable of cables.values()) {
@@ -51,10 +51,10 @@ export function MediumOptions({ defaultMedium, updateMedium, defaultEmitterHeigh
                     em0Ref.current.disabled = em1Ref.current.disabled = medium.type === 'cable'
                     updateMedium(selectRef.current.value) // NOTE: ends with useless repetition on higher layers
                     if (medium.type === 'radio') {
-                        em0Ref.current.value = String((medium as RadioMedium).emitterHeight)
-                        em1Ref.current.value = String((medium as RadioMedium).emitterHeight)
-                        updateEmitterHeight0((medium as RadioMedium).emitterHeight)
-                        updateEmitterHeight1((medium as RadioMedium).emitterHeight)
+                        em0Ref.current.value = String((medium as RadioMedium).heightMeter)
+                        em1Ref.current.value = String((medium as RadioMedium).heightMeter)
+                        updateEmitterHeight0((medium as RadioMedium).heightMeter)
+                        updateEmitterHeight1((medium as RadioMedium).heightMeter)
                     }
                 }}
             >

@@ -1,4 +1,5 @@
 import { CableLinkEstimate, CableMediumOptions, LinkEstimateOptions, MediumOptions, MediumResolvable, MediumType, RadioLinkEstimate, RadioMediumOptions, SaveCableMedium, SaveRadioMedium } from '../interfaces'
+import { getSetting } from '../settings'
 
 
 export function resolveMedium(obj: MediumResolvable): RadioMedium | CableMedium {
@@ -32,22 +33,15 @@ export abstract class Medium {
 
 
 export class RadioMedium extends Medium {
-    public frequency: number
-    public beamWidth?: number
-    public emitterHeight: number
-    public Pt: number
-    public Gt: number
-    public Gr: number
+    public freqMhz: number
+    public heightMeter: number
+    public beamWidthDeg?: number
     constructor(options: RadioMediumOptions) {
         super('radio', options)
-        this.frequency = options.frequency
-        this.emitterHeight = options.emitterHeight
-        this.beamWidth = options.beamWidth
-        this.Pt = options.Pt
-        this.Gt = options.Gt
-        this.Gr = options.Gr
+        this.freqMhz = options.freqMhz
+        this.heightMeter = options.heightMeter
+        this.beamWidthDeg = options.beamWidthDeg
     }
-
 
 
     /**
@@ -85,7 +79,7 @@ export class RadioMedium extends Medium {
             pfl, // double pfl[]
             5, // int climate temperate for Finland
             301.0, // double N_0 default is 301 equal to K=4/3
-            this.frequency, // double f__mhz
+            this.freqMhz, // double f__mhz
             1, // int pol // TODO: Make modifiable, 0=hor 1=vert
             // TODO: Make the following values modifiable via settings.
             15.0, // double epsilon Relative permittivity 1<epsilon (15.0 = average ground)
@@ -120,14 +114,16 @@ export class RadioMedium extends Medium {
         return {
             type: this.type,
             name: this.name,
-            frequency: this.frequency,
-            beamWidth: this.beamWidth
+            freqMhz: this.freqMhz,
+            heightMeter: this.heightMeter,
+            beamWidthDeg: this.beamWidthDeg
         } as SaveRadioMedium
     }
     static deserialize(obj: SaveRadioMedium) {
         return new RadioMedium({
             ...obj,
-            emitterHeight: 25 // TODO: Get emitterheight from options
+            // TODO: Get emitterheight from options
+            heightMeter: obj.heightMeter || getSetting('defaultEmitterHeight') as number
         })
     }
 }
@@ -168,31 +164,22 @@ export class CableMedium extends Medium {
 const radioPresetArray = [
     new RadioMedium({
         name: 'VHF1',
-        emitterHeight: 4,
-        frequency: 88,
-        Pt: 17,
-        Gt: 2.15,
-        Gr: 2.15,
+        heightMeter: 4,
+        freqMhz: 88,
         preset: true
     }),
     new RadioMedium({
         name: 'UHF1',
-        emitterHeight: 22,
-        frequency: 1200,
-        beamWidth: 14,
-        Pt: 10,
-        Gt: 25,
-        Gr: 25,
+        heightMeter: 22,
+        freqMhz: 1200,
+        beamWidthDeg: 14,
         preset: true
     }),
     new RadioMedium({
         name: 'SHF1',
-        emitterHeight: 25,
-        frequency: 4000,
-        beamWidth: 6,
-        Pt: 10,
-        Gt: 40,
-        Gr: 40,
+        heightMeter: 25,
+        freqMhz: 4000,
+        beamWidthDeg: 6,
         preset: true
     })
 ]

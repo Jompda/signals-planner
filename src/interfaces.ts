@@ -174,18 +174,9 @@ export interface MediumOptions {
 export type MediumType = 'radio' | 'cable'
 
 export interface RadioMediumOptions extends MediumOptions {
-    /** Frequency in MHz. */
-    frequency: number
-    /**Height of the emitter above ground. */
-    emitterHeight: number
-    /** Beam width in degrees. */
-    beamWidth?: number
-    /** Transmitted power. */
-    Pt: number
-    /** Transmitting antenna gain. */
-    Gt: number
-    /** Receiving antenna gain. */
-    Gr: number
+    freqMhz: number
+    heightMeter: number
+    beamWidthDeg?: number
 }
 
 export interface CableMediumOptions extends MediumOptions {
@@ -242,11 +233,9 @@ export interface SaveMedium {
 
 export interface SaveRadioMedium extends SaveMedium {
     type: 'radio'
-    frequency: number
-    beamWidth?: number
-    Pt: number
-    Gt: number
-    Gr: number
+    freqMhz: number
+    heightMeter: number
+    beamWidthDeg?: number
 }
 
 export interface SaveCableMedium extends SaveMedium {
