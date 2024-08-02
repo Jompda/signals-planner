@@ -105,17 +105,8 @@ function calculateEmission() {
         if (link.medium.type == 'cable') continue;
         const ll0 = new LatLon(link.unit0.latlng.lat, link.unit0.latlng.lng)
         const ll1 = new LatLon(link.unit1.latlng.lat, link.unit1.latlng.lng)
-
         const bearing00 = ll0.initialBearingTo(ll1)
-        const bearing01 = ll0.finalBearingTo(ll1)
         const bearing10 = ll1.initialBearingTo(ll0)
-        const bearing11 = ll1.finalBearingTo(ll0)
-
-        //console.log(link)
-        //console.log('bearings:', bearing00, bearing01, bearing10, bearing11)
-
-        //console.log(link.lineStats)
-        //console.log('link values:', link.values)
 
         // instead of viewbounds check if it's inside the active tiles?
         if (viewBounds.contains(link.unit0.latlng)) calculateSourceEmission(borderPoints, zLayer, zoom, ll0, link, link.emitterHeight0, bearing00)
