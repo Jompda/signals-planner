@@ -13,6 +13,7 @@ export function MediumOptions({ sourceOnly, defaultMedium, updateMedium, default
     updateEmitterHeight1?: (value: number) => any
 }) {
     const selectRef = useRef<HTMLSelectElement>()
+    const emRef = useRef<HTMLDivElement>()
     const em0Ref = useRef<HTMLInputElement>()
     const em1Ref = useRef<HTMLInputElement>()
 
@@ -49,7 +50,7 @@ export function MediumOptions({ sourceOnly, defaultMedium, updateMedium, default
                 defaultValue={defaultMedium || dlm}
                 onChange={() => {
                     const medium = resolveMedium(selectRef.current.value)
-                    em0Ref.current.disabled = em1Ref.current.disabled = medium.type === 'cable'
+                    emRef.current.style.visibility = (medium.type === 'cable') ? 'hidden' : 'visible'
                     updateMedium(selectRef.current.value) // NOTE: ends with useless repetition on higher layers
                     if (medium.type === 'radio') {
                         em0Ref.current.value = String((medium as RadioMedium).heightMeter)
@@ -62,12 +63,11 @@ export function MediumOptions({ sourceOnly, defaultMedium, updateMedium, default
                 <optgroup label='Radios'>{radioGroup}</optgroup>
                 <optgroup label='Cables'>{cableGroup}</optgroup>
             </select>
-            <div>
+            <div ref={emRef} style={{visibility: (resolveMedium(defaultMedium || dlm).type === 'cable') ? 'hidden' : 'visible'}}>
                 <span>{sourceOnly ? 'Emitter height (m):' : 'Source emitter height (m):'}</span>
                 <input
                     ref={em0Ref}
                     type='number'
-                    disabled={resolveMedium(defaultMedium || dlm).type === 'cable'}
                     defaultValue={defaultEmitterHeight0 || deh}
                     onInput={() => updateEmitterHeight0(parseFloat(em0Ref.current.value))} />
                 {sourceOnly ? undefined :
@@ -76,7 +76,6 @@ export function MediumOptions({ sourceOnly, defaultMedium, updateMedium, default
                         <input
                             ref={em1Ref}
                             type='number'
-                            disabled={resolveMedium(defaultMedium || dlm).type === 'cable'}
                             defaultValue={defaultEmitterHeight1 || deh}
                             onInput={() => updateEmitterHeight1(parseFloat(em1Ref.current.value))} />
                     </>
