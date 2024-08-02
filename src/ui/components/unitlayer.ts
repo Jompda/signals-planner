@@ -8,6 +8,7 @@ import { getPointInfo } from '../../topoutil'
 import { addAction } from '../../actionhistory'
 import { MoveUnitAction, RemoveUnitAction } from '../../actions/unitactions'
 import { isUnitInteractionEnabled } from '../structurecontroller'
+import { getLinksByUnitId } from '../../struct'
 
 
 const iconSize = 40
@@ -99,9 +100,17 @@ export default class UnitLayer extends Marker {
     }
 
     async openInfoPopup() {
-        const info = await getPointInfo(this.unit.latlng) as any
-        info.unit = this.unit.unitIdentifier(false)
-        info.id = this.unit.id
+        const info = {
+            ...await getPointInfo(this.unit.latlng),
+            unit: this.unit.unitIdentifier(false),
+            id: this.unit.id
+        } as any
+
+        for (const link of getLinksByUnitId(this.unit.id)) {
+            const zero = link.unit0.id == this.unit.id
+            info[link.medium.name] = Math.round(zero ? link.bearing0 : link.bearing1) + '°'
+        }
+
         const div = DomUtil.create('div', 'info-table')
         for (const field in info) {
             const a = DomUtil.create('span'), b = DomUtil.create('span')

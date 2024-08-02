@@ -116,6 +116,7 @@ export default class LinkLayer extends FeatureGroup {
         const endPoints = getEndPoints(this.unit0, this.unit1)
         this.line.setLatLngs(endPoints)
         this.marker.setLatLng([(endPoints[0].lat + endPoints[1].lat) / 2, (endPoints[0].lng + endPoints[1].lng) / 2])
+        // TODO: Better way of visualizing which medium type is used
         this.element.innerText = this.link.medium.name[0]
         const { values, lineStats, stats } = await this.link.calculate()
 

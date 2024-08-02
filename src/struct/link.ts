@@ -4,6 +4,7 @@ import { getValues } from '../topoutil'
 import { CableMedium, RadioMedium, resolveMedium } from './medium'
 import { createLosGetter, getGeodesicLine, getGeodesicLineStats, getLineStats } from '../linkutil'
 import { getSetting } from '../settings'
+import LatLon from 'geodesy/latlon-spherical'
 
 
 export default class Link {
@@ -12,6 +13,8 @@ export default class Link {
     public unit1: Unit
     public emitterHeight0: number
     public emitterHeight1: number
+    public bearing0: number
+    public bearing1: number
     public medium: RadioMedium | CableMedium
     public values: Array<TiledataLatLng>
     public lineStats: LineStats
@@ -80,6 +83,11 @@ export default class Link {
                 index: highestObstacleI
             }
         }
+
+        const ll0 = new LatLon(this.unit0.latlng.lat, this.unit0.latlng.lng)
+        const ll1 = new LatLon(this.unit1.latlng.lat, this.unit1.latlng.lng)
+        this.bearing0 = ll0.initialBearingTo(ll1)
+        this.bearing1 = ll1.initialBearingTo(ll0)
 
         this.stats = this.medium.estimateLinkStats(this)
 
