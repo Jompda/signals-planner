@@ -123,10 +123,11 @@ function LayerModel({ enabled, layer, map, layerName }: {
 
 
 function LayerModelOptions({ layer }: {
-    layer: TileLayer & { options: { lcOptions?: any } }
+    layer: TileLayer & { options: { lcOpacity?: number, lcOptions?: any } }
 }) {
-    const [state, setState] = useState(1)
-    const sliderRef = useRef<HTMLInputElement>()
+    const [opacity, setOpacity] = useState(layer.options.lcOpacity ? layer.options.lcOpacity : 1)
+    layer.setOpacity(opacity)
+    const opacitySliderRef = useRef<HTMLInputElement>()
 
     return (
         <>
@@ -134,18 +135,18 @@ function LayerModelOptions({ layer }: {
                 <span>Opacity:</span>
                 <input
                     className='slider'
-                    ref={sliderRef}
+                    ref={opacitySliderRef}
                     type='range'
-                    defaultValue={100}
+                    defaultValue={layer.options.lcOpacity ? layer.options.lcOpacity * 100 : 100}
                     min={0}
                     max={100}
                     onChange={() => {
-                        const value = parseInt(sliderRef.current.value) / 100
-                        setState(value)
+                        const value = parseInt(opacitySliderRef.current.value) / 100
+                        setOpacity(value)
                         layer.setOpacity(value)
                     }}
                 />
-                <span>{state.toFixed(2)}</span>
+                <span>{opacity.toFixed(2)}</span>
             </div>
             {
                 (typeof layer.options.lcOptions) == 'string'

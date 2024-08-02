@@ -200,7 +200,8 @@ function calculateSourceEmission(
                     // below radiation, receiverHeight might be enough to get radiation
                     if ((pElevation + receiverHeight - srcElevation) / pxDist >= blindRatio) value = 2
                 }
-                emissionArr[y * res + x] = value
+                const k = y * res + x
+                if (emissionArr[k] != 1 || value != 1) emissionArr[k] += value
                 ++pxDist
             }
         }
@@ -336,6 +337,7 @@ function getLinePlot(x0: number, y0: number, x1: number, y1: number) {
 
 (GridLayer as any).emissionLayer = GridLayer.extend({
     options: {
+        lcOpacity: 0.6,
         lcOptions: <CustomLayerOptions />
     },
     onAdd: function(map: LMap) {
@@ -416,9 +418,9 @@ function getLinePlot(x0: number, y0: number, x1: number, y1: number) {
         for (let x = 0; x < res; ++x) {
             for (let y = 0; y < res; ++y) {
                 const value = emissionData[y * res + x]
-                if (!value) continue
-                else if (value == 1) ctx.fillStyle = '#ffff0088'
-                else if (value == 2) ctx.fillStyle = '#00ff0088'
+                if (value == 0) continue
+                else if (value == 1) ctx.fillStyle = '#ffff00'
+                else if (value >= 2) ctx.fillStyle = '#00ff00'
                 putpixel(x * s, y * s)
             }
         }
