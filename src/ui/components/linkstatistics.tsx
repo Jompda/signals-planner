@@ -35,7 +35,7 @@ export function LinkStatistics({ linkLayer, setHighlightLatLng }: {
     linkLayer: LinkLayer
     setHighlightLatLng: (latlng: LatLng) => any
 }) {
-    const { emitterHeight0, emitterHeight1, values, lineStats, stats } = linkLayer.link as Link
+    const { emitterHeight0, emitterHeight1, values, lineStats, stats, medium } = linkLayer.link as Link
     const canvas = DomUtil.create('canvas')
     canvas.width = 600
     canvas.height = 260
@@ -49,11 +49,11 @@ export function LinkStatistics({ linkLayer, setHighlightLatLng }: {
     const distanceLabels = new Array<number>()
     const elevations = new Array<number>()
     const treeHeights = new Array<number>()
-    const losElevations = [
+    const losElevations = medium.type === 'radio' ? [
         values[0].elevation + emitterHeight0,
         ...new Array<number>(values.length - 2).fill(null),
         values[values.length - 1].elevation + emitterHeight1
-    ]
+    ] : values.map(a => a.elevation)
     let dist = 0
     for (let i = 0; i < values.length; i++) {
         distanceLabels.push(Math.round(dist))
@@ -140,9 +140,9 @@ export function LinkStatistics({ linkLayer, setHighlightLatLng }: {
                             backgroundColor: '#00ff00',
                             barPercentage: 0.2,
                             stack: 'sum'
-                        }, { // NOTE: Draw a line on ground if Medium type is cable.
+                        }, {
                             type: 'line',
-                            label: 'Line-of-Sight',
+                            label: medium.type === 'radio' ? 'Line-of-Sight' : 'Cable',
                             data: losElevations,
                             pointRadius: 0,
                             pointHitRadius: 0,
