@@ -455,6 +455,17 @@ body {
     */
 }
 
+.link-marker {
+    margin-top: -1px;
+    font-size: 12px;
+}
+
+/* Hide background of link specifier */
+.leaflet-div-icon:has(> .link-marker) {
+    background-color: transparent;
+    border: none;
+}
+
 
 /*
  * Amazing CSS

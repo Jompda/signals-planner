@@ -54,8 +54,7 @@ export default class LinkLayer extends FeatureGroup {
         })
         this.addLayer(this.line)
 
-        this.element = DomUtil.create('span', 'unit-marker')
-        this.element.innerText = this.link.medium.name
+        this.element = DomUtil.create('div', 'link-marker')
         this.marker = new Marker(endPoints[0], {
             pmIgnore: true,
             opacity: 0.75,
@@ -116,8 +115,7 @@ export default class LinkLayer extends FeatureGroup {
         const endPoints = getEndPoints(this.unit0, this.unit1)
         this.line.setLatLngs(endPoints)
         this.marker.setLatLng([(endPoints[0].lat + endPoints[1].lat) / 2, (endPoints[0].lng + endPoints[1].lng) / 2])
-        // TODO: Better way of visualizing which medium type is used
-        this.element.innerText = this.link.medium.name[0]
+        this.element.innerText = this.link.medium.name // TODO: Add option to change the presentation format.
         const { values, lineStats, stats } = await this.link.calculate()
 
         // NOTE: Link performance values are basically just pulled out of the hat.
@@ -145,6 +143,9 @@ export default class LinkLayer extends FeatureGroup {
             weight,
             color
         })
+
+        const textBearing = (this.link.bearing0 + this.link.bearing1) / 2 + 180
+        this.element.style.transform = `rotate(${textBearing}deg)`
 
         this.fire('update', { endPoints, values, lineStats, stats })
     }
