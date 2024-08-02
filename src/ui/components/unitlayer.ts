@@ -107,8 +107,10 @@ export default class UnitLayer extends Marker {
         } as any
 
         for (const link of getLinksByUnitId(this.unit.id)) {
+            const name = link.medium.name
             const zero = link.unit0.id == this.unit.id
-            info[link.medium.name] = Math.round(zero ? link.bearing0 : link.bearing1) + '°'
+            let i = 0
+            info[(name in info) ? `${name}_${++i}` : name] = Math.round(zero ? link.bearing0 : link.bearing1) + '°'
         }
 
         const div = DomUtil.create('div', 'info-table')
