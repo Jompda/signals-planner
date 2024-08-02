@@ -73,6 +73,7 @@ export function LinkGroupActions() {
             <h2>Group Actions</h2>
             <span>Link Medium:</span>
             <MediumOptions
+                sourceOnly={true}
                 defaultMedium={mediumName}
                 updateMedium={(value: string) => mediumName = value}
                 updateEmitterHeight0={() => null} // NOTE: temp, can't be like this

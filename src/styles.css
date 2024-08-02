@@ -191,6 +191,11 @@ body {
     text-align: right;
 }
 
+.medium-options>div {
+    display: grid;
+    grid-template-columns: auto auto;
+}
+
 
 /*
  * Options menu
