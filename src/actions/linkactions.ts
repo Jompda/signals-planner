@@ -3,6 +3,7 @@ import Action from './action'
 import { addLink as structAddLink, removeLink as structRemoveLink } from '../struct'
 import { addLink as lgAddLink, removeLink as lgRemoveLink } from '../ui/structurecontroller'
 import { MediumResolvable } from '../interfaces'
+import { sealedArray } from '../util'
 
 
 abstract class LinkAction extends Action {
@@ -47,39 +48,35 @@ export class RemoveLinkAction extends LinkAction {
 
 
 export class EditLinkAction extends LinkAction {
-    private medium0: MediumResolvable
-    private medium1: MediumResolvable
-    private emitterheight00: number
-    private emitterheight10: number
-    private emitterheight01: number
-    private emitterheight11: number
-    constructor(linkLayer: LinkLayer,
+    private medium = sealedArray<MediumResolvable>(2)
+    private emitterHeightOld = sealedArray<number>(2)
+    private emitterHeightNew = sealedArray<number>(2)
+    constructor(
+        linkLayer: LinkLayer,
         medium0: MediumResolvable,
-        emitterheight00: number,
-        emitterheight10: number,
+        emitterHeightOld0: number,
+        emitterHeightOld1: number,
         medium1: MediumResolvable,
-        emitterheight01: number,
-        emitterheight11: number,
+        emitterHeightNew0: number,
+        emitterHeightNew1: number,
     ) {
         super(linkLayer)
-        this.medium0 = medium0
-        this.medium1 = medium1
-        this.emitterheight00 = emitterheight00;
-        this.emitterheight01 = emitterheight01;
-        this.emitterheight10 = emitterheight10;
-        this.emitterheight11 = emitterheight11;
+        this.medium[0] = medium0
+        this.medium[1] = medium1
+        this.emitterHeightOld[0] = emitterHeightOld0;
+        this.emitterHeightOld[1] = emitterHeightOld1;
+        this.emitterHeightNew[0] = emitterHeightNew0;
+        this.emitterHeightNew[1] = emitterHeightNew1;
     }
     forward() {
-        this.linkLayer.link.setMedium(this.medium1)
-        this.linkLayer.link.emitterHeight0 = this.emitterheight01
-        this.linkLayer.link.emitterHeight1 = this.emitterheight11
+        this.linkLayer.link.setMedium(this.medium[1])
+        this.linkLayer.link.emitterHeight = this.emitterHeightNew
         this.linkLayer.update()
         return this
     }
     reverse() {
-        this.linkLayer.link.setMedium(this.medium0)
-        this.linkLayer.link.emitterHeight0 = this.emitterheight00
-        this.linkLayer.link.emitterHeight1 = this.emitterheight10
+        this.linkLayer.link.setMedium(this.medium[0])
+        this.linkLayer.link.emitterHeight = this.emitterHeightOld
         this.linkLayer.update()
         return this
     }

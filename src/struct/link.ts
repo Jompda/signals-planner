@@ -5,40 +5,47 @@ import { CableMedium, RadioMedium, resolveMedium } from './medium'
 import { createLosGetter, getGeodesicLine, getGeodesicLineStats, getLineStats } from '../linkutil'
 import { getSetting } from '../settings'
 import LatLon from 'geodesy/latlon-spherical'
+import { sealedArray } from '../util'
 
 
 export default class Link {
     public id: string
-    public unit0: Unit
-    public unit1: Unit
-    public emitterHeight0: number
-    public emitterHeight1: number
-    public bearing0: number
-    public bearing1: number
+    // NOTE: Change to arrays of size 2? Would it just clutter the program due to javascript object?
+    public unit = sealedArray<Unit>(2)
+    public emitterHeight = sealedArray<number>(2)
+    public bearing = sealedArray<number>(2)
     public medium: RadioMedium | CableMedium
     public values: Array<TiledataLatLng>
     public lineStats: LineStats
     public stats: RadioLinkEstimate | CableLinkEstimate
     constructor(options: LinkOptions) {
-        Object.assign(this, options)
+        this.unit[0] = options.unit0
+        this.unit[1] = options.unit1
+        this.emitterHeight[0] = options.emitterHeight0
+        this.emitterHeight[1] = options.emitterHeight1
         this.medium = resolveMedium(options.medium)
         this.reorder()
     }
     reorder() {
-        const [unit0, unit1] = Link.orderUnits(this.unit0, this.unit1)
-        if (unit0.id !== this.unit0.id) {
-            const temp = this.emitterHeight0
-            this.emitterHeight0 = this.emitterHeight1
-            this.emitterHeight1 = temp
+        const unit = Link.orderUnits.call(null, ...this.unit) as Array<Unit>
+        if (unit[0].id !== this.unit[0].id) {
+            this.unit = this.unit.reverse()
+            this.emitterHeight = this.emitterHeight.reverse()
         }
-        this.unit0 = unit0
-        this.unit1 = unit1
-        this.id = Link.createId(this.unit0, this.unit1)
+        this.id = Link.createId.call(null, ...this.unit)
     }
     static createId(unit0: Unit, unit1: Unit) {
-        [unit0, unit1] = this.orderUnits(unit0, unit1)
+        [unit0, unit1] = Link.orderUnits(unit0, unit1)
         return `${unit0.id}-${unit1.id}`
     }
+    /**
+     * Used to internally order units so comparison based on link id is easier.
+     * // NOTE: Funny business could happen with the current logic.
+     * 
+     * @param unit0 
+     * @param unit1 
+     * @returns 
+     */
     static orderUnits(unit0: Unit, unit1: Unit) {
         const ll0 = unit0.latlng
         const ll1 = unit1.latlng
@@ -55,13 +62,13 @@ export default class Link {
 
     async calculate() {
         const sourceNames = ['elevation', 'treeHeight'] as Array<SourceName>
-        const { steps, delta } = getGeodesicLineStats(this.unit0.latlng, this.unit1.latlng, 200)
-        const latlngs = getGeodesicLine(this.unit0.latlng, this.unit1.latlng, steps)
+        const { steps, delta } = getGeodesicLineStats(this.unit[0].latlng, this.unit[1].latlng, 200)
+        const latlngs = getGeodesicLine(this.unit[0].latlng, this.unit[1].latlng, steps)
         const values = await getValues(latlngs, sourceNames, 10)
         const lineStats = getLineStats(values, sourceNames)
 
-        const transmitterElevation = values[0].elevation + this.emitterHeight0
-        const receiverElevation = values[values.length - 1].elevation + this.emitterHeight1
+        const transmitterElevation = values[0].elevation + this.emitterHeight[0]
+        const receiverElevation = values[values.length - 1].elevation + this.emitterHeight[1]
         const losElevationAtIndex = createLosGetter(transmitterElevation, receiverElevation, values.length - 1)
 
         let highestObstacle = lineStats.peaks.values[0] - losElevationAtIndex(1)
@@ -84,10 +91,10 @@ export default class Link {
             }
         }
 
-        const ll0 = new LatLon(this.unit0.latlng.lat, this.unit0.latlng.lng)
-        const ll1 = new LatLon(this.unit1.latlng.lat, this.unit1.latlng.lng)
-        this.bearing0 = ll0.initialBearingTo(ll1)
-        this.bearing1 = ll1.initialBearingTo(ll0)
+        const ll0 = new LatLon(this.unit[0].latlng.lat, this.unit[0].latlng.lng)
+        const ll1 = new LatLon(this.unit[1].latlng.lat, this.unit[1].latlng.lng)
+        this.bearing[0] = ll0.initialBearingTo(ll1)
+        this.bearing[1] = ll1.initialBearingTo(ll0)
 
         this.stats = this.medium.estimateLinkStats(this)
 
@@ -97,10 +104,10 @@ export default class Link {
 
     serialize() {
         return {
-            unit0: this.unit0.id,
-            unit1: this.unit1.id,
-            emitterHeight0: this.emitterHeight0,
-            emitterHeight1: this.emitterHeight1,
+            unit0: this.unit[0].id,
+            unit1: this.unit[1].id,
+            emitterHeight0: this.emitterHeight[0],
+            emitterHeight1: this.emitterHeight[1],
             medium: this.medium.serialize()
         } as SaveLink
     }

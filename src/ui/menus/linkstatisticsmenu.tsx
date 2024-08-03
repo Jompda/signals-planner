@@ -28,7 +28,7 @@ export function showLinkStatistics(map: LMap, linkLayer: LinkLayer) {
         }
     }
 
-    const highlight = new CircleMarker(linkLayer.link.unit0.latlng, { radius: 10 }).addTo(map)
+    const highlight = new CircleMarker(linkLayer.link.unit[0].latlng, { radius: 10 }).addTo(map)
 
     const container = DomUtil.create('div', 'dialog-menu')
     dialog.setContent(container)
@@ -40,7 +40,7 @@ export function showLinkStatistics(map: LMap, linkLayer: LinkLayer) {
     function onLinkUpdate() {
         root.unmount()
         root = createUI(container)
-        highlight.setLatLng(linkLayer.link.unit0.latlng)
+        highlight.setLatLng(linkLayer.link.unit[0].latlng)
     }
     function onLinkRemove() {
         dialog.close()
@@ -59,11 +59,11 @@ export function showLinkStatistics(map: LMap, linkLayer: LinkLayer) {
         root.render(
             <>
                 <h3>
-                    Link: <span className='underline'>{linkLayer.link.unit0.toHierarchyString()}</span>
+                    Link: <span className='underline'>{linkLayer.link.unit[0].toHierarchyString()}</span>
                     <span> — </span>
                     <span className='underline'>{linkLayer.link.medium.name}</span>
                     <span> — </span>
-                    <span className='underline'>{linkLayer.link.unit1.toHierarchyString()}</span>
+                    <span className='underline'>{linkLayer.link.unit[0].toHierarchyString()}</span>
                 </h3>
                 <span>NOTE: Figure doesn't take into account earth curvature nor actual radio propagation path.</span>
                 <LinkStatistics

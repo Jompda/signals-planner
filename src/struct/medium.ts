@@ -69,14 +69,14 @@ export class RadioMedium extends Medium {
      * // TODO: Improve estimateLinkStats
      * - With line-of-sight connection, take into account multipath interference
      */
-    estimateLinkStats({ lineStats, values, emitterHeight0, emitterHeight1 }: LinkEstimateOptions): RadioLinkEstimate {
+    estimateLinkStats({ lineStats, values, emitterHeight }: LinkEstimateOptions): RadioLinkEstimate {
         // https://github.com/NTIA/itm check README.md
         const pflRes = lineStats.delta // Approximate delta of points in meters.
         const pfl = [values.length - 1, pflRes].concat(values.map(val => val.elevation + val.treeHeight))
         //console.log('h0,h1,freq,pfl:', emitterHeight0, emitterHeight1, this.frequency, pfl)
         const results = window.ITM_P2P_TLS_Ex(
-            emitterHeight0, // double h_tx__meter
-            emitterHeight1, // double h_rx__meter
+            emitterHeight[0], // double h_tx__meter
+            emitterHeight[1], // double h_rx__meter
             pfl, // double pfl[]
             5, // int climate temperate for Finland
             301.0, // double N_0 default is 301 equal to K=4/3

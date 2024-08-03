@@ -42,7 +42,7 @@ export function getUnits() {
 export function getLinksByUnitId(id: string) {
     const arr = []
     for (const link of links.values()) {
-        if (link.unit0.id == id || link.unit1.id == id) arr.push(link)
+        if (link.unit[0].id == id || link.unit[1].id == id) arr.push(link)
     }
     return arr
 }
@@ -73,7 +73,7 @@ export function serialize(selectionOnly: boolean) {
     for (const unit of selectionOnly ? getSelectedUnits() : units.values())
         sUnits.push(unit.serialize())
     for (const link of links.values())
-        if (sUnits.find(s => s.id === link.unit0.id) && sUnits.find(s => s.id === link.unit1.id))
+        if (sUnits.find(s => s.id === link.unit[0].id) && sUnits.find(s => s.id === link.unit[1].id))
             sLinks.push(link.serialize())
     return {
         units: sUnits,

@@ -30,7 +30,7 @@ export default class ImportAction extends Action {
             this.units.push(new AddUnitAction(unitLayer))
         }
         for (const link of links)
-            this.links.push(new AddLinkAction(new LinkLayer(link, linkUnitResolver(link.unit0.id), linkUnitResolver(link.unit1.id))))
+            this.links.push(new AddLinkAction(new LinkLayer(link, linkUnitResolver(link.unit[0].id), linkUnitResolver(link.unit[1].id))))
     }
     forward() {
         for (const unit of this.units) unit.forward()

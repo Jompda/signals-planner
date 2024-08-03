@@ -261,8 +261,7 @@ export interface CableLinkEstimate {
 export interface LinkEstimateOptions {
     lineStats: LineStats
     values: Array<TiledataLatLng>
-    emitterHeight0: number
-    emitterHeight1: number
+    emitterHeight: Array<number>
 }
 
 export type MediumResolvable = RadioMedium | SaveRadioMedium | CableMedium | SaveCableMedium | Medium | string

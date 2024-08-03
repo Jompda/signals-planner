@@ -7,12 +7,13 @@ import { showLinkStatistics } from '../menus/linkstatisticsmenu'
 import { isLinkInteractionEnabled } from '../structurecontroller'
 import { linkLayerClick, linkLayerMouseDown, linkLayerMouseUp } from '../toolcontroller'
 import UnitLayer from './unitlayer'
+import { sealedArray } from '../../util'
 
 
 export default class LinkLayer extends FeatureGroup {
     public link: Link
-    public unit0: UnitLayer
-    public unit1: UnitLayer
+    // NOTE: Unit order is not updated according to the underlying link object.
+    public unit = sealedArray<UnitLayer>(2)
     public line: Polyline
     public marker: Marker
     public element: HTMLElement
@@ -21,8 +22,8 @@ export default class LinkLayer extends FeatureGroup {
         super()
 
         this.link = link
-        this.unit0 = unit0
-        this.unit1 = unit1
+        this.unit[0] = unit0
+        this.unit[1] = unit1
 
         const contextmenuItems = [{
                 text: 'Info',
@@ -78,10 +79,10 @@ export default class LinkLayer extends FeatureGroup {
         this.on('mousedown', this.mousedown, this)
         this.on('mouseup', this.mouseup, this)
 
-        this.unit0.on('dragend', this.update, this)
-        this.unit1.on('dragend', this.update, this)
-        this.unit0.on('update', this.update, this)
-        this.unit1.on('update', this.update, this)
+        this.unit[0].on('dragend', this.update, this)
+        this.unit[1].on('dragend', this.update, this)
+        this.unit[0].on('update', this.update, this)
+        this.unit[1].on('update', this.update, this)
     }
 
 
@@ -90,10 +91,10 @@ export default class LinkLayer extends FeatureGroup {
         this.off('mousedown', this.mousedown)
         this.off('mouseup', this.mouseup)
 
-        this.unit0.off('dragend', this.update)
-        this.unit1.off('dragend', this.update)
-        this.unit0.off('update', this.update)
-        this.unit1.off('update', this.update)
+        this.unit[0].off('dragend', this.update)
+        this.unit[1].off('dragend', this.update)
+        this.unit[0].off('update', this.update)
+        this.unit[1].off('update', this.update)
     }
 
 
@@ -107,12 +108,12 @@ export default class LinkLayer extends FeatureGroup {
 
     async update() {
         this.link.reorder()
-        if (this.unit0.unit.id != this.link.unit0.id) {
-            const temp = this.unit0
-            this.unit0 = this.unit1
-            this.unit1 = temp
+        if (this.unit[0].unit.id != this.link.unit[0].id) {
+            const temp = this.unit[0]
+            this.unit[0] = this.unit[1]
+            this.unit[1] = temp
         }
-        const endPoints = getEndPoints(this.unit0, this.unit1)
+        const endPoints = getEndPoints(this.unit[0], this.unit[1])
         this.line.setLatLngs(endPoints)
         this.marker.setLatLng([(endPoints[0].lat + endPoints[1].lat) / 2, (endPoints[0].lng + endPoints[1].lng) / 2])
         this.element.innerText = this.link.medium.name // TODO: Add option to change the presentation format.
@@ -144,7 +145,7 @@ export default class LinkLayer extends FeatureGroup {
             color
         })
 
-        const textBearing = (this.link.bearing0 + this.link.bearing1) / 2 + 180
+        const textBearing = (this.link.bearing[0] + this.link.bearing[1]) / 2 + 180
         this.element.style.transform = `rotate(${textBearing}deg)`
 
         this.fire('update', { endPoints, values, lineStats, stats })

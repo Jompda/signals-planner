@@ -266,3 +266,11 @@ export function getLinePlot(x0: number, y0: number, x1: number, y1: number) {
 
     return gridPoints
 }
+
+
+/**
+ * Creates an array which's size in immutable but the values themselves can be changed.
+ */
+export function sealedArray<T>(length: number) {
+    return Object.seal(new Array<T>(length).fill(undefined))
+}

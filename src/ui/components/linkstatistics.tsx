@@ -35,14 +35,14 @@ export function LinkStatistics({ linkLayer, setHighlightLatLng }: {
     linkLayer: LinkLayer
     setHighlightLatLng: (latlng: LatLng) => any
 }) {
-    const { emitterHeight0, emitterHeight1, values, lineStats, stats, medium } = linkLayer.link as Link
+    const { emitterHeight, values, lineStats, stats, medium } = linkLayer.link as Link
     const canvas = DomUtil.create('canvas')
     canvas.width = 600
     canvas.height = 260
 
     const getLosElevationAtIndex = createLosGetter(
-        values[0].elevation + emitterHeight0,
-        values[values.length - 1].elevation + emitterHeight1,
+        values[0].elevation + emitterHeight[0],
+        values[values.length - 1].elevation + emitterHeight[1],
         values.length - 1
     )
 
@@ -50,9 +50,9 @@ export function LinkStatistics({ linkLayer, setHighlightLatLng }: {
     const elevations = new Array<number>()
     const treeHeights = new Array<number>()
     const losElevations = medium.type === 'radio' ? [
-        values[0].elevation + emitterHeight0,
+        values[0].elevation + emitterHeight[0],
         ...new Array<number>(values.length - 2).fill(null),
-        values[values.length - 1].elevation + emitterHeight1
+        values[values.length - 1].elevation + emitterHeight[1]
     ] : values.map(a => a.elevation)
     let dist = 0
     for (let i = 0; i < values.length; i++) {
@@ -204,11 +204,11 @@ export function LinkStatistics({ linkLayer, setHighlightLatLng }: {
                             </tr>
                             <tr>
                                 <td>Emitter height 0</td>
-                                <td>{emitterHeight0}m</td>
+                                <td>{emitterHeight[0]}m</td>
                             </tr>
                             <tr>
                                 <td>Emitter height 1</td>
-                                <td>{emitterHeight1}m</td>
+                                <td>{emitterHeight[1]}m</td>
                             </tr>
                         </>
                         : undefined

@@ -75,7 +75,7 @@ export function showAddLinkMenu(map: LMap, unitLayer0: UnitLayer) {
                         if (!unit1) return // Tell user to select link.
                         if (linkIdExists(Link.createId(unitLayer0.unit, unit1.unit))) throw new Error('Link id already exists!')
                         const link = new Link({ unit0: unitLayer0.unit, unit1: unit1.unit, emitterHeight0, emitterHeight1, medium })
-                        const linkLayer = new LinkLayer(link, getUnitLayerById(link.unit0.id), getUnitLayerById(link.unit1.id))
+                        const linkLayer = new LinkLayer(link, getUnitLayerById(link.unit[0].id), getUnitLayerById(link.unit[1].id))
                         addAction(new AddLinkAction(linkLayer).forward())
                         dialog.close()
                     }}>Add</button>
@@ -130,20 +130,20 @@ export function showEditLinkMenu(map: LMap, linkLayer: LinkLayer) {
                 <h1>Edit Link:</h1>
                 <span>Source:</span>
                 <select disabled>
-                    <option>{linkLayer.unit0.unit.unitIdentifier(true)}</option>
+                    <option>{linkLayer.unit[0].unit.unitIdentifier(true)}</option>
                 </select>
                 <span>Target:</span>
                 <select disabled>
-                    <option>{linkLayer.unit1.unit.unitIdentifier(true)}</option>
+                    <option>{linkLayer.unit[1].unit.unitIdentifier(true)}</option>
                 </select>
                 <hr />
                 <span>Type:</span>
                 <MediumOptions
                     defaultMedium={linkLayer.link.medium.name}
                     updateMedium={(value: string) => medium = value}
-                    defaultEmitterHeight0={linkLayer.link.emitterHeight0}
+                    defaultEmitterHeight0={linkLayer.link.emitterHeight[0]}
                     updateEmitterHeight0={value => emitterHeight0 = value}
-                    defaultEmitterHeight1={linkLayer.link.emitterHeight1}
+                    defaultEmitterHeight1={linkLayer.link.emitterHeight[1]}
                     updateEmitterHeight1={value => emitterHeight1 = value}
                 />
                 <div className='grower'></div>
@@ -152,8 +152,8 @@ export function showEditLinkMenu(map: LMap, linkLayer: LinkLayer) {
                         addAction(new EditLinkAction(
                             linkLayer,
                             linkLayer.link.medium,
-                            linkLayer.link.emitterHeight0,
-                            linkLayer.link.emitterHeight1,
+                            linkLayer.link.emitterHeight[0],
+                            linkLayer.link.emitterHeight[1],
                             medium,
                             emitterHeight0,
                             emitterHeight1
