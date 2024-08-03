@@ -27,10 +27,10 @@ export default class ImportAction extends Action {
         for (const unit of units) {
             const unitLayer = new UnitLayer(unit)
             unitLayers.push(unitLayer)
-            this.units.push(new AddUnitAction(unitLayer))
+            this.units.push(new AddUnitAction(unitLayer).preventEventDispatch())
         }
         for (const link of links)
-            this.links.push(new AddLinkAction(new LinkLayer(link, linkUnitResolver(link.unit[0].id), linkUnitResolver(link.unit[1].id))))
+            this.links.push(new AddLinkAction(new LinkLayer(link, linkUnitResolver(link.unit[0].id), linkUnitResolver(link.unit[1].id))).preventEventDispatch())
     }
     forward() {
         for (const unit of this.units) unit.forward()
@@ -41,6 +41,7 @@ export default class ImportAction extends Action {
         deselectAllUnitLayers()
         for (const unit of this.units) unit.unitLayer.select()
 
+        this.dispatchEvent('structureUpdate')
         return this
     }
     reverse() {
@@ -50,6 +51,8 @@ export default class ImportAction extends Action {
         for (const unit of this.units) unit.reverse()
         const drawnlayers = getDrawnLayers()
         if (this.drawings) for (const layer of this.drawings) drawnlayers.removeLayer(layer)
+
+        this.dispatchEvent('structureUpdate')
         return this
     }
 }

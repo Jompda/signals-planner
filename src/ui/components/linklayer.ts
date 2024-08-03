@@ -79,8 +79,6 @@ export default class LinkLayer extends FeatureGroup {
         this.on('mousedown', this.mousedown, this)
         this.on('mouseup', this.mouseup, this)
 
-        this.unit[0].on('dragend', this.update, this)
-        this.unit[1].on('dragend', this.update, this)
         this.unit[0].on('update', this.update, this)
         this.unit[1].on('update', this.update, this)
     }
@@ -91,8 +89,6 @@ export default class LinkLayer extends FeatureGroup {
         this.off('mousedown', this.mousedown)
         this.off('mouseup', this.mouseup)
 
-        this.unit[0].off('dragend', this.update)
-        this.unit[1].off('dragend', this.update)
         this.unit[0].off('update', this.update)
         this.unit[1].off('update', this.update)
     }

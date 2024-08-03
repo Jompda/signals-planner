@@ -20,11 +20,13 @@ export class AddUnitAction extends UnitAction {
     forward() {
         structAddUnit(this.unitLayer.unit)
         lgAddUnit(this.unitLayer)
+        this.dispatchEvent('structureUpdate')
         return this
     }
     reverse() {
         structRemoveUnit(this.unitLayer.unit)
         lgRemoveUnit(this.unitLayer)
+        this.dispatchEvent('structureUpdate')
         return this
     }
 }
@@ -34,9 +36,10 @@ export class RemoveUnitAction extends UnitAction {
     private removedLinks: Array<RemoveLinkAction>
     forward() {
         this.removedLinks = getLinkLayersByUnitId(this.unitLayer.unit.id)
-            .map(linkLayer => new RemoveLinkAction(linkLayer).forward())
+            .map(linkLayer => new RemoveLinkAction(linkLayer).preventEventDispatch().forward())
         structRemoveUnit(this.unitLayer.unit)
         lgRemoveUnit(this.unitLayer)
+        this.dispatchEvent('structureUpdate')
         return this
     }
     reverse() {
@@ -44,6 +47,7 @@ export class RemoveUnitAction extends UnitAction {
         lgAddUnit(this.unitLayer)
         for (const rmAction of this.removedLinks)
             rmAction.reverse()
+        this.dispatchEvent('structureUpdate')
         return this
     }
 }
@@ -59,10 +63,12 @@ export class MoveUnitAction extends UnitAction {
     }
     forward() {
         this.unitLayer.setUnitLatLng(this.latlng1)
+        this.dispatchEvent('structureUpdate')
         return this
     }
     reverse() {
         this.unitLayer.setUnitLatLng(this.latlng0)
+        this.dispatchEvent('structureUpdate')
         return this
     }
 }
@@ -78,10 +84,12 @@ export class EditUnitAction extends MoveUnitAction {
     }
     forward() {
         this.unitLayer.setLatLngSymbol(this.latlng1, this.symbol1)
+        this.dispatchEvent('structureUpdate')
         return this
     }
     reverse() {
         this.unitLayer.setLatLngSymbol(this.latlng0, this.symbol0)
+        this.dispatchEvent('structureUpdate')
         return this
     }
 }

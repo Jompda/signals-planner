@@ -5,7 +5,7 @@ import { showEditUnitMenu } from '../menus/unitmenus'
 import { showAddLinkMenu } from '../menus/linkmenus'
 import { getActiveTool, unitLayerClick, unitLayerMouseDown, unitLayerMouseUp } from '../toolcontroller'
 import { getPointInfo } from '../../topoutil'
-import { addAction } from '../../actionhistory'
+import { actionEvents, addAction } from '../../actionhistory'
 import { MoveUnitAction, RemoveUnitAction } from '../../actions/unitactions'
 import { isUnitInteractionEnabled } from '../structurecontroller'
 import { getLinksByUnitId } from '../../struct'
@@ -133,8 +133,7 @@ export default class UnitLayer extends Marker {
 
 
     dragEnd() {
-        addAction(new MoveUnitAction(this, this.unit.latlng, this.getLatLng()))
-        this.unit.latlng = this.getLatLng()
+        addAction(new MoveUnitAction(this, this.unit.latlng, this.getLatLng()).forward())
     }
     click(e: LeafletMouseEvent) {
         unitLayerClick(e, this)

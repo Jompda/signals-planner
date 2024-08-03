@@ -20,12 +20,14 @@ export class AddLinkAction extends LinkAction {
         structAddLink(this.linkLayer.link)
         lgAddLink(this.linkLayer)
         this.linkLayer.addHandlers()
+        this.dispatchEvent('structureUpdate')
         return this
     }
     reverse() {
         this.linkLayer.removeHandlers()
         structRemoveLink(this.linkLayer.link)
         lgRemoveLink(this.linkLayer)
+        this.dispatchEvent('structureUpdate')
         return this
     }
 }
@@ -36,12 +38,14 @@ export class RemoveLinkAction extends LinkAction {
         this.linkLayer.removeHandlers()
         structRemoveLink(this.linkLayer.link)
         lgRemoveLink(this.linkLayer)
+        this.dispatchEvent('structureUpdate')
         return this
     }
     reverse() {
         structAddLink(this.linkLayer.link)
         lgAddLink(this.linkLayer)
         this.linkLayer.addHandlers()
+        this.dispatchEvent('structureUpdate')
         return this
     }
 }
@@ -71,13 +75,13 @@ export class EditLinkAction extends LinkAction {
     forward() {
         this.linkLayer.link.setMedium(this.medium[1])
         this.linkLayer.link.emitterHeight = this.emitterHeightNew
-        this.linkLayer.update()
+        this.linkLayer.update().then(() => this.dispatchEvent('structureUpdate'))
         return this
     }
     reverse() {
         this.linkLayer.link.setMedium(this.medium[0])
         this.linkLayer.link.emitterHeight = this.emitterHeightOld
-        this.linkLayer.update()
+        this.linkLayer.update().then(() => this.dispatchEvent('structureUpdate'))
         return this
     }
 }
@@ -95,6 +99,7 @@ export class AddLinksAction extends Action {
             lgAddLink(linkLayer)
             linkLayer.addHandlers()
         }
+        this.dispatchEvent('structureUpdate')
         return this
     }
     reverse() {
@@ -103,6 +108,7 @@ export class AddLinksAction extends Action {
             lgRemoveLink(linkLayer)
             structRemoveLink(linkLayer.link)
         }
+        this.dispatchEvent('structureUpdate')
         return this
     }
 }
@@ -120,6 +126,7 @@ export class RemoveLinksAction extends Action {
             lgRemoveLink(linkLayer)
             structRemoveLink(linkLayer.link)
         }
+        this.dispatchEvent('structureUpdate')
         return this
     }
     reverse() {
@@ -128,6 +135,7 @@ export class RemoveLinksAction extends Action {
             lgAddLink(linkLayer)
             linkLayer.addHandlers()
         }
+        this.dispatchEvent('structureUpdate')
         return this
     }
 }

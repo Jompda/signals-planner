@@ -19,10 +19,12 @@ export class AddDrawLayerAction extends DrawAction {
     }
     forward() {
         this.lg.addLayer(this.layer)
+        this.dispatchEvent('drawUpdate')
         return this
     }
     reverse() {
         this.lg.removeLayer(this.layer)
+        this.dispatchEvent('drawUpdate')
         return this
     }
 }
@@ -36,10 +38,12 @@ export class RemoveDrawLayerAction extends DrawAction {
     }
     forward() {
         this.lg.removeLayer(this.layer)
+        this.dispatchEvent('drawUpdate')
         return this
     }
     reverse() {
         this.lg.addLayer(this.layer)
+        this.dispatchEvent('drawUpdate')
         return this
     }
 }
@@ -85,10 +89,14 @@ export class EditDrawLayersAction extends DrawAction {
         return this
     }
     forward() {
-        return this.apply(`editNew:${this.editId}`)
+        this.apply(`editNew:${this.editId}`)
+        this.dispatchEvent('drawUpdate')
+        return this
     }
     reverse() {
-        return this.apply(`editOld:${this.editId}`)
+        this.apply(`editOld:${this.editId}`)
+        this.dispatchEvent('drawUpdate')
+        return this
     }
     apply(fieldName: string) {
         for (const layer of this.layers) {

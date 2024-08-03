@@ -2,6 +2,16 @@ import { notifications } from '.'
 import Action from './actions/action'
 
 
+export type ActionEvent = 'structureUpdate' | 'drawUpdate' | 'selectionUpdate'
+/**
+ * Event is one of ActionEvents
+ */
+export const actionEvents = new EventTarget()
+actionEvents.addEventListener('structureUpdate', () => console.log('structureUpdate'))
+actionEvents.addEventListener('drawUpdate', () => console.log('drawUpdate'))
+actionEvents.addEventListener('selectionUpdate', () => console.log('selectionUpdate'))
+
+
 let i = -1
 const timeline = new Array<Action>()
 export function getActionTimeline() {
