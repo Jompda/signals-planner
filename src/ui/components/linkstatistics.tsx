@@ -152,6 +152,9 @@ export function LinkStatistics({ linkLayer, setHighlightLatLng }: {
                     ]
                 }}
                 options={{
+                    animation: {
+                        duration: 0
+                    },
                     scales: {
                         x: {
                             ticks: {
