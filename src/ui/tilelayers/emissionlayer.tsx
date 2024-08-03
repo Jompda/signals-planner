@@ -1,5 +1,5 @@
 import { DomUtil, GridLayer, Map as LMap, Coords, LatLngBounds, LatLng, Marker, CRS, Point, latLng, ControlOptions } from 'leaflet'
-import { getTiledata, latlngToTileCoords } from 'tiledata'
+import { getTiledata, latlngToTileCoords, latlngToTilePixelCoords } from 'tiledata'
 import { getLinks } from '../../struct';
 import { getMap } from '../structurecontroller';
 import Link from '../../struct/link';
@@ -8,6 +8,7 @@ import { RadioMedium } from '../../struct/medium';
 import { getGeodesicLine, getGeodesicLineStats } from '../../linkutil';
 import { getSetting } from '../../settings';
 import { useRef } from 'react';
+import { getLinePlot } from '../../util';
 
 
 /* 
@@ -132,8 +133,8 @@ function calculateSourceEmission(
     bearing: number
 ) {
     const latlng0  = latLng(ll0.lat, ll0.lon)
-    const srcTileCoords = getTileCoords(latlng0, zoom) // These two functions could be unified
-    const srcTileXY = getTileXYCoords(srcTileCoords, latlng0);
+    const srcTileCoords = latlngToTileCoords(latlng0, zoom) // These two functions could be unified
+    const srcTileXY = latlngToTilePixelCoords(srcTileCoords, latlng0);
     const srcRawElevation = getTileDataValue(srcTileCoords, srcTileXY.x, srcTileXY.y, zLayer, 'elevation', 256)
     const srcElevation = srcRawElevation + emitterheight
 
@@ -157,11 +158,11 @@ function calculateSourceEmission(
 
         for (let i = 1; i < latlngs.length; ++i) {
             const latlng0 = latlngs[i-1], latlng1 = latlngs[i]
-            const tileCoords0 = getTileCoords(latlng0, zoom)
-            const xy0 = getTileXYCoords(tileCoords0, latlng0) // res 256
+            const tileCoords0 = latlngToTileCoords(latlng0, zoom)
+            const xy0 = latlngToTilePixelCoords(tileCoords0, latlng0) // res 256
             const p0 = new Point(Math.floor(tileCoords0.x * res + xy0.x * scale), Math.floor(tileCoords0.y * res + xy0.y * scale)) // scale the grid to the resolution
-            const tileCoords1 = getTileCoords(latlng1, zoom)
-            const xy1 = getTileXYCoords(tileCoords1, latlng1)
+            const tileCoords1 = latlngToTileCoords(latlng1, zoom)
+            const xy1 = latlngToTilePixelCoords(tileCoords1, latlng1)
             const p1 = new Point(Math.floor(tileCoords1.x * res + xy1.x * scale), Math.floor(tileCoords1.y * res + xy1.y * scale))
 
             const linePlot = getLinePlot(p0.x, p0.y, p1.x, p1.y)
@@ -269,69 +270,6 @@ function getBorderPoints(nwCoords: TileCoords, seCoords: TileCoords) {
     }
 
     return borderPoints
-}
-
-
-/**
- * Utility function from RadioProjekti
- */
-function getTileCoords(latlng: LatLng, scale: number) {
-    const point = CRS.EPSG3857.latLngToPoint(latlng, scale)
-    return {
-        x: Math.floor(point.x / 256),
-        y: Math.floor(point.y / 256),
-        z: scale
-    }
-}
-
-/**
- * Utility function from RadioProjekti
- * Formerly known as getTileGridCoords
- */
-function getTileXYCoords(tileCoords: TileCoords, latlng: LatLng) {
-    const point = CRS.EPSG3857.latLngToPoint(latlng, tileCoords.z)
-    const xOffset = point.x / 256 - tileCoords.x
-    const yOffset = point.y / 256 - tileCoords.y
-    const resUnit = 1 / 256
-    const x = Math.floor(xOffset / resUnit)
-    const y = Math.floor(yOffset / resUnit)
-    return { x, y }
-}
-
-
-/**
- * Bresenham's line algorithm
- * Author: Jack Elton Bresenham
- * Date: 22.10.2022
- * Source: https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
- * Modified for context by Joni Rapo 18.7.2024
- */
-function getLinePlot(x0: number, y0: number, x1: number, y1: number) {
-    const gridPoints = new Array<{x: number, y: number}>()
-
-    const dx = Math.abs(x1 - x0)
-    const sx = x0 < x1 ? 1 : -1
-    const dy = -Math.abs(y1 - y0)
-    const sy = y0 < y1 ? 1 : -1
-    let error = dx + dy
-
-    while (true) {
-        gridPoints.push({ x: x0, y: y0 })
-        if (x0 == x1 && y0 == y1) break
-        const e2 = 2 * error
-        if (e2 >= dy) {
-            if (x0 == x1) break
-            error = error + dy
-            x0 = x0 + sx
-        }
-        if (e2 <= dx) {
-            if (y0 == y1) break
-            error = error + dx
-            y0 = y0 + sy
-        }
-    }
-
-    return gridPoints
 }
 
 

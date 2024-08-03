@@ -230,3 +230,39 @@ export function createDialog(map: LMap, options: LeafletDialogOptions) {
 
     return dialog
 }
+
+
+/**
+* Bresenham's line algorithm
+* Author: Jack Elton Bresenham
+* Date: 22.10.2022
+* Source: https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
+* Modified for context by Joni Rapo 18.7.2024
+*/
+export function getLinePlot(x0: number, y0: number, x1: number, y1: number) {
+    const gridPoints = new Array<{x: number, y: number}>()
+
+    const dx = Math.abs(x1 - x0)
+    const sx = x0 < x1 ? 1 : -1
+    const dy = -Math.abs(y1 - y0)
+    const sy = y0 < y1 ? 1 : -1
+    let error = dx + dy
+
+    while (true) {
+        gridPoints.push({ x: x0, y: y0 })
+        if (x0 == x1 && y0 == y1) break
+        const e2 = 2 * error
+        if (e2 >= dy) {
+            if (x0 == x1) break
+            error = error + dy
+            x0 = x0 + sx
+        }
+        if (e2 <= dx) {
+            if (y0 == y1) break
+            error = error + dx
+            y0 = y0 + sy
+        }
+    }
+
+    return gridPoints
+}
