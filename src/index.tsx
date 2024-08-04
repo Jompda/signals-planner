@@ -84,14 +84,6 @@ setTiledataConfig<SourceName>({
 
 
 /*
- * Setup itm-webassembly.
- * Curretly linked locally using `npm link itm-webassembly`
- */
-import * as _ from 'itm-webassembly'
-window.onItmInitialize(() => console.log('itm-webassembly initialized!'))
-
-
-/*
  * Setup the UI
  */
 import './ui/menus/optionsmenu'
