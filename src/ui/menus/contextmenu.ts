@@ -10,6 +10,7 @@ import RemoveAllAction from '../../actions/removeallaction'
 import { getDrawnLayers, getDrawStyleOptions } from '../geomancontroller'
 import { deselectAllUnitLayers, selectAllUnitLayers, toggleSelectAllUnitLayers } from '../structurecontroller'
 import { notifications } from '../..'
+import ImportSolutionAction from '../../actions/importsolutionaction'
 
 let i = 0;
 
@@ -61,9 +62,25 @@ export function initContextMenu(map: LMap) {
         callback: () => requestFileUpload('application/json', (filename, content) => {
             const parsed = JSON.parse(content)
             const { units, links, center, zoom, drawings } = deserialize(parsed)
+            // TODO: Make more error resistant and capture errors in here.
             addAction(new ImportAction(units, links, geoJsonToLayers(drawings, getDrawStyleOptions())).forward())
             map.setView([center.lat, center.lng], zoom)
             notifications.success('Import', `Succesfully imported "${filename}"`)
+        })
+    }, {
+        text: 'Import Solution',
+        index: ++i,
+        callback: () => requestFileUpload('text/plain', (filename, content) => {
+            try {
+                console.log(content)
+                addAction(new ImportSolutionAction(content).forward())
+                notifications.success('Import Solution', `Succesfully imported solution "${filename}"`)
+            } catch (err) {
+                console.error(err)
+                notifications.alert('Import Solution', `Failed to import solution "${filename}".\nError message has been printed to console.`, {
+                    timeout: 6_000
+                })
+            }
         })
     }, {
         text: 'Remove All',
