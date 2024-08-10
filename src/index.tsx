@@ -202,14 +202,15 @@ control.ruler({ // NOTE: For some reason, you have to double click the map after
 
 
 import 'leaflet-notifications'
+// Usage: https://gitlab.com/manuel.richter95/leaflet.notifications
 export const notifications = control.notifications({
     timeout: 3000,
     position: 'bottomright',
-    closable: true,
+    closable: false,
     // NOTE: Dismissable needs to be set to false on notifications
     // which include links to more information
     dismissable: true, 
-    className: 'modern'
+    className: 'default'
 }).addTo(map)
 
 
