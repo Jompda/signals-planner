@@ -34,9 +34,7 @@ import { actionEvents } from '../../actionhistory';
  *           - Use bresenham's line algorithm to connect the pixel coords between tiles.
  *             - Each pixel is part of the LOS calculation.
  * 
- * // TODO: Implement the following to the LOS calculation algorithm:
- * The LOS calculation must stop once ray length exceeds radio horizon.
- * Energy loss over distance.
+ * // TODO: Implement either ITM Area mode or from scratch free-space-loss and radio horizon.
  */
 
 
@@ -128,7 +126,7 @@ function calculateSourceEmission(
     const latlng0  = latLng(ll0.lat, ll0.lon)
     const srcTileCoords = latlngToTileCoords(latlng0, zoom) // These two functions could be unified
     const srcTileXY = latlngToTilePixelCoords(srcTileCoords, latlng0);
-    const srcRawElevation = getTileDataValue(srcTileCoords, srcTileXY.x, srcTileXY.y, zLayer, 'elevation', 256)
+    const srcRawElevation = zLayer.get(`${srcTileCoords.x}|${srcTileCoords.y}|${zoom}`).data['elevation'][srcTileXY.y * 256 + srcTileXY.x]
     const srcElevation = srcRawElevation + emitterheight
 
     //const map = getMap()
@@ -168,22 +166,16 @@ function calculateSourceEmission(
                 const x = Math.floor(rx % 1 * res), y = Math.floor(ry % 1 * res) // xy on tile
                 // LOS increment here
                 
-                const pElevation = getTileDataValue(
-                    {x: tx, y: ty, z: zoom},
-                    x / scale, // topleft corner of the pixel // TODO center
-                    y / scale,
-                    zLayer,
-                    'elevation',
-                    256
-                )
-                // TODO: Same for treeHeight
+                const data = zLayer.get(`${tx}|${ty}|${zoom}`).data
+                const dataIndex = Math.round((y / scale) * 256 + (x / scale))
+                const elevation = data['elevation'][dataIndex]
+                const treeHeight = data['treeHeight'][dataIndex]
 
                 const emissionArr = zLayer.get(`${tx}|${ty}|${zoom}`).data.emission as Int16Array
                 //console.log(tx, ty, x, y, pElevation)
                 
-                const hRatio = (pElevation - srcElevation) / pxDist
+                const hRatio = (elevation + treeHeight - srcElevation) / pxDist
                 let value = 1
-                // NOTE: Consider implementing a Irregular Terrain Model algorithm.
                 //console.log('pxDist,srcElevation,pElevation,blindRatio,hRatio:', pxDist, srcElevation, pElevation, blindRatio, hRatio, hRatio >= blindRatio)
                 if (hRatio >= blindRatio) { // pxDist should be changed to a more valid distancemeter
                     // gets direct radiation
@@ -192,31 +184,13 @@ function calculateSourceEmission(
                     //console.log('updated ratio:', srcElevation, pElevation, blindRatio)
                 } else {
                     // below radiation, receiverHeight might be enough to get radiation
-                    if ((pElevation + receiverHeight - srcElevation) / pxDist >= blindRatio) value = 2
+                    if ((elevation + receiverHeight - srcElevation) / pxDist >= blindRatio) value = 2
                 }
                 const k = y * res + x
                 if (emissionArr[k] != 1 || value != 1) emissionArr[k] += value
                 ++pxDist
             }
         }
-    }
-}
-
-
-function getTileDataValue(
-    coords: TileCoords,
-    x: number,
-    y: number,
-    zLayer: Map<string, CoverageTile>,
-    dataField: string,
-    res: number
-) {
-    try {
-        const data = zLayer.get(`${coords.x}|${coords.y}|${coords.z}`).data[dataField] as Int16Array
-        return data[y * res + x]
-    } catch (e) {
-        console.error(e)
-        console.error(coords, x, y, zLayer, dataField, res)
     }
 }
 
@@ -276,8 +250,6 @@ function getBorderPoints(nwCoords: TileCoords, seCoords: TileCoords) {
         map.on('moveend', this.onMoveEnd)
         actionEvents.addEventListener('structureUpdate', this.structureListener)
         GridLayer.prototype.onAdd.call(this, map)
-
-        // TODO: Hook to actions to update. Also actions need to fire events of addition, undo and redo.
     },
 
     onRemove: function(map: LMap) {
@@ -320,7 +292,7 @@ function getBorderPoints(nwCoords: TileCoords, seCoords: TileCoords) {
                 m.set(`${coords.x}|${coords.y}|${coords.z}`, {
                     coords,
                     bounds: this._tileCoordsToBounds(coords),
-                    data: await getTiledata(coords, ['elevation']),
+                    data: await getTiledata(coords, ['elevation', 'treeHeight']),
                     drawEmission: () => this.drawEmission(coords, tile)
                 })
             }
@@ -339,9 +311,6 @@ function getBorderPoints(nwCoords: TileCoords, seCoords: TileCoords) {
         return tile
     },
 
-    // NOTE: At bigger scales is not accurate enough. Consider
-    // calculating at a set zoom level and constructing the tiles from there.
-    // Also consider leaving out tiles that are not inside lines of sight to prevent loading thousands of tiles.
     drawEmission: function(coords: TileCoords, tile: HTMLCanvasElement) {
         const emissionData = cache.get(coords.z).get(`${coords.x}|${coords.y}|${coords.z}`).data.emission as Int16Array
 
