@@ -34,10 +34,10 @@ export function addAction(action: Action) {
 
 
 export function undo() {
-    if (i > -1) history[i--].reverse()
-    notifications.info('Undo', `History: ${i + 1}`)
+    if (i > -1) history[i--].reverse() 
+    else notifications.info('Undo', `Nothing to undo`)
 }
 export function redo() {
     if (i < history.length - 1) history[++i].forward()
-    notifications.info('Redo', `History: ${i + 1}`)
+    else notifications.info('Redo', `Nothing to redo`)
 }
