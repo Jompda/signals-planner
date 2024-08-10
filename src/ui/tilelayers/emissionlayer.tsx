@@ -9,6 +9,7 @@ import { getGeodesicLine, getGeodesicLineStats } from '../../linkutil';
 import { getSetting } from '../../settings';
 import { useRef } from 'react';
 import { getLinePlot } from '../../util';
+import { actionEvents } from '../../actionhistory';
 
 
 /* 
@@ -67,7 +68,6 @@ let tid: number
 function waitFinish(forceUpdate?: boolean) {
     if (tid) clearTimeout(tid)
     tid = setTimeout(() => {
-        console.log('wait finished')
         if (update || forceUpdate) {
             console.time('calculateCoverage')
             calculateEmission()
@@ -77,10 +77,6 @@ function waitFinish(forceUpdate?: boolean) {
     }, timeout) as unknown as number
 }
 
-function onMoveEnd() {
-    console.log('moveend:')
-    waitFinish()
-}
 
 function calculateEmission() {
     const links = getLinks()
@@ -92,9 +88,6 @@ function calculateEmission() {
 
     const nwTile = latlngToTileCoords(viewBounds.getNorthWest(), zoom),
         seTile = latlngToTileCoords(viewBounds.getSouthEast(), zoom)
-
-    console.log('scale,res:', scale, res)
-    console.log('links:', links)
 
     const borderPoints = getBorderPoints(nwTile, seTile)
 
@@ -280,16 +273,21 @@ function getBorderPoints(nwCoords: TileCoords, seCoords: TileCoords) {
     },
     onAdd: function(map: LMap) {
         this._map = map
-        map.on('moveend', onMoveEnd)
+        map.on('moveend', this.onMoveEnd)
+        actionEvents.addEventListener('structureUpdate', this.structureListener)
         GridLayer.prototype.onAdd.call(this, map)
 
         // TODO: Hook to actions to update. Also actions need to fire events of addition, undo and redo.
     },
 
     onRemove: function(map: LMap) {
-        map.off('moveend', onMoveEnd)
+        map.off('moveend', this.onMoveEnd)
+        actionEvents.removeEventListener('structureUpdate', this.structureListener)
         GridLayer.prototype.onRemove.call(this, map)
     },
+
+    moveListener() { waitFinish() },
+    structureListener() { waitFinish(true) },
 
     createTile: function (coords: Coords, callback: Function) {
         const tile = DomUtil.create('canvas', 'leaflet-tile')
@@ -423,7 +421,6 @@ function CustomLayerOptions() {
 
                 scale = 1 / div
                 res = 256 * scale
-                console.log('div,scale,res:', div, scale, res)
                 infoRef.current.textContent = String(res)
                 waitFinish(true)
             }}>Apply</button>
