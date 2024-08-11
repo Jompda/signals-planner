@@ -8,7 +8,7 @@ import { addAction, redo, undo } from '../../actionhistory'
 import ImportAction from '../../actions/importaction'
 import RemoveAllAction from '../../actions/removeallaction'
 import { getDrawnLayers, getDrawStyleOptions } from '../geomancontroller'
-import { deselectAllUnitLayers, selectAllUnitLayers, toggleSelectAllUnitLayers } from '../structurecontroller'
+import { deselectAllUnitLayers, selectAllUnitLayers } from '../structurecontroller'
 import { notifications } from '../..'
 import ImportSolutionAction from '../../actions/importsolutionaction'
 

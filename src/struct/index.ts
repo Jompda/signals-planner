@@ -1,6 +1,6 @@
 import Link from './link'
 import Unit from './unit'
-import deepEqual from 'deep-equal'
+//import deepEqual from 'deep-equal'
 import { SaveLink, SaveStructure, SaveUnit } from '../interfaces'
 import { getSelectedUnits } from '../ui/structurecontroller'
 

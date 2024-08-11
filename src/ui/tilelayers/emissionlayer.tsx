@@ -1,4 +1,4 @@
-import { DomUtil, GridLayer, Map as LMap, Coords, LatLngBounds, LatLng, Marker, CRS, Point, latLng, ControlOptions } from 'leaflet'
+import { DomUtil, GridLayer, Map as LMap, Coords, LatLngBounds, LatLng, CRS, Point, latLng } from 'leaflet'
 import { getTiledata, latlngToTileCoords, latlngToTilePixelCoords } from 'tiledata'
 import { getLinks } from '../../struct';
 import { getMap } from '../structurecontroller';

@@ -1,4 +1,4 @@
-import { LatLng, Marker, DomUtil, divIcon, point, LeafletMouseEvent, Evented, Popup } from 'leaflet'
+import { LatLng, Marker, DomUtil, divIcon, point, LeafletMouseEvent, Popup } from 'leaflet'
 import { Symbol as MilSymbol } from 'milsymbol'
 import Unit from '../../struct/unit'
 import { showEditUnitMenu } from '../menus/unitmenus'

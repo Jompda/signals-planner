@@ -1,4 +1,4 @@
-import {control, Control, DomUtil, Map} from 'leaflet';
+import { control, Control, DomUtil, Map } from 'leaflet'
 
 control.zoomRatio = function() {
     return new Control.ZoomRatio() as Control

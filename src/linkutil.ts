@@ -1,5 +1,5 @@
 import LinkLayer from './ui/components/linklayer'
-import { asyncOperation, getMaxWorkers, workers } from './util'
+import { asyncOperation, workers } from './util'
 import { linkIdExists, removeLink as structRemoveLink, addLink as structAddLink } from './struct'
 import { getLinkLayerById, removeLink as lgRemoveLink, addLink as lgAddLink } from './ui/structurecontroller'
 import UnitLayer from './ui/components/unitlayer'
@@ -7,7 +7,7 @@ import { Medium } from './struct/medium'
 import Link from './struct/link'
 import LatLon from 'geodesy/latlon-spherical'
 import { latLng } from 'leaflet'
-import { CableLinkEstimate, RadioLinkEstimate, SourceName, TiledataLatLng } from './interfaces'
+import { RadioLinkEstimate, SourceName, TiledataLatLng } from './interfaces'
 import Unit from './struct/unit'
 
 

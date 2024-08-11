@@ -1,4 +1,4 @@
-import { CircleMarkerOptions, FeatureGroup, Map as LMap, PathOptions } from 'leaflet'
+import { CircleMarkerOptions, FeatureGroup, Map as LMap } from 'leaflet'
 import { addAction } from '../actionhistory'
 import { AddDrawLayerAction, EditDrawLayersAction, RemoveDrawLayerAction } from '../actions/drawactions'
 import { setLinkInteraction, setUnitInteraction } from './structurecontroller'

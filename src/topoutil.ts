@@ -1,6 +1,6 @@
 import { latlngToTileCoords, latlngToXYOnTile, getTiledata } from 'tiledata'
-import * as mgrs from 'mgrs'
-import * as utm from 'utm'
+import { forward as mgrsForward } from 'mgrs'
+import { fromLatLon as utmFromLatLon, toLatLon as utmToLatLon } from 'utm'
 import { Map as LMap, LatLng as LLatLng, latLng, Topography, popup, DomUtil } from 'leaflet'
 import { asyncOperation, getMaxWorkers, round, workers } from './util'
 import { SourceName, TiledataLatLng } from './interfaces'
@@ -90,7 +90,7 @@ export async function getPointInfo(latlng: LLatLng) {
     return {
         lat: String(round(latlng.lat, 6)).padEnd(9, '0'),
         lng: String(round(latlng.lng, 6)).padEnd(9, '0'),
-        mgrs: mgrs.forward([latlng.lng, latlng.lat]),
+        mgrs: mgrsForward([latlng.lng, latlng.lat]),
         utm: latlngToUtm(latlng),
         treeHeight: treeHeight[0] + 'm',
         elevation: round(topography.elevation) + 'm',
@@ -101,14 +101,14 @@ export async function getPointInfo(latlng: LLatLng) {
 }
 
 export function latlngToUtm(latlng: LatLng) {
-    const s = utm.fromLatLon(latlng.lat, latlng.lng)
+    const s = utmFromLatLon(latlng.lat, latlng.lng)
     return `${s.zoneNum}${s.zoneLetter} ${Math.floor(s.easting)} ${Math.floor(s.northing)}`
 }
 
 export function utmToLatLng(str: string) {
     const parts = str.split(' ')
     const s1 = parts[0]
-    const s = utm.toLatLon(
+    const s = utmToLatLon(
         +parts[1],
         +parts[2],
         +s1.slice(0, s1.length - 1),

@@ -1,6 +1,6 @@
 import Action from './action'
 import { RemoveUnitAction } from './unitactions'
-import { getLinkLayers, getLinkLayersByUnitLayers, getUnitLayerById, getUnitLayers } from '../ui/structurecontroller'
+import { getLinkLayers, getUnitLayerById, getUnitLayers } from '../ui/structurecontroller'
 import UnitLayer from '../ui/components/unitlayer'
 import LinkLayer from '../ui/components/linklayer'
 import { RemoveLinksAction } from './linkactions'

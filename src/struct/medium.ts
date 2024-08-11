@@ -1,4 +1,3 @@
-import { resolveReturnCode } from 'itm-webassembly'
 import { CableLinkEstimate, CableMediumOptions, LinkEstimateOptions, MediumOptions, MediumResolvable, MediumType, RadioLinkEstimate, RadioMediumOptions, SaveCableMedium, SaveRadioMedium } from '../interfaces'
 import { getSetting } from '../settings'
 
@@ -95,8 +94,7 @@ export class RadioMedium extends Medium {
         const A_ref__db = parseFloat(results.get('A_ref__db')) // reference attentuation
         const A__db = parseFloat(results.get('A__db')) // A_fs__db + terrain loss
         const mode = parseInt(results.get('mode'))
-        // TODO: parse warnings
-        const code = window.resolveReturnCode(parseInt(results.get('code')))
+        //const code = window.resolveReturnCode(parseInt(results.get('code')))
         const warnings = window.resolveWarnings(results.get('warnings'))
 
         return {

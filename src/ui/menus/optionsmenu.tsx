@@ -1,4 +1,4 @@
-import { Map as LMap, control, Control, DomUtil, Util, DomEvent, ControlOptions } from 'leaflet'
+import { Map as LMap, control, Control, DomUtil, Util, ControlOptions } from 'leaflet'
 import { createRoot } from 'react-dom/client';
 import { createDialog } from '../../util';
 import { OptionsItem } from '../../interfaces';
