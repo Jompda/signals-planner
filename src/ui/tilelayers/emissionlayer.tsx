@@ -78,7 +78,6 @@ function waitFinish(forceUpdate?: boolean) {
 
 function calculateEmission() {
     const links = getLinks()
-    
     const map = getMap()
     const viewBounds = map.getBounds()
     const zoom = map.getZoom()
@@ -100,7 +99,7 @@ function calculateEmission() {
         const bearing00 = ll0.initialBearingTo(ll1)
         const bearing10 = ll1.initialBearingTo(ll0)
 
-        // instead of viewbounds check if it's inside the active tiles?
+        // TODO: Instead of viewbounds check if the unit is inside the active tiles
         if (viewBounds.contains(link.unit[0].latlng)) calculateSourceEmission(borderPoints, zLayer, zoom, ll0, link, link.emitterHeight[0], bearing00)
         if (viewBounds.contains(link.unit[1].latlng)) calculateSourceEmission(borderPoints, zLayer, zoom, ll1, link, link.emitterHeight[1], bearing10)
     }
@@ -129,7 +128,6 @@ function calculateSourceEmission(
     const srcRawElevation = zLayer.get(`${srcTileCoords.x}|${srcTileCoords.y}|${zoom}`).data['elevation'][srcTileXY.y * 256 + srcTileXY.x]
     const srcElevation = srcRawElevation + emitterheight
 
-    //const map = getMap()
     for (const bp of borderPoints) {
         const ll1 = new LatLon(bp.latlng.lat, bp.latlng.lng)
         const bearing1 = ll0.initialBearingTo(ll1);
@@ -139,10 +137,6 @@ function calculateSourceEmission(
 
         const {steps} = getGeodesicLineStats(latlng0, bp.latlng, 10000) // accuracy good enough
         const latlngs = getGeodesicLine(latlng0, bp.latlng, steps)
-
-        // temp visualization
-        //for (const temp of latlngs)
-        //    new Marker(temp).addTo(map)
 
         // LOS calculation starts here
         let blindRatio = Number.MIN_SAFE_INTEGER, pxDist = 1
@@ -163,7 +157,7 @@ function calculateSourceEmission(
                 const p = linePlot[j]
                 const rx = p.x / res, ry = p.y / res
                 const tx = Math.floor(rx), ty = Math.floor(ry) // tile coordinates
-                const x = Math.floor(rx % 1 * res), y = Math.floor(ry % 1 * res) // xy on tile
+                const x = Math.floor(rx % 1 * res), y = Math.floor(ry % 1 * res) // pixel coords on tile
                 // LOS increment here
                 
                 const data = zLayer.get(`${tx}|${ty}|${zoom}`).data
@@ -172,18 +166,14 @@ function calculateSourceEmission(
                 const treeHeight = data['treeHeight'][dataIndex]
 
                 const emissionArr = zLayer.get(`${tx}|${ty}|${zoom}`).data.emission as Int16Array
-                //console.log(tx, ty, x, y, pElevation)
                 
                 const hRatio = (elevation + treeHeight - srcElevation) / pxDist
                 let value = 1
-                //console.log('pxDist,srcElevation,pElevation,blindRatio,hRatio:', pxDist, srcElevation, pElevation, blindRatio, hRatio, hRatio >= blindRatio)
-                if (hRatio >= blindRatio) { // pxDist should be changed to a more valid distancemeter
-                    // gets direct radiation
+                // pxDist should be changed to a more valid distancemeter
+                if (hRatio >= blindRatio) { // gets direct radiation
                     blindRatio = hRatio
                     value = 2
-                    //console.log('updated ratio:', srcElevation, pElevation, blindRatio)
-                } else {
-                    // below radiation, receiverHeight might be enough to get radiation
+                } else { // below radiation, receiverHeight might be enough to get radiation
                     if ((elevation + receiverHeight - srcElevation) / pxDist >= blindRatio) value = 2
                 }
                 const k = y * res + x
@@ -261,6 +251,10 @@ function getBorderPoints(nwCoords: TileCoords, seCoords: TileCoords) {
     moveListener() { waitFinish() },
     structureListener() { waitFinish(true) },
 
+    /**
+     * GridLayer expects a HTML element to be returned
+     * and the callback to be called asynchronoysly.
+     */
     createTile: function (coords: Coords, callback: Function) {
         const tile = DomUtil.create('canvas', 'leaflet-tile')
         const size = this.getTileSize()
@@ -268,7 +262,6 @@ function getBorderPoints(nwCoords: TileCoords, seCoords: TileCoords) {
         tile.height = size.y
 
         const ctx = tile.getContext('2d')
-        // debug outline
         drawCoords(ctx, tile, coords)
         if (coords.z > 14) { // MapBox only provides dem data up to zoom level 14.
             const text = 'NO DATA AVAILABLE\nToo zoomed in.'
@@ -281,11 +274,10 @@ function getBorderPoints(nwCoords: TileCoords, seCoords: TileCoords) {
             return tile
         }
 
-        //console.log('loading')
         update = true
-        waitFinish()
+        waitFinish();
 
-        const loadData = async () => {
+        (async () => {
             try {
                 let m = cache.get(coords.z)
                 if (!m) cache.set(coords.z, m = new Map())
@@ -296,17 +288,10 @@ function getBorderPoints(nwCoords: TileCoords, seCoords: TileCoords) {
                     drawEmission: () => this.drawEmission(coords, tile)
                 })
             }
-            catch (e) {
-                console.error(e)
-            }
-            finally {
-                //console.log('loaded')
-                waitFinish()
-            }
-
+            catch (e) { console.error(e) }
+            finally { waitFinish() }
             callback(null, tile)
-        }
-        loadData()
+        })()
 
         return tile
     },
@@ -353,8 +338,6 @@ function CustomLayerOptions() {
     const divRef = useRef<HTMLInputElement>()
     const timeoutRef = useRef<HTMLInputElement>()
     const infoRef = useRef<HTMLInputElement>()
-
-    // divider = 4, scale = 1 / divider, res = 256 * scale
 
     return (
         <div className='lc-custom'>
