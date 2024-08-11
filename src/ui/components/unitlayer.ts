@@ -1,11 +1,11 @@
-import { LatLng, Marker, DomUtil, divIcon, point, LeafletMouseEvent } from 'leaflet'
+import { LatLng, Marker, DomUtil, divIcon, point, LeafletMouseEvent, Evented, Popup } from 'leaflet'
 import { Symbol as MilSymbol } from 'milsymbol'
 import Unit from '../../struct/unit'
 import { showEditUnitMenu } from '../menus/unitmenus'
 import { showAddLinkMenu } from '../menus/linkmenus'
-import { getActiveTool, unitLayerClick, unitLayerMouseDown, unitLayerMouseUp } from '../toolcontroller'
+import { unitLayerClick, unitLayerMouseDown, unitLayerMouseUp } from '../toolcontroller'
 import { getPointInfo } from '../../topoutil'
-import { actionEvents, addAction } from '../../actionhistory'
+import { addAction } from '../../actionhistory'
 import { MoveUnitAction, RemoveUnitAction } from '../../actions/unitactions'
 import { isUnitInteractionEnabled } from '../structurecontroller'
 import { getLinksByUnitId } from '../../struct'
@@ -18,10 +18,11 @@ export default class UnitLayer extends Marker {
     public unit: Unit
     public svg: HTMLElement
     public hitbox: HTMLDivElement
+    private popup: Popup
     constructor(unit: Unit) {
         unit.symbol.setOptions({
             infoBackground: '#ffffffaa',
-            outlineColor: '#000000aa',
+            outlineColor: '#000000aa', // NOTE: Change to modifiable
             outlineWidth: 2
         })
         const { icon, svg, hitbox } = createIcon(unit.symbol, iconSize);
@@ -65,7 +66,7 @@ export default class UnitLayer extends Marker {
         this.svg = svg
         this.hitbox = hitbox
         this.hitbox.id = this.unit.id
-
+        this.popup = new Popup()
         this.addHandlers()
     }
 
@@ -125,8 +126,9 @@ export default class UnitLayer extends Marker {
             a.innerText = field; b.innerText = info[field]
             div.append(a, b)
         }
-        
-        this.bindPopup(div)
+
+        this.popup.setContent(div)
+        this.bindPopup(this.popup)
         this.openPopup()
         this.unbindPopup()
     }
@@ -134,6 +136,7 @@ export default class UnitLayer extends Marker {
 
     dragEnd() {
         addAction(new MoveUnitAction(this, this.unit.latlng, this.getLatLng()).forward())
+        if (this.popup.isOpen()) this.openInfoPopup()
     }
     click(e: LeafletMouseEvent) {
         unitLayerClick(e, this)
