@@ -3,11 +3,10 @@ import { asyncOperation, workers } from './util'
 import { linkIdExists, removeLink as structRemoveLink, addLink as structAddLink } from './struct'
 import { getLinkLayerById, removeLink as lgRemoveLink, addLink as lgAddLink } from './ui/structurecontroller'
 import UnitLayer from './ui/components/unitlayer'
-import { Medium } from './struct/medium'
 import Link from './struct/link'
 import LatLon from 'geodesy/latlon-spherical'
 import { latLng } from 'leaflet'
-import { RadioLinkEstimate, SourceName, TiledataLatLng } from './interfaces'
+import { MediumResolvable, RadioLinkEstimate, SourceName, TiledataLatLng } from './interfaces'
 import Unit from './struct/unit'
 
 
@@ -32,7 +31,7 @@ export function generateLinkLayers(
     minDist: number,
     maxDist: number,
     maxDBLoss: number,
-    medium: Medium,
+    medium: MediumResolvable,
     emitterHeight: number,
     override: boolean,
     progressFunction: (i: number) => any,

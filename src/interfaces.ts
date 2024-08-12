@@ -1,6 +1,5 @@
 import { Control, ControlPosition, LatLng as LLatLng, LeafletMouseEvent, Map as LMap } from 'leaflet'
 import { Symbol as MilSymbol, SymbolOptions } from 'milsymbol'
-import { CableMedium, Medium, RadioMedium } from './struct/medium'
 import Unit from './struct/unit'
 
 
@@ -168,12 +167,13 @@ export interface LinkOptions {
     medium: MediumResolvable
 }
 
+export type MediumType = 'radio' | 'cable'
+export type MediumResolvable = RadioMediumOptions | CableMediumOptions | string
+
 export interface MediumOptions {
     name: string
-    preset?: boolean
+    type: MediumType
 }
-
-export type MediumType = 'radio' | 'cable'
 
 export interface RadioMediumOptions extends MediumOptions {
     freqMhz: number
@@ -182,8 +182,7 @@ export interface RadioMediumOptions extends MediumOptions {
 }
 
 export interface CableMediumOptions extends MediumOptions {
-    /** Length of a single extendable cable. */
-    cableLength: number
+    cableLengthMeter: number
 }
 
 export interface LineStats {
@@ -225,25 +224,9 @@ export interface SaveLink {
     unit1: string
     emitterHeight0: number
     emitterHeight1: number
-    medium: SaveRadioMedium | SaveCableMedium | string
+    medium: MediumResolvable
 }
 
-export interface SaveMedium {
-    type: MediumType
-    name: string
-}
-
-export interface SaveRadioMedium extends SaveMedium {
-    type: 'radio'
-    freqMhz: number
-    heightMeter: number
-    beamWidthDeg?: number
-}
-
-export interface SaveCableMedium extends SaveMedium {
-    type: 'cable'
-    cableLength: number
-}
 
 export interface RadioLinkEstimate {
     A_fs__db: number
@@ -263,5 +246,3 @@ export interface LinkEstimateOptions {
     values: Array<TiledataLatLng>
     emitterHeight: Array<number>
 }
-
-export type MediumResolvable = RadioMedium | SaveRadioMedium | CableMedium | SaveCableMedium | Medium | string

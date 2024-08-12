@@ -1,7 +1,7 @@
-import { CableLinkEstimate, LineStats, LinkOptions, MediumResolvable, RadioLinkEstimate, SaveLink, SourceName, TiledataLatLng } from '../interfaces'
+import { CableLinkEstimate, CableMediumOptions, LineStats, LinkOptions, MediumResolvable, RadioLinkEstimate, RadioMediumOptions, SaveLink, SourceName, TiledataLatLng } from '../interfaces'
 import Unit from './unit'
 import { getValues } from '../topoutil'
-import { CableMedium, RadioMedium, resolveMedium } from './medium'
+import { estimateCableLinkStats, estimateRadioLinkStats, resolveMedium } from './medium'
 import { createLosGetter, getGeodesicLine, getGeodesicLineStats, getLineStats } from '../linkutil'
 import { getSetting } from '../settings'
 import LatLon from 'geodesy/latlon-spherical'
@@ -14,7 +14,7 @@ export default class Link {
     public unit = sealedArray<Unit>(2)
     public emitterHeight = sealedArray<number>(2)
     public bearing = sealedArray<number>(2)
-    public medium: RadioMedium | CableMedium
+    public medium: RadioMediumOptions | CableMediumOptions
     public values: Array<TiledataLatLng>
     public lineStats: LineStats
     public stats: RadioLinkEstimate | CableLinkEstimate
@@ -96,7 +96,9 @@ export default class Link {
         this.bearing[0] = ll0.initialBearingTo(ll1)
         this.bearing[1] = ll1.initialBearingTo(ll0)
 
-        this.stats = this.medium.estimateLinkStats(this)
+        this.stats = this.medium.type === 'radio' ?
+            estimateRadioLinkStats(this.medium as RadioMediumOptions, this)
+            : estimateCableLinkStats(this.medium as CableMediumOptions, this)
 
         return { values, lineStats: this.lineStats, stats: this.stats }
     }
@@ -108,7 +110,7 @@ export default class Link {
             unit1: this.unit[1].id,
             emitterHeight0: this.emitterHeight[0],
             emitterHeight1: this.emitterHeight[1],
-            medium: this.medium.serialize()
+            medium: this.medium
         } as SaveLink
     }
     static deserialize(obj: SaveLink, getUnitById: (unitId: string) => Unit) {
@@ -118,6 +120,7 @@ export default class Link {
             unit1: getUnitById(obj.unit1),
             emitterHeight0: obj.emitterHeight0 || defaultEmitterHeight,
             emitterHeight1: obj.emitterHeight1 || defaultEmitterHeight,
+            // NOTE: For backwards compatibility this resolves MediumOptions from just a name
             medium: resolveMedium(obj.medium)
         })
     }

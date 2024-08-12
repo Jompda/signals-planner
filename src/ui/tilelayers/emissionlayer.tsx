@@ -1,15 +1,15 @@
 import { DomUtil, GridLayer, Map as LMap, Coords, LatLngBounds, LatLng, CRS, Point, latLng } from 'leaflet'
 import { getTiledata, latlngToTileCoords, latlngToTilePixelCoords } from 'tiledata'
-import { getLinks } from '../../struct';
-import { getMap } from '../structurecontroller';
-import Link from '../../struct/link';
+import { getLinks } from '../../struct'
+import { getMap } from '../structurecontroller'
+import Link from '../../struct/link'
 import LatLon from 'geodesy/latlon-spherical'
-import { RadioMedium } from '../../struct/medium';
-import { getGeodesicLine, getGeodesicLineStats } from '../../linkutil';
-import { getSetting } from '../../settings';
-import { useRef } from 'react';
-import { getLinePlot } from '../../util';
-import { actionEvents } from '../../actionhistory';
+import { getGeodesicLine, getGeodesicLineStats } from '../../linkutil'
+import { getSetting } from '../../settings'
+import { useRef } from 'react'
+import { getLinePlot } from '../../util'
+import { actionEvents } from '../../actionhistory'
+import { RadioMediumOptions } from '../../interfaces'
 
 
 /* 
@@ -131,7 +131,7 @@ function calculateSourceEmission(
     for (const bp of borderPoints) {
         const ll1 = new LatLon(bp.latlng.lat, bp.latlng.lng)
         const bearing1 = ll0.initialBearingTo(ll1);
-        const beamWidth = (link.medium as RadioMedium).beamWidthDeg
+        const beamWidth = (link.medium as RadioMediumOptions).beamWidthDeg
         const bearingDiff = Math.abs(bearing-bearing1)
         if (beamWidth && bearingDiff > beamWidth) continue;
 

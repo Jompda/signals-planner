@@ -1,6 +1,7 @@
 import { useRef } from "react"
-import { cables, RadioMedium, radios, resolveMedium } from "../../struct/medium"
+import { radioOptions, cableOptions, resolveMedium } from "../../struct/medium"
 import { getSetting } from "../../settings"
+import { RadioMediumOptions } from "../../interfaces"
 
 
 export function MediumOptions({ sourceOnly, defaultMedium, updateMedium, defaultEmitterHeight0, updateEmitterHeight0, defaultEmitterHeight1, updateEmitterHeight1 }: {
@@ -19,7 +20,7 @@ export function MediumOptions({ sourceOnly, defaultMedium, updateMedium, default
 
     const radioGroup = new Array<JSX.Element>()
     const cableGroup = new Array<JSX.Element>()
-    for (const radio of radios.values()) {
+    for (const radio of radioOptions.values()) {
         radioGroup.push(
             <option
                 key={radio.name}
@@ -27,12 +28,12 @@ export function MediumOptions({ sourceOnly, defaultMedium, updateMedium, default
             >{radio.name}: {radio.freqMhz}MHz {radio.beamWidthDeg ? 'Directing ' + radio.beamWidthDeg + '°' : ''}</option>
         )
     }
-    for (const cable of cables.values()) {
+    for (const cable of cableOptions.values()) {
         cableGroup.push(
             <option
                 key={cable.name}
                 value={cable.name}
-            >{cable.name}: {cable.cableLength}m</option>
+            >{cable.name}: {cable.cableLengthMeter}m</option>
         )
     }
 
@@ -53,10 +54,10 @@ export function MediumOptions({ sourceOnly, defaultMedium, updateMedium, default
                     emRef.current.style.visibility = (medium.type === 'cable') ? 'hidden' : 'visible'
                     updateMedium(selectRef.current.value) // NOTE: ends with useless repetition on higher layers
                     if (medium.type === 'radio') {
-                        em0Ref.current.value = String((medium as RadioMedium).heightMeter)
-                        em1Ref.current.value = String((medium as RadioMedium).heightMeter)
-                        updateEmitterHeight0((medium as RadioMedium).heightMeter)
-                        updateEmitterHeight1((medium as RadioMedium).heightMeter)
+                        em0Ref.current.value = String((medium as RadioMediumOptions).heightMeter)
+                        em1Ref.current.value = String((medium as RadioMediumOptions).heightMeter)
+                        updateEmitterHeight0((medium as RadioMediumOptions).heightMeter)
+                        updateEmitterHeight1((medium as RadioMediumOptions).heightMeter)
                     }
                 }}
             >

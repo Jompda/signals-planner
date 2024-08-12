@@ -1,13 +1,13 @@
 import Tool from '../tool'
 import { DomUtil, LeafletKeyboardEvent, LeafletMouseEvent, polyline, Polyline } from 'leaflet'
 import UnitLayer from '../components/unitlayer'
-import { Medium, resolveMedium } from '../../struct/medium'
+import { resolveMedium } from '../../struct/medium'
 import { addAction } from '../../actionhistory'
 import { AddLinkAction } from '../../actions/linkactions'
 import LinkLayer from '../components/linklayer'
 import Link from '../../struct/link'
 import { getMap } from '../structurecontroller'
-import { LeafletDialog } from '../../interfaces'
+import { CableMediumOptions, LeafletDialog, RadioMediumOptions } from '../../interfaces'
 import { createDialog } from '../../util'
 import { createRoot } from 'react-dom/client'
 import { MediumOptions } from '../components/mediumoptions'
@@ -16,7 +16,7 @@ import { useRef } from 'react'
 
 
 class LinkEditorTool extends Tool {
-    private medium: Medium
+    private medium: RadioMediumOptions | CableMediumOptions
     private startUnit: UnitLayer
     private highlight: Polyline
     public editDialog: LeafletDialog
@@ -123,14 +123,14 @@ function LinkEditorToolSettings({ emitterHeight, updateEmitterHeight0, updateEmi
     medium: string
     updateMedium: (value: string) => any
 }) {
-    const emitterHeightRef = useRef<HTMLInputElement>()
-
     return (
         <>
             <h2>Link type:</h2>
             <MediumOptions
                 defaultMedium={medium}
                 updateMedium={updateMedium}
+                defaultEmitterHeight0={parseFloat(emitterHeight)}
+                defaultEmitterHeight1={parseFloat(emitterHeight)}
                 updateEmitterHeight0={updateEmitterHeight0}
                 updateEmitterHeight1={updateEmitterHeight1}
             />
