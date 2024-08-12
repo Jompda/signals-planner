@@ -1,12 +1,13 @@
 import { Map as LMap, control, Control, DomUtil, Util, ControlOptions } from 'leaflet'
-import { createRoot } from 'react-dom/client';
-import { createDialog } from '../../util';
-import { OptionsItem } from '../../interfaces';
+import { createRoot } from 'react-dom/client'
+import { createDialog } from '../../util'
+import { useRef, useState } from 'react'
+import { getSetting, resetSetting, setSetting } from '../../settings'
 
 
-control.optionsMenu = function (items: Array<OptionsItem>, options: ControlOptions) {
-    return new Control.OptionsMenu(items, options) as Control
-};
+control.optionsMenu = function (options: ControlOptions) {
+    return new Control.OptionsMenu(options) as Control
+}
 
 
 Control.OptionsMenu = Control.extend({
@@ -14,9 +15,8 @@ Control.OptionsMenu = Control.extend({
         position: 'topright'
     },
 
-    initialize: function (items: Array<OptionsItem>, options: ControlOptions) {
+    initialize: function (options: ControlOptions) {
         Util.setOptions(this, options)
-        this._items = items;
         this._container = this.createOpenButton()
     },
 
@@ -61,35 +61,37 @@ Control.OptionsMenu = Control.extend({
 
         const container = DomUtil.create('div', 'dialog-menu')
 
-        const items = this._items
-        const elements = new Array<React.JSX.Element>
-        for (let i = 0; i < this._items.length; ++i)
-            elements.push(<div key={i}>{this._items[i].element}</div>)
-        
         const root = createRoot(container)
-
-        function applyOptions() {
-            for (const item of items) item.apply()
-        }
-
-        function resetOptions() {
-            for (const item of items) item.reset()
-        }
-
-        root.render(
-            <>
-                <h1>Options</h1>
-                <hr />
-                {elements}
-                <div className='grower'></div>
-                <div className='dialog-menu-submit'>
-                    <button onClick={applyOptions}>Apply</button>
-                    <button onClick={resetOptions}>Restore defaults</button>
-                </div>
-            </>
-        )
+        root.render(<OptionsMenu/>)
 
         dialog.setContent(container)
         dialog.close()
     },
 })
+
+
+function OptionsMenu() {
+    const emitterHeightRef = useRef<HTMLInputElement>()
+    const [emitterHeight, setEmitterHeight] = useState(getSetting('defaultEmitterHeight'))
+
+    function apply() {
+        setSetting('defaultEmitterHeight', emitterHeight)
+    }
+    function reset() {
+        resetSetting('defaultEmitterHeight')
+        const value = getSetting('defaultEmitterHeight', undefined, true)
+        setEmitterHeight(emitterHeightRef.current.value = value)
+    }
+
+    return <>
+        <h1>Mediums</h1>
+        <h2>Default emitter height</h2>
+        <input type="number" defaultValue={emitterHeight} ref={emitterHeightRef}
+            onChange={() => setEmitterHeight(parseFloat(emitterHeightRef.current.value))}/>
+        <div className='grower'></div>
+        <div className='dialog-menu-submit'>
+            <button onClick={apply}>Apply</button>
+            <button onClick={reset}>Restore defaults</button>
+        </div>
+    </>
+}

@@ -201,8 +201,8 @@ body {
  * Options menu
  */
 .optionsmenu-button {
-    padding: 1.5em;
-    color: #b3b3b3
+    padding: 1em 1.5em;
+    color: #7c7c7c
 }
 
 .optionsmenu-button>* {

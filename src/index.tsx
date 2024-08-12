@@ -128,21 +128,7 @@ baseLayers.OSM.addTo(map)
  * https://github.com/turbo87/sidebar-v2/
  */
 // TODO: these OptionsItems should be constructed by their respective modules
-control.optionsMenu([
-    {
-        apply: () => console.log('apply mediums'),
-        reset: () => console.log('reset mediums'),
-        // NOTE: Ability to modify existing medium presets without changing applied ones.
-        // Ability to create new mediums.
-        // Emitter heights
-        element:
-            <>
-                <h1>Mediums</h1>
-                <h2>Default Link Medium</h2>
-            </>
-    }
-],
-{ position: 'topright' }).addTo(map);
+control.optionsMenu({ position: 'topright' }).addTo(map)
 control.layerControl({ ...baseLayers, ...overlays }, { position: 'topright' }).addTo(map)
 control.customToolbar([
     defaultTool,

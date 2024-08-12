@@ -48,7 +48,7 @@ declare module 'leaflet' {
             constructor(layers: Record<string, Layer>, options?: ControlOptions)
         }
         export class OptionsMenu {
-            constructor(items: Array<OptionsItem>, options?: ControlOptions)
+            constructor(options?: ControlOptions)
         }
         export class CustomToolbar {
             constructor(items: Array<IToolbarItem>, options?: ControlOptions)
@@ -59,7 +59,7 @@ declare module 'leaflet' {
     }
     export namespace control {
         export function layerControl(layers: Record<string, Layer>, options: ControlOptions): Control
-        export function optionsMenu(items: Array<OptionsItem>, options?: ControlOptions): Control
+        export function optionsMenu(options?: ControlOptions): Control
         export function customToolbar(items: Array<IToolbarItem>, options?: ControlOptions): Control
         export function dialog(options?: LeafletDialogOptions): LeafletDialog
         export function ruler(options?: any): Control
