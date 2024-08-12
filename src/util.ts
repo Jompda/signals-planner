@@ -181,25 +181,38 @@ export const unitNames = [
     { name: 'Command', short: 'Cmd.' },
 ]
 
+
+/**
+ * Exception if symbol satisfies criteria for a default node unit.
+ */
 export function symbolToHierarchyString(symbol: MilSymbol, reverseOrder?: boolean, undef?: string) {
     const options = symbol.getOptions(false)
     let hierarchy = new Array<String>()
     const unitSize = options.sidc.charCodeAt(options.sidc.length - 1) - 65
 
+    const parts = options.higherFormation.split('/')
+    const parsedId = parseInt(options.uniqueDesignation)
+
+    let i = 0
+    // Default node criteria
+    if (!isNaN(parsedId) && parts.length > 0 && parts[0] === 'Node') {
+        hierarchy.push(options.uniqueDesignation + ' Node')
+        parts.shift()
+    }
+    else {
+        add(options.uniqueDesignation || `(id:${undef})`, unitSize)
+    }
+
+    for (; i < parts.length; ++i)
+        if (parts[i].length > 0)
+            add(parts[i], unitSize + 1 + i)
+
     function add(specifier: string, i: number) {
         hierarchy.push(
-            (specifier ? specifier + '.' : '')
+            (specifier ? specifier.trim() + '.' : '')
             + (unitSize >= 0 ? unitNames[i].short : '')
         )
     }
-
-    add(options.uniqueDesignation || `(id:${undef})`, unitSize)
-    if (options.higherFormation.length > 0) {
-        const split = options.higherFormation.split('/')
-        for (let i = 0; i < split.length; i++)
-            add(split[i], unitSize + 1 + i)
-    }
-
     if (reverseOrder) hierarchy = hierarchy.reverse()
     return hierarchy.join(' | ')
 }

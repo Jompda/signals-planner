@@ -63,7 +63,7 @@ export function showLinkStatistics(map: LMap, linkLayer: LinkLayer) {
                     <span> — </span>
                     <span className='underline'>{linkLayer.link.medium.name}</span>
                     <span> — </span>
-                    <span className='underline'>{linkLayer.link.unit[0].toHierarchyString()}</span>
+                    <span className='underline'>{linkLayer.link.unit[1].toHierarchyString()}</span>
                 </h3>
                 <span>NOTE: Figure doesn't take into account earth curvature nor actual radio propagation path.</span>
                 <LinkStatistics
