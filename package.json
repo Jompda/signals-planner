@@ -7,7 +7,7 @@
         "build": "webpack"
     },
     "author": "Joni Rapo",
-    "license": "ISC",
+    "license": "MIT",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/Jompda/signals-planner.git"
