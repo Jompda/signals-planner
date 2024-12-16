@@ -6,6 +6,11 @@ import {
     RadioLinkEstimate,
     RadioMediumOptions,
 } from '../interfaces'
+import {
+    ITM_P2P_TLS_Ex,
+    resolveWarnings,
+    resolveReturnCode
+} from 'itm-webassembly'
 
 
 const radioOptions = new Map<string, RadioMediumOptions>()
@@ -54,7 +59,7 @@ export function estimateRadioLinkStats(
     const pflRes = lineStats.delta // Approximate delta of points in meters.
     const pfl = [values.length - 1, pflRes].concat(values.map(val => val.elevation + val.treeHeight))
     //console.log('h0,h1,freq,pfl:', emitterHeight0, emitterHeight1, freqMhz, pfl)
-    const results = window.ITM_P2P_TLS_Ex(
+    const results = ITM_P2P_TLS_Ex(
         emitterHeight[0], // double h_tx__meter
         emitterHeight[1], // double h_rx__meter
         pfl, // double pfl[]
@@ -75,8 +80,8 @@ export function estimateRadioLinkStats(
     const A_ref__db = parseFloat(results.get('A_ref__db')) // reference attentuation
     const A__db = parseFloat(results.get('A__db')) // A_fs__db + terrain loss
     const mode = parseInt(results.get('mode'))
-    //const code = window.resolveReturnCode(parseInt(results.get('code')))
-    const warnings = window.resolveWarnings(results.get('warnings'))
+    //const code = resolveReturnCode(parseInt(results.get('code')))
+    const warnings = resolveWarnings(results.get('warnings'))
 
     return {
         A_fs__db,

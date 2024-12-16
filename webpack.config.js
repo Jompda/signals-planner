@@ -45,7 +45,7 @@ module.exports = {
             patterns: [
                 { from: path.resolve(srcDir, 'index.html'), to: path.resolve(destDir, 'index.html') },
                 { from: path.resolve(srcDir, 'styles.css'), to: path.resolve(destDir, 'styles.css') },
-                { from: path.resolve(__dirname, 'node_modules/itm-webassembly/em_bin'), to: path.resolve(destDir, 'em_bin') },
+                { from: path.resolve(__dirname, 'node_modules/itm-webassembly/em_bin'), to: path.resolve(destDir) }, // NOTE: dest dir should be em_bin but webpack is funny
                 { from: path.resolve(__dirname, 'node_modules/itm-webassembly/itm-webassembly.js'), to: path.resolve(destDir) }
             ]
         }),
