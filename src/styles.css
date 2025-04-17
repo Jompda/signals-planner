@@ -1,0 +1,581 @@
+/* 
+ * Base styles
+ */
+body {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+}
+
+#map {
+    position: relative;
+    flex: 1;
+    background-color: transparent;
+}
+
+.hidden {
+    display: none;
+}
+
+.center-content {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+.underline {
+    text-decoration: underline;
+}
+
+
+/*
+ * Context menu
+ */
+.leaflet-contextmenu a.leaflet-contextmenu-item {
+    display: block;
+    color: #222;
+    font-size: 12px;
+    line-height: 20px;
+    text-decoration: none;
+    padding: 0 12px;
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid transparent;
+    cursor: default;
+    outline: none;
+}
+.leaflet-contextmenu a.leaflet-contextmenu-item > * {
+    pointer-events: auto;
+}
+.leaflet-contextmenu a.leaflet-contextmenu-item > *:hover {
+    background-color: #f4f4f4;
+}
+.leaflet-contextmenu a.leaflet-contextmenu-item:hover{
+    background-color: #f4f4f4;
+    border-top: 1px solid #f4f4f4;
+    border-bottom: 1px solid #f4f4f4;
+}
+.leaflet-contextmenu a.leaflet-contextmenu-item :nth-child(2) {
+    float: right;
+}
+
+
+/* 
+ * Dialogs
+ */
+.dialog-menu {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.dialog-menu>hr {
+    width: 100%;
+}
+
+.dialog-menu>h1 {
+    text-align: center;
+}
+
+.grower {
+    flex: 1;
+    align-items: stretch;
+}
+
+.dialog-menu-submit {
+    display: flex;
+    justify-content: end;
+}
+
+.dialog-menu-submit>*:not(:last-child) {
+    margin: 0 0.5em;
+}
+
+
+.coords-input-menu {
+    align-items: center;
+    display: grid;
+    grid-column-gap: 1em;
+    grid-row-gap: 0.5em;
+    grid-template-columns: 4em auto 4em;
+}
+
+.coords-input-menu>*:last-child {
+    grid-column: 3;
+}
+
+.coords-input-menu-latlng {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    grid-column: span 2;
+}
+
+.coords-input-menu-latlng>div {
+    display: flex;
+    align-items: center;
+}
+
+
+.coords-input-menu-latlng>div>input {
+    margin-left: 1em;
+    width: 7em;
+}
+
+
+
+.milsymbol-editor {
+    display: grid;
+    grid-template-columns: 75% 25%;
+    text-align: center;
+}
+
+.milsymbol-editor-fields {
+    align-items: center;
+    font-size: 1em;
+    display: grid;
+    grid-template-columns: 50% 50%;
+}
+
+.milsymbol-editor-fields>input {
+    max-width: 8em;
+    font-size: 1em;
+}
+
+.milsymbol-editor>div>img {
+    width: 100%;
+}
+
+
+.unit-selector-target-units-container {
+    height: 12em;
+    overflow-y: scroll;
+}
+
+.unit-selector-button {
+    display: block;
+}
+
+.unit-selector-button>input {
+    display: none;
+}
+
+.unit-selector-button>div {
+    background-color: #e8e8e8;
+    border-block: 1px solid #cfcfcf;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.unit-selector-button>div>* {
+    margin: 0.3em;
+}
+
+.unit-selector-button>input:checked+div {
+    background-color: #4ada6e;
+}
+
+
+.ma-2xgrid {
+    display: grid;
+    grid-template-columns: 9em 5em;
+}
+
+.ma-2xgrid>input {
+    text-align: right;
+}
+
+.medium-options>div {
+    display: grid;
+    grid-template-columns: auto auto;
+}
+
+
+/*
+ * Options menu
+ */
+.optionsmenu-button {
+    padding: 1em 1.5em;
+    color: #7c7c7c
+}
+
+.optionsmenu-button>* {
+    transform: scale(3);
+}
+
+.optionsmenu-button>*:hover {
+    color: #4ada6e;
+}
+
+
+/*
+ * Layer Control
+ */
+.layercontrol {
+    width: 16em;
+    background-color: #ffffff;
+    border: 2px solid #e8e8e8;
+    border-radius: 0.5em;
+}
+
+.lc-header {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    align-items: center;
+    padding: 0.4em;
+    margin: 0;
+    background-color: #e8e8e8;
+    border-top-left-radius: 0.2em;
+    border-top-right-radius: 0.2em;
+    cursor: pointer;
+}
+
+.lc-header-caret {
+    width: 1em;
+    margin-right: -1em;
+}
+
+.lc-layermodel {
+    margin-top: 2px;
+    border-block: 2px solid #e8e8e8;
+    border-radius: 0.4em;
+}
+
+.lc-layermodel-head {
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.lc-layermodel-head:hover {
+    background-color: #e8e8e8;
+}
+
+.lc-layermodel-head-selected {
+    background-color: #e8e8e8;
+}
+
+.lc-layermodel-head>div {
+    display: flex;
+    align-items: center;
+}
+
+.lc-bringtofront {
+    margin-right: 0.2em;
+    display: flex;
+    justify-content: center;
+    border-radius: 0.4em;
+    padding: 0.1em 0.4em;
+}
+
+.lc-bringtofront:hover {
+    background-color: #44cc66;
+}
+
+
+.lc-slider {
+    padding: 0.2em 0.5em;
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+}
+
+.lc-slider>span:first-child {
+    font-weight: bold;
+}
+
+.lc-slider>input {
+    width: 8em;
+}
+
+
+.lc-3xgrid {
+    margin: 0.5em 0;
+    margin-left: 0.3em;
+    padding-left: 0.3em;
+    border-left: 0.3em solid #e8e8e8;
+    border-radius: 0.1em;
+    display: grid;
+    grid-template-columns: 3em 7.5em 4.5em;
+    align-items: center;
+}
+
+.lc-3xgrid>*:first-child {
+    font-weight: bold;
+    grid-column: span 3;
+    margin: 0;
+    margin-bottom: 0.2em;
+}
+
+.lc-3xgrid>button {
+    margin-top: 0.5em;
+    grid-column: span 3;
+}
+
+.lc-valueinput {
+    padding: 0;
+}
+
+.lc-valueinput:invalid {
+    color: red;
+}
+
+
+.link-stats {
+    display: inline;
+    border-collapse: collapse;
+}
+
+.link-stats>tbody>tr>td {
+    width: 6em;
+    border: 1px solid #adadad;
+}
+
+.link-stats-warnings>tbody>tr>td {
+    width: 20em;
+    border: 1px solid #adadad;
+}
+
+.lc-custom {
+    margin: 0.5em 0.5em;
+}
+
+.emissionopt-row {
+    
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.emissionopt-row > input {
+    width: 4em;
+}
+
+
+/*
+ * Toolbar
+ */
+
+.ctoolbar-category {
+    margin: 0;
+    padding: 0;
+    display: none;
+}
+
+.ctoolbar-category-icon:hover+.ctoolbar-category,
+.ctoolbar-category:hover {
+    display: block;
+}
+
+.ctoolbar-category>li {
+    margin-left: 2.7em;
+    background-color: white;
+    width: 2.7em;
+    height: 2.7em;
+    display: block;
+    margin-top: -1px;
+    border: 1px solid #00000069;
+}
+
+.ctoolbar-category>li:hover {
+    background-color: #f3f3f3;
+}
+
+.ctoolbar-root {
+    position: relative;
+    margin-left: -2.7em;
+    display: block;
+}
+
+.ctoolbar-category-icon {
+    position: absolute;
+}
+
+.fitter {
+    width: 2.7em;
+    height: 2.7em;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}
+
+.fitter>input {
+    display: none;
+}
+
+.fitter>input:checked+div {
+    background-color: #4ada6e;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+}
+
+.fitter>*:last-child {
+    position: absolute;
+}
+
+
+/* 
+ * Map layers
+ */
+.unit {
+    width: 0;
+    height: 0;
+}
+
+.unit-milsymbol {
+    position: absolute;
+    pointer-events: none;
+}
+
+.unit-hitbox {
+    position: absolute;
+}
+
+.unit-selected {
+    outline-offset: 1px;
+    outline: 2px dashed white;
+    box-shadow: 0 0 0 4px rgba(0, 0, 0, 50%);
+
+    /* src: https://stackoverflow.com/questions/14387690/how-can-i-show-only-corner-borders */
+    /*--s: 12px;
+    padding: 2px;
+    margin-left: -6px;
+    margin-top: -6px;
+    border: 4px solid black;
+    -webkit-mask:
+    conic-gradient(at var(--s) var(--s),#0000 75%,#000 0)
+    0 0/calc(100% - var(--s)) calc(100% - var(--s)),
+    linear-gradient(#000 0 0) content-box;
+    */
+}
+
+.link-marker {
+    margin-top: -1px;
+    font-size: 12px;
+    text-wrap: nowrap;
+}
+
+/* Hide background of link specifier */
+.leaflet-div-icon:has(> .link-marker) {
+    background-color: transparent;
+    border: none;
+}
+
+
+/*
+ * Amazing CSS
+ */
+.toggler-wrapper {
+    display: block;
+    width: 45px;
+    height: 25px;
+    cursor: pointer;
+    position: relative;
+    margin-left: -0.5em;
+    transform: scale(0.6);
+}
+
+.toggler-wrapper input[type="checkbox"] {
+    display: none;
+}
+
+.toggler-wrapper input[type="checkbox"]:checked+.toggler-slider {
+    background-color: #44cc66;
+}
+
+.toggler-wrapper .toggler-slider {
+    background-color: #ccc;
+    position: absolute;
+    border-radius: 100px;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    -webkit-transition: all 300ms ease;
+    transition: all 300ms ease;
+}
+
+.toggler-wrapper .toggler-knob {
+    position: absolute;
+    -webkit-transition: all 300ms ease;
+    transition: all 300ms ease;
+}
+
+.toggler-wrapper input[type="checkbox"]:checked+.toggler-slider .toggler-knob {
+    left: calc(100% - 19px - 3px);
+}
+
+.toggler-wrapper .toggler-knob {
+    width: calc(25px - 6px);
+    height: calc(25px - 6px);
+    border-radius: 50%;
+    left: 3px;
+    top: 3px;
+    background-color: #fff;
+}
+
+
+.slider {
+    appearance: none;
+    height: 0.5em;
+    border-radius: 0.5em;
+    background: #e8e8e8;
+    cursor: pointer;
+}
+
+/* For some reason these two can't be merged */
+.slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+    background: #44cc66;
+    cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+    background: #44cc66;
+    cursor: pointer;
+    border: none;
+}
+
+
+
+.info-table {
+    display: grid;
+    grid-template-columns: auto auto;
+}
+
+.info-table > *{
+    padding: 0.05em 0;
+}
+.info-table > *:nth-child(4n+1) {
+    background-color: lightgray;
+    padding-right: 1em;
+}
+.info-table > *:nth-child(4n+2) {
+    background-color: lightgray;
+}
+
+.leaflet-bottom {
+    display: flex;
+}
+
+.leaflet-ruler.leaflet-bar {
+    width: 30px;
+    height: 30px;
+}
