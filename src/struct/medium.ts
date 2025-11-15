@@ -7,7 +7,7 @@ import {
     RadioMediumOptions,
 } from '../interfaces'
 import {
-    ITM_P2P_TLS_Ex,
+    ITM_P2P_CR_Ex,
     resolveWarnings,
     resolveReturnCode
 } from 'itm-webassembly'
@@ -60,7 +60,7 @@ export function estimateRadioLinkStats(
     const pfl = [values.length - 1, pflRes].concat(values.map(val => val.elevation + val.treeHeight))
     //console.log('h0,h1,freq,pfl:', emitterHeight0, emitterHeight1, freqMhz, pfl)
     // NOTE: Values are kinda just thrown in there based on the itm example
-    const results = ITM_P2P_TLS_Ex(
+    const results = ITM_P2P_CR_Ex(
         emitterHeight[0], // double h_tx__meter
         emitterHeight[1], // double h_rx__meter
         pfl, // double pfl[]
@@ -72,9 +72,8 @@ export function estimateRadioLinkStats(
         15.0, // double epsilon Relative permittivity 1<epsilon (15.0 = average ground)
         0.005, // double sigma Conductivity S/m 0<sigma (0.005 = average ground)
         1, // int mdvar 1 = individual
-        50.0, // double time
-        50.0, // double location
-        50.0 // double situation
+        95.0, // double confidence
+        95.0, // double reliability
     ) as Map<string, string>
     //console.log(results)
     const A_fs__db = parseFloat(results.get('A_fs__db')) // free-space transmission loss
