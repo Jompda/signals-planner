@@ -10,6 +10,12 @@ import { useRef } from 'react'
 import { getLinePlot } from '../../util'
 import { actionEvents } from '../../actionhistory'
 import { RadioMediumOptions } from '../../interfaces'
+import {
+    ComputeDeltaH,
+    ITM_AREA_CR_Ex,
+    resolveWarnings,
+    resolveReturnCode
+} from 'itm-webassembly'
 
 
 /* 
@@ -253,7 +259,7 @@ function getBorderPoints(nwCoords: TileCoords, seCoords: TileCoords) {
 
     /**
      * GridLayer expects a HTML element to be returned
-     * and the callback to be called asynchronoysly.
+     * and the callback to be called asynchronously.
      */
     createTile: function (coords: Coords, callback: Function) {
         const tile = DomUtil.create('canvas', 'leaflet-tile')
