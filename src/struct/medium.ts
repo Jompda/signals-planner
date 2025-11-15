@@ -1,15 +1,19 @@
 import {
     CableLinkEstimate,
     CableMediumOptions,
+    LineStats,
     LinkEstimateOptions,
     MediumResolvable,
     RadioLinkEstimate,
     RadioMediumOptions,
+    TiledataLatLng,
 } from '../interfaces'
 import {
     ITM_P2P_CR_Ex,
     resolveWarnings,
-    resolveReturnCode
+    resolveReturnCode,
+    ITM_AREA_CR_Ex,
+    ComputeDeltaH
 } from 'itm-webassembly'
 
 
@@ -83,6 +87,8 @@ export function estimateRadioLinkStats(
     //const code = resolveReturnCode(parseInt(results.get('code')))
     const warnings = resolveWarnings(results.get('warnings'))
 
+    testArea(freqMhz, emitterHeight, lineStats, values) // temp
+
     return {
         A_fs__db,
         A_ref__db,
@@ -94,6 +100,51 @@ export function estimateRadioLinkStats(
         //CINR: NaN,
         //cost: NaN
     }
+}
+
+
+/**
+ * temp ITM_AREA testing function to get this working on emissionlayer
+ * TODO: take a look at https://github.com/edwardoughton/itmlogic/blob/master/scripts/area.py
+ * and https://its.ntia.gov/publications/download/HuffordITMalgWhitePaper.pdf
+ */
+function testArea(freqMhz: number, emitterHeight: Array<number>, lineStats: LineStats, values: Array<TiledataLatLng>) {
+    const pflRes = lineStats.delta // Approximate delta of points in meters.
+    const pfl = [values.length - 1, pflRes].concat(values.map(val => val.elevation + val.treeHeight))
+    const delta_h__meter = ComputeDeltaH(pfl, 0, lineStats.distance)
+    //console.log('h0,h1,freq,pfl:', emitterHeight0, emitterHeight1, freqMhz, pfl)
+    console.log("TEMP ITM_AREA TESTING")
+    console.log(lineStats)
+    console.log(pfl)
+    console.log(delta_h__meter)
+    const result = []
+    for (let i = 2; i < values.length; i += 1) {
+        pfl[0] = i; // set length of datapoints in profile
+        const d__meter = i*pflRes;
+        const results = ITM_AREA_CR_Ex(
+            emitterHeight[0], // double h_tx__meter
+            emitterHeight[1], // double h_rx__meter
+            1, // int tx_site_criteria // 1=CAREFUL
+            1, // int rx_site_criteria
+            d__meter / 1000, // double d__km
+            delta_h__meter, // double delta_h__meter
+            5, // int climate temperate for Finland
+            301.0, // double N_0 default is 301 equal to K=4/3
+            freqMhz, // double f__mhz
+            1, // int pol // TODO: Make modifiable, 0=hor 1=vert
+            // TODO: Make the following values modifiable via settings.
+            15.0, // double epsilon Relative permittivity 1<epsilon (15.0 = average ground)
+            0.005, // double sigma Conductivity S/m 0<sigma (0.005 = average ground)
+            1, // int mdvar 1 = individual
+            95.0, // double confidence
+            95.0, // double reliability
+        ) as Map<string, string>
+        const A_fs__db = parseFloat(results.get('A_fs__db')) // free-space transmission loss
+        const A_ref__db = parseFloat(results.get('A_ref__db')) // reference attentuation
+        const A__db = parseFloat(results.get('A__db')) // A_fs__db + terrain loss
+        result.push({A_fs__db, A_ref__db, A__db})
+    }
+    console.table(result)
 }
 
 
